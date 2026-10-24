@@ -1,6 +1,6 @@
 ## 1. Yêu cầu chung
 - Công nghệ: React Router (chế độ SSR) + TypeScript + Tailwind + shadcn/ui, chạy trên Cloudflare Workers, dữ liệu ở D1, ảnh ở R2.
-- Làm bản điện thoại trước, rồi đến máy tính. Giao diện theo spec ở `docs/spec_giao_dien.md` (dựa trên 14 màn mẫu).
+- Làm bản điện thoại trước, rồi đến máy tính. Giao diện theo spec ở `docs/spec_giao_dien.md` (dựa trên 24 màn mẫu; giai đoạn 1 làm màn 01–15, 18 (bản đơn giản) và 19. Ảnh mẫu ở `docs/giao_dien_24/`).
 - Không viết cứng giá, phí ship hay tiền cọc vào code. Tất cả đọc từ `config/shop-config.json`.
 - Không đưa secret hay key vào repo, chỉ để trong biến môi trường của Cloudflare.
 - Mỗi việc làm trên một nhánh riêng, gộp vào `main` qua pull request. README ghi cách chạy và cách deploy.
