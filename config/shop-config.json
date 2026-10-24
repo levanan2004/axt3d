@@ -24,7 +24,8 @@
       { "id": "tray", "slug": "khay-de-do-hinh-may", "name": "Khay để đồ hình mây", "category": "do-gia-dung", "price": 69000, "color": "Kem", "hex": "#e5d6bc", "material": "PETG", "stock": 25, "image": "tray", "badge": "" },
       { "id": "dino", "slug": "khung-long-chibi", "name": "Khủng long chibi", "category": "mo-hinh-3d", "price": 89000, "color": "Xanh lá", "hex": "#71826a", "material": "PLA", "stock": 16, "image": "dino", "badge": "" },
       { "id": "keyring", "slug": "moc-khoa-hinh-hoa", "name": "Móc khóa hình hoa", "category": "qua-tang", "price": 39000, "color": "Cam đất", "hex": "#d86b38", "material": "PLA", "stock": 40, "image": "keyring", "badge": "" },
-      { "id": "organizer", "slug": "hop-but-to-ong", "name": "Hộp bút tổ ong", "category": "phu-kien", "price": 99000, "color": "Xanh navy", "hex": "#223c4b", "material": "PLA", "stock": 22, "image": "organizer", "badge": "" }
+      { "id": "organizer", "slug": "hop-but-to-ong", "name": "Hộp bút tổ ong", "category": "phu-kien", "price": 99000, "color": "Xanh navy", "hex": "#223c4b", "material": "PLA", "stock": 22, "image": "organizer", "badge": "" },
+      { "id": "robot", "slug": "robot", "name": "Mô hình robot", "category": "mo-hinh-3d", "price": 189000, "color": "Xám", "hex": "#7d8794", "material": "PLA", "stock": 10, "image": "robot", "badge": "" }
     ]
   },
   "deposit": {
