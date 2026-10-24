@@ -1,8 +1,13 @@
 import type { Env } from './types';
 import { shopConfig } from './config';
 
-export function robotsTxt(env: Pick<Env, 'APP_ENV' | 'SITE_URL'>) {
-  const rules = env.APP_ENV === 'production'
+/** Production is indexable. Other environments stay closed unless ALLOW_INDEXING=true (local Lighthouse). */
+export function allowsIndexing(env: { APP_ENV?: string; ALLOW_INDEXING?: string }) {
+  return env.APP_ENV === 'production' || env.ALLOW_INDEXING === 'true';
+}
+
+export function robotsTxt(env: Pick<Env, 'APP_ENV' | 'SITE_URL'> & { ALLOW_INDEXING?: string }) {
+  const rules = allowsIndexing(env)
     ? 'Allow: /\nDisallow: /admin\nDisallow: /pos\nDisallow: /api/\nDisallow: /thanh-toan\nDisallow: /gio-hang\nDisallow: /theo-doi-don'
     : 'Disallow: /';
   return `User-agent: *\n${rules}\nSitemap: ${env.SITE_URL}/sitemap.xml\n`;
