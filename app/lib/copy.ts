@@ -125,13 +125,40 @@ export function label(key: string, fallback: string) {
   return line ? renderTokens(line.slice(key.length + 1).trim()) : fallback;
 }
 
-export function productDescription(slug: string, fallback: string) {
-  const doc = pageCopy('mo-ta-san-pham');
-  if (!doc) return fallback;
+function productSection(key: string) {
+  const doc = pageCopy('mo_ta_san_pham_mau');
+  if (!doc) return null;
+  const aliases = new Set([key]);
+  for (const product of shopConfig.catalog.seedProducts) {
+    if (product.id === key || product.slug === key) {
+      aliases.add(product.id);
+      aliases.add(product.slug);
+    }
+  }
   const sections = doc.body.split(/^##\s+/m).slice(1);
-  const found = sections.find(section => section.startsWith(slug + '\n') || section.startsWith(slug + '\r\n'));
-  if (!found) return fallback;
-  return renderTokens(found.split(/\r?\n/).slice(1).join('\n').trim()) || fallback;
+  const found = sections.find(section => {
+    const heading = section.split(/\r?\n/, 1)[0] || '';
+    const tagged = heading.match(/\(slug:\s*`([^`]+)`\)/)?.[1];
+    return Boolean(tagged && aliases.has(tagged));
+  });
+  return found ? found.split(/\r?\n/).slice(1).join('\n') : null;
+}
+
+/** Short line from mo_ta_san_pham_mau.md. Used for meta and JSON-LD. Robot stays in the file and is not a catalog product. */
+export function productSummary(slug: string, fallback: string) {
+  const body = productSection(slug);
+  const short = body?.match(/\*\*Ngắn:\*\*\s*(.+)/)?.[1]?.trim();
+  return (short ? renderTokens(short) : fallback).slice(0, 155);
+}
+
+/** Long description from the copy file. Falls back to the stored product text. */
+export function productDescription(slug: string, fallback: string) {
+  const body = productSection(slug);
+  if (!body) return fallback;
+  const longBlock = body.match(/\*\*Dài:\*\*\s*([\s\S]*?)(?:\n\*\*Thông số:\*\*|$)/)?.[1]?.trim();
+  if (!longBlock) return fallback;
+  const long = longBlock.split(/\n{2,}/).map(paragraph => paragraph.replace(/\s+/g, ' ').trim()).filter(Boolean).join('\n\n');
+  return renderTokens(long) || fallback;
 }
 
 export function htmlEscape(value: string) {

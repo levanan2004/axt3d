@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { legalCopy, productDescription, renderMarkdown, renderTokens, routeSeo } from '../app/lib/copy';
+import { legalCopy, productDescription, productSummary, renderMarkdown, renderTokens, routeSeo } from '../app/lib/copy';
+import { shopConfig } from '../app/lib/config';
 import { extensionPhrase } from '../app/lib/quote';
 import { robotsTxt } from '../app/lib/http';
 
@@ -15,6 +16,21 @@ describe('copy tokens', () => {
   });
   it('falls back when a product description file is absent', () => {
     expect(productDescription('khong-co', 'Mô tả gốc')).toBe('Mô tả gốc');
+  });
+  it('applies product copy by catalog slug and keeps robot out of the seed catalog', () => {
+    expect(productDescription('gia-do-dien-thoai', 'gốc')).toContain('mèo ngồi');
+    expect(productDescription('stand', 'gốc')).toContain('mèo ngồi');
+    expect(productSummary('moc-khoa-hinh-hoa', 'gốc')).toContain('corgi');
+    expect(productDescription('chau-cay-duong-van', 'gốc')).toContain('đầu mèo');
+    expect(productDescription('binh-hoa-xoan', 'gốc')).toContain('gờ xoắn');
+    expect(productDescription('khay-de-do-hinh-may', 'gốc')).toContain('Viền thấp');
+    expect(productDescription('khung-long-chibi', 'gốc')).toContain('khủng long');
+    expect(productSummary('robot', 'gốc')).toContain('robot');
+    expect(shopConfig.catalog.seedProducts.some(product => product.id === 'robot')).toBe(false);
+    const home = routeSeo('/');
+    expect(home?.title).toContain('AXT 3D');
+    expect(home?.description).toContain('móc khóa corgi');
+    expect(home?.description).toContain('chậu cây hình mèo');
   });
   it('renders legal pages and replaces hard-coded upload types with config', () => {
     const terms = legalCopy('dieu-khoan');

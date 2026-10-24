@@ -46,7 +46,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
     });
     if (parsed.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(parsed.email)) throw new Error('Email chưa đúng định dạng.');
     const uploads = form.getAll('files').filter((item): item is File => item instanceof File && item.size > 0);
-    if (uploads.length < 1 || uploads.length > limits.maxFiles) throw new Error(`Tối đa ${limits.maxFiles} file.`);
+    if (uploads.length < 1 || uploads.length > limits.maxFiles) throw new Error(`Tối đa ${limits.maxFiles} file mỗi yêu cầu.`);
     const files = [];
     for (const file of uploads) {
       const bytes = new Uint8Array(await file.arrayBuffer());
@@ -73,7 +73,7 @@ export default function CustomPrint() {
   return <StoreLayout>
     <Breadcrumb items={[{ label: 'Đặt in' }]}/>
     <h1>In 3D theo yêu cầu</h1>
-    <p className="help-text">{renderTokens('Gửi file, chọn nhựa và màu. Shop kiểm tra file rồi gửi báo giá chính thức. Báo giá có hiệu lực {config.customPrint.quoteValidHours} giờ sau khi gửi. Giá tạm tính chỉ hiện khi shop đã đo khối lượng và thời gian in.')}</p>
+    <p className="help-text">{renderTokens('Gửi file ({config.customPrint.upload.allowedExt}), chọn nhựa và màu. Shop kiểm tra file và gửi báo giá, bạn đồng ý rồi mới cọc.')}</p>
     <Form method="post" encType="multipart/form-data">
       <div className="two-column">
         <div>
@@ -110,7 +110,7 @@ export default function CustomPrint() {
               <li>Đặt cọc 50%</li>
               <li>In và giao Viettel Post</li>
             </ol>
-            <p className="notice">Admin sẽ báo giá sau khi đo file. Báo giá có hiệu lực {hours} giờ kể từ lúc gửi.</p>
+            <p className="notice">Web không tính giá tự động. Shop kiểm tra file rồi gửi báo giá, báo giá có hiệu lực {hours} giờ. Đơn tối thiểu {money(shopConfig.customPrint.minOrder)}.</p>
             <label className="check-row"><input type="checkbox" name="rights"/> Tôi cam kết có quyền sử dụng file này để in và file không vi phạm quyền sở hữu trí tuệ của người khác.</label>
             <label className="check-row"><input type="checkbox" name="banned"/> Tôi xác nhận file không phải vũ khí, đồ giả mạo, hoặc vật phẩm trái pháp luật.</label>
             {result?.error && <p className="error-message" role="alert">{result.error}</p>}
@@ -118,11 +118,11 @@ export default function CustomPrint() {
         </div>
         <aside className="summary-panel panel">
           <h2>Gửi yêu cầu</h2>
-          <p className="help-text">Đơn tối thiểu {money(shopConfig.customPrint.minOrder)}. Giá trên trang này không phải giá cuối.</p>
+          <p className="help-text">Đơn tối thiểu {money(shopConfig.customPrint.minOrder)}. Shop đo file rồi mới chốt giá.</p>
           <Button type="submit" className="full-width" disabled={busy}>{busy && <LoaderCircle className="spin" size={16}/>} Gửi yêu cầu báo giá</Button>
         </aside>
       </div>
-      <div className="sticky-action checkout-sticky"><div><strong>Chưa có giá tạm</strong><small>Shop đo file rồi báo giá</small></div><Button type="submit" disabled={busy}>Gửi yêu cầu</Button></div>
+      <div className="sticky-action checkout-sticky"><div><strong>Chưa có báo giá</strong><small>Shop kiểm tra file rồi gửi giá</small></div><Button type="submit" disabled={busy}>Gửi yêu cầu</Button></div>
     </Form>
   </StoreLayout>;
 }
