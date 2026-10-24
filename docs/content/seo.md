@@ -6,7 +6,7 @@ Quy ước: `AXT 3D` thường ngắn. Nếu title dài hơn 60 ký tự sau khi
 
 ### `/` Trang chủ
 - Title: `AXT 3D – Mô hình, quà tặng và in 3D theo yêu cầu`
-- Meta: `Shop đồ in 3D: mô hình, móc khóa tên, chậu cây mini, phụ kiện bàn làm việc. Nhận in theo file STL, 3MF, OBJ. Cọc 50%, phần còn lại COD.`
+- Meta: `Shop đồ in 3D: mô hình, móc khóa corgi, chậu cây hình mèo, phụ kiện bàn làm việc. Nhận in theo file STL, 3MF, OBJ. Cọc 50%, phần còn lại COD.`
 - H1: `Đồ in 3D làm tại xưởng, giao toàn quốc`
 - OG title: `AXT 3D – Đồ in 3D và in theo yêu cầu`
 - OG description: `Mô hình, quà tặng, phụ kiện in 3D. Gửi file để nhận báo giá in riêng. Giao Viettel Post, thu COD phần còn lại.`

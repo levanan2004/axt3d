@@ -113,3 +113,39 @@ Mẫu là thiết kế gốc của shop, không mô phỏng robot hay nhân vậ
 Lưu ý: có chi tiết nhỏ, không phù hợp với trẻ dưới 3 tuổi. Đừng xoay khớp quá mạnh. Vân lớp in mỏng trên bề mặt là đặc trưng của in 3D.
 
 **Thông số:** PLA · Cao {…} mm · Khối lượng: {…} g · Màu: theo lựa chọn · Sai số theo chính sách dung sai · Giá: lấy từ {config} / Hà Phương điền
+
+## 8. Bình hoa trang trí (slug: `vase`)
+**Ngắn:** Bình hoa/lọ trang trí in 3D dáng xoắn, cắm hoa khô hoặc để trơn làm decor kệ, bàn.
+
+**Dài:**
+Thân bình in thành các gờ xoắn, bắt sáng đẹp khi đặt gần cửa sổ hay đèn bàn. Hợp cắm hoa khô, cành lá giả hoặc để trơn trang trí.
+
+Muốn cắm hoa tươi, hãy đặt một ống/lọ thủy tinh nhỏ đựng nước bên trong. Bình in 3D không đảm bảo kín nước tuyệt đối.
+
+Không đựng nước nóng. Lau bằng khăn ẩm. Vân lớp in mỏng là đặc trưng của in 3D.
+
+**Thông số:** PLA hoặc PETG · Cao {…} mm · Đường kính {…} mm · Màu: theo lựa chọn · Sai số theo chính sách dung sai · Giá: lấy từ {config}
+
+## 9. Khay đựng đồ nhỏ (slug: `tray`)
+**Ngắn:** Khay in 3D đựng đồ nhỏ: chìa khóa, trang sức, kẹp giấy. Đáy phẳng, viền thấp, dễ lấy đồ.
+
+**Dài:**
+Khay gom các món hay để lung tung trên bàn, kệ đầu giường hoặc cạnh cửa ra vào. Viền thấp để lấy đồ nhanh, đáy phẳng không trượt.
+
+Chọn bản một ngăn hoặc chia ngăn ở trang sản phẩm.
+
+Không dùng đựng thức ăn. Lau bằng khăn ẩm, không ngâm nước nóng.
+
+**Thông số:** PLA hoặc PETG · Kích thước: {…} mm · Số ngăn: {…} · Màu: theo lựa chọn · Sai số theo chính sách dung sai · Giá: lấy từ {config}
+
+## 10. Mô hình khủng long (slug: `dino`)
+**Ngắn:** Mô hình khủng long in 3D do shop tự thiết kế, dáng tròn trịa dễ thương. Để bàn, kệ sách hoặc làm quà.
+
+**Dài:**
+Chú khủng long đứng hai chân, đuôi dài cân bằng thân, đặt chắc trên mặt phẳng. Có thể phối thân và gai lưng hai màu.
+
+Mẫu là thiết kế gốc của shop, không mô phỏng khủng long hay nhân vật của phim, truyện, game nào. Hợp với bàn học, góc làm việc, hoặc làm quà cho người thích khủng long.
+
+Lưu ý: có chi tiết nhỏ, không phù hợp với trẻ dưới 3 tuổi. Vân lớp in mỏng trên bề mặt là đặc trưng của in 3D.
+
+**Thông số:** PLA · Cao {…} mm · Dài {…} mm · Khối lượng: {…} g · Màu: theo lựa chọn · Sai số theo chính sách dung sai · Giá: lấy từ {config}
