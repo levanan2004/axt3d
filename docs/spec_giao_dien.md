@@ -1,180 +1,238 @@
-# 3DStore – Spec giao diện (v1)
+# 3DStore – Spec giao diện (v2, theo bộ 24 màn)
 
-Stack: React Router + TypeScript + Tailwind + shadcn/ui, deploy Cloudflare. **Mobile-first**. Màu lấy mẫu từ mockup bằng PIL.
-"3DStore" chỉ là tên tạm → logo là component `<Logo />` thay được (tên + icon đọc từ config).
+**Nguồn chuẩn:** `giao_dien_24/3D_Print_Store_Codex_UIUX/` (24 PNG ở `02_*`, `03_*`, `04_*` + `05_Specs/mockup_source.html`). Bộ này thay mockup 14 màn cũ. `01_Concept_Boards` chỉ để tham khảo phong cách: chữ/giá trên đó không chính xác và có nhân vật bản quyền, **không lấy theo**.
+**Stack:** React Router + TypeScript + Tailwind + shadcn/ui trên Cloudflare (Workers, D1/R2). README trong zip gợi ý Next.js + PostgreSQL → **không theo**, giữ stack của dự án. **Mobile-first.**
+"3DStore"/"3D Store" là tên tạm → `<Logo />` (ô vuông cam "3D" + chữ "Store") là component thay được, tên + icon đọc từ config.
 
-## 1. Design tokens
+**Nguyên tắc cố định (giữ từ v1, ưu tiên hơn mockup khi mâu thuẫn):**
+1. Chỉ **1 luồng thanh toán**: cọc 50% tiền hàng qua QR chuyển khoản, phần còn lại + ship thu COD (Viettel Post). Không có lựa chọn "trả toàn bộ trước", ví điện tử hay "COD toàn phần".
+2. Tổng tiền luôn **tính**, không hard-code. Giá/phí/tỉ lệ đọc từ `config/shop-config.json` (nguồn `/workspace/web-in-3d/shop-config.json`).
+3. Cọc làm tròn **lên** hàng nghìn (`ceilTo1000`). Hạn cọc **30 phút** có đếm ngược. Nội dung CK **`IN3D{mã đơn}`**.
+4. Trạng thái đơn phía khách: `cho_coc → da_coc → dang_chuan_bi → da_giao_van_chuyen → hoan_thanh`, + `da_huy`.
+5. Không dùng nhân vật/thương hiệu có bản quyền. Chữ cam trên nền trắng phải đạt AA. Logo thay được.
 
-| Token | Hex | Dùng cho |
+## 1. Design tokens (lấy mẫu từ 24 PNG bằng PIL)
+
+| Token | Hex | Ghi chú |
 |---|---|---|
-| primary | `#F06D19` (mẫu từ mockup) | nút, nền badge, icon active |
-| primary-hover | `#D9580F` | hover/pressed |
-| primary-text | `#C2410C` | **chữ cam trên nền trắng** (giá, link) – 5.18:1 đạt AA |
-| primary-light | `#FFF1E8` | nền nhạt: chip chọn, banner, hàng được chọn |
-| text | `#132130` (mẫu từ mockup) | chữ chính (16.3:1) |
-| muted | `#6B7280` | chữ phụ, đã bán, placeholder |
-| border | `#E5E7EB` | viền card/input |
-| bg | `#F8F9FA` (mẫu) | nền trang; card `#FFFFFF` |
-| success | `#16A34A` | đã cọc, hoàn thành |
-| warning | `#D97706` | chờ cọc, đếm ngược |
-| danger | `#DC2626` | đã hủy, lỗi, xóa |
+| primary | `#F4511E` (mẫu, khớp README) | nền nút, viền ô tìm kiếm, icon active. Trên trắng **3.48:1 → không đạt AA chữ thường** |
+| primary-hover | `#D84315` | hover/pressed |
+| primary-text | `#C2410C` | **chữ cam** (giá, link "Xem tất cả →"), 5.18:1 AA |
+| primary-light | `#FFF3EE` | nền chip/ô ghi chú cọc/hàng chọn |
+| navy | `#152B40` (mẫu) | topline, sidebar admin, nền hero (gradient `#152D42 → #293B49 → #EC7D3B`) |
+| text | `#172333` | chữ chính (15.9:1) |
+| muted | `#6B7280` | chữ phụ (4.83:1) |
+| border | `#E6E9EF` | viền card/input |
+| bg | `#F7F8FA` | nền trang; card `#FFFFFF` |
+| success | `#00AA48` (mẫu) nền/icon; chữ `#15803D` | đã cọc, đã giao, hoàn tất |
+| warning | `#FFCA28` (mẫu, sao rating) nền/icon; chữ `#B45309` | chờ cọc, đếm ngược |
+| danger | `#C62828` (mẫu) | in lỗi, đã hủy (5.6:1) |
+| info | `#284F6F` (mẫu) | badge "Đang vận chuyển"/"Chờ in" |
 
-**Tương phản:** `#F06D19` trên trắng = **3.04:1 → KHÔNG đạt AA** cho chữ thường. Chỉ dùng làm nền nút với chữ trắng cỡ ≥ 16px đậm (đạt mức large text 3:1) hoặc icon. Giá/link chữ cam dùng `#C2410C`. Nút primary chữ trắng: nên dùng chữ bold 16px; nếu muốn chắc chắn AA mọi cỡ thì nền nút `#C2410C`.
+Nút primary chữ trắng trên `#F4511E`: chỉ dùng chữ **bold ≥ 16px** (large text ≥3:1). Muốn AA mọi cỡ: nền `#C2410C`.
 
-- **Font:** Be Vietnam Pro (Google Fonts, subset `vietnamese,latin`, weight 400/500/600/700, `font-display: swap`).
-- **Type scale (mobile → PC):** xs 12/16 · sm 14/20 · base 16/24 · lg 18/28 · xl 20/28 · 2xl 24/32 · 3xl 30/36 (tiêu đề hero PC 36–40/44). Giá trong card: base/700; giá ở chi tiết SP: 2xl→3xl/700.
-- **Radius:** sm 6 · md 8 (input, nút) · lg 12 (card) · xl 16 (sheet, banner) · full (badge, avatar).
-- **Spacing:** thang 4px Tailwind; padding trang 16 (mobile) / 24 (PC); gap grid 12 mobile / 16–20 PC.
-- **Shadow:** card `0 1px 2px rgb(16 24 40/.06)`; hover card `0 4px 12px rgb(16 24 40/.08)`; sticky bar `0 -2px 8px rgb(16 24 40/.08)`.
-- **Breakpoints:** mobile `<768` · tablet `md: 768–1023` · desktop `lg: ≥1024`; container max **1320px**.
+- **Font:** Be Vietnam Pro (self-host, subset vietnamese+latin, 400/500/600/700/800, `font-display: swap`). Mockup render bằng Arial → thay.
+- **Type scale:** xs 12/16 · sm 14/20 · base 16/24 · lg 18/28 · xl 22/28 (tiêu đề section như mockup) · 2xl 26/32 · hero 32 mobile / 40 PC (line-height 1.1, weight 800). Giá card base/700; giá chi tiết 28–32/800.
+- **Radius:** 8 (nút, input, ô tìm kiếm) · 12 (card, panel, hero) · full (badge, swatch).
+- **Spacing:** 8/12/16/24/32. Padding container 16 mobile / 20 PC. Gap grid 12 mobile / 16 PC.
+- **Shadow:** card `0 2px 9px rgb(21 42 56 / .06)`; sticky bar `0 -2px 8px rgb(21 42 56 / .08)`.
+- **Breakpoints:** mobile `<768` · tablet `md 768–1023` · laptop `lg 1024–1439` · desktop `xl ≥1440`. **Container max 1320px** (theo bộ mới; v1 là 1280). QA tại 360/375/390/430/768/834/1024/1280/1440/1920, không tràn ngang.
 
 ### tailwind.config (theme.extend)
 ```ts
 theme: {
-  container: { center: true, padding: { DEFAULT: "1rem", lg: "1.5rem" }, screens: { "2xl": "1320px" } },
+  container: { center: true, padding: { DEFAULT: "1rem", lg: "1.25rem" } },
+  screens: { md: "768px", lg: "1024px", xl: "1440px" },
   extend: {
+    maxWidth: { content: "1320px" },
     fontFamily: { sans: ['"Be Vietnam Pro"', "system-ui", "sans-serif"] },
     colors: {
-      brand: { DEFAULT: "#F06D19", hover: "#D9580F", text: "#C2410C", light: "#FFF1E8" },
-      ink: "#132130", muted: { DEFAULT: "hsl(var(--muted))", foreground: "hsl(var(--muted-foreground))" },
-      success: "#16A34A", warning: "#D97706", danger: "#DC2626",
+      brand: { DEFAULT: "#F4511E", hover: "#D84315", text: "#C2410C", light: "#FFF3EE" },
+      navy: { DEFAULT: "#152B40", 600: "#284F6F" },
+      ink: "#172333",
+      success: { DEFAULT: "#00AA48", text: "#15803D" },
+      warning: { DEFAULT: "#FFCA28", text: "#B45309" },
+      danger: "#C62828",
       border: "hsl(var(--border))", input: "hsl(var(--input))", ring: "hsl(var(--ring))",
       background: "hsl(var(--background))", foreground: "hsl(var(--foreground))",
       primary: { DEFAULT: "hsl(var(--primary))", foreground: "hsl(var(--primary-foreground))" },
       secondary: { DEFAULT: "hsl(var(--secondary))", foreground: "hsl(var(--secondary-foreground))" },
+      muted: { DEFAULT: "hsl(var(--muted))", foreground: "hsl(var(--muted-foreground))" },
+      accent: { DEFAULT: "hsl(var(--accent))", foreground: "hsl(var(--accent-foreground))" },
       destructive: { DEFAULT: "hsl(var(--destructive))", foreground: "hsl(var(--destructive-foreground))" },
       card: { DEFAULT: "hsl(var(--card))", foreground: "hsl(var(--card-foreground))" },
     },
-    borderRadius: { lg: "var(--radius)", md: "calc(var(--radius) - 4px)", sm: "calc(var(--radius) - 6px)", xl: "16px" },
-    boxShadow: { card: "0 1px 2px rgb(16 24 40 / .06)", "card-hover": "0 4px 12px rgb(16 24 40 / .08)", bar: "0 -2px 8px rgb(16 24 40 / .08)" },
+    borderRadius: { lg: "var(--radius)", md: "8px", sm: "6px" },
+    boxShadow: { card: "0 2px 9px rgb(21 42 56 / .06)", bar: "0 -2px 8px rgb(21 42 56 / .08)" },
   },
 }
 ```
 
-### shadcn CSS variables (globals.css)
+### shadcn CSS variables
 ```css
 :root {
-  --background: 210 17% 98%;      /* #F8F9FA */
-  --foreground: 211 43% 13%;      /* #132130 */
-  --card: 0 0% 100%;  --card-foreground: 211 43% 13%;
-  --popover: 0 0% 100%; --popover-foreground: 211 43% 13%;
-  --primary: 23 88% 52%;          /* #F06D19 */
+  --background: 220 23% 97%;        /* #F7F8FA */
+  --foreground: 214 38% 15%;        /* #172333 */
+  --card: 0 0% 100%; --card-foreground: 214 38% 15%;
+  --popover: 0 0% 100%; --popover-foreground: 214 38% 15%;
+  --primary: 14 91% 54%;            /* #F4511E */
   --primary-foreground: 0 0% 100%;
-  --secondary: 23 100% 95%;       /* #FFF1E8 */
+  --secondary: 17 100% 97%;         /* #FFF3EE */
   --secondary-foreground: 17 88% 40%; /* #C2410C */
-  --muted: 220 14% 96%;  --muted-foreground: 220 9% 46%;
-  --accent: 23 100% 95%; --accent-foreground: 17 88% 40%;
-  --destructive: 0 72% 51%; --destructive-foreground: 0 0% 100%;
-  --border: 220 13% 91%; --input: 220 13% 91%;
+  --muted: 220 20% 95%; --muted-foreground: 220 9% 46%;
+  --accent: 17 100% 97%; --accent-foreground: 17 88% 40%;
+  --destructive: 0 66% 47%;         /* #C62828 */
+  --destructive-foreground: 0 0% 100%;
+  --border: 222 22% 92%; --input: 222 22% 92%;   /* #E6E9EF */
   --ring: 17 88% 40%;
   --radius: 0.75rem;
+  --sidebar: 210 51% 17%;           /* #152B40 admin */
 }
 ```
 
 ## 2. Component dùng chung
 
-- **Header PC (≥1024):** sticky top, cao 64, nền trắng, viền dưới. Trái `<Logo />`; giữa ô tìm kiếm (flex-1, max 560, nút kính lúp cam bên phải); phải icon Tài khoản, Giỏ hàng (badge số lượng đỏ/cam). Dòng 2: menu danh mục ("Danh mục" + các mục: Mô hình 3D, Phụ kiện, Quà tặng, Đồ trang trí, Phim/Anime*, Đồ chơi…). *Đổi tên mục "Phim/Anime" — đề xuất "Nhân vật & Fantasy".
-- **Header mobile:** cao 56: logo + icon tìm kiếm/giỏ; trang con: nút back + tiêu đề + icon giỏ.
-- **Bottom nav mobile (<768):** fixed bottom, cao 56 + `env(safe-area-inset-bottom)`, 5 tab: **Trang chủ · Danh mục · Yêu thích · Giỏ hàng · Tài khoản** (icon + nhãn 11–12px; active = brand). Ẩn trên trang có sticky action bar (chi tiết SP, giỏ, thanh toán) để tránh 2 thanh chồng nhau.
-- **Product card:** ảnh **1:1** `object-cover` bo lg; tên **2 dòng** `line-clamp-2` (sm/500); giá `text-brand-text font-bold`; dòng phụ: ★ rating + "Đã bán N" (xs muted). Badge góc ảnh (Mới / -x%). Cả card là 1 link; nút yêu thích là button riêng có `aria-label`.
-- **Button:** primary = nền brand, chữ trắng bold; secondary = viền brand, chữ `brand-text`, nền trắng (hover `brand-light`); ghost; destructive. Cao **44 mobile / 40 PC** (`h-11 lg:h-10`), radius md. Disabled: opacity 50%, loading: spinner + giữ chiều rộng.
-- **Badge:** pill radius full, xs/600: brand-light/brand-text (mặc định), success, warning, danger, neutral (muted).
-- **Quantity stepper:** [−] số [+], mỗi nút 36×36 (mobile 40×40), min 1, max = tồn kho; input số `inputmode="numeric"`; `aria-label` "Giảm/Tăng số lượng".
-- **Order status stepper:** các trạng thái **Chờ cọc → Đã cọc → Đang chuẩn bị → Đã giao vận chuyển → Hoàn thành**; **Đã hủy** là trạng thái kết thúc riêng (hiển thị badge danger, stepper xám, dừng ở bước bị hủy). PC: dọc kèm thời gian (màn 12) hoặc ngang (màn 9 checkout steps); mobile: dọc. Done = success, hiện tại = brand, chưa tới = border. Enum dùng chung FE/BE: `cho_coc | da_coc | dang_chuan_bi | da_giao_van_chuyen | hoan_thanh | da_huy`.
-- **PriceSummary:** component duy nhất tính tiền (xem mục 4), dùng ở giỏ, thanh toán, QR, đơn hàng.
+- **Topline (≥1024):** nền navy, chữ 12px `#C6D3DE`: trái "Hỗ trợ khách hàng · Theo dõi đơn hàng", phải "Chính sách giao hàng · Đăng nhập / Đăng ký". Ẩn trên mobile.
+- **Header PC:** `<Logo />` | ô tìm kiếm cao 48, viền 2px brand, placeholder "Tìm mô hình, phụ kiện, quà tặng in 3D...", nút "Tìm kiếm" nền brand | icon Yêu thích ♡, Giỏ hàng (badge số), Tài khoản. Dòng menu: **☰ Danh mục · Mô hình 3D · Phụ kiện công nghệ · Đồ trang trí · Quà tặng · Đặt in theo yêu cầu · Khuyến mãi** (active = brand-text).
+- **Header mobile:** logo + ♡ + 🛒; dưới là ô tìm kiếm full-width (placeholder ngắn "Tìm mô hình, phụ kiện, quà tặng..."). Trang con: back + tiêu đề.
+- **Bottom nav mobile:** 5 tab **Trang chủ · Danh mục · Đặt in · Giỏ hàng · Tài khoản** (cao 56 + safe-area). Ẩn khi có sticky action bar (chi tiết SP, giỏ, checkout, QR) – README yêu cầu nút thanh toán không dính navigation.
+- **Sidebar danh mục (PC home):** "Danh mục sản phẩm": Tất cả danh mục, Mô hình in 3D, Phụ kiện công nghệ, Đồ trang trí, Quà tặng cá nhân hóa, Đồ gia dụng, Đặt in theo yêu cầu.
+- **Product card:** ảnh 1:1 (mockup dùng emoji → thay ảnh thật WebP), tên 2 dòng `line-clamp-2`, giá `brand-text` bold, dòng "★ 4.9 · 124 đã bán" (sao `warning`, chữ muted).
+- **Button:** primary (nền brand, chữ trắng bold), secondary (viền brand, chữ brand-text, ví dụ "＋ Thêm vào giỏ hàng"), gray (`#F2F5F8`/chữ `#293A49`), destructive. Cao **44 mobile / 40 PC**, radius 8, padding 13×22.
+- **Badge trạng thái:** pill; màu theo nhóm: warning (chờ cọc/chờ in/chờ kiểm tra), brand-light (đang sản xuất/đã cọc), info (đang vận chuyển), success (đã giao/hoàn tất/đã nhận COD), danger (in lỗi/đã hủy).
+- **Quantity stepper:** − 1 ＋, nút 36 (mobile 40), min 1, max tồn kho, `aria-label`.
+- **Variant picker:** swatch màu tròn 32 (có tên màu cho a11y), chip kích thước (10cm/15cm/20cm), chip vật liệu (PLA/PETG/TPU); hiển thị "Có sẵn / In theo yêu cầu".
+- **Order status stepper (khách):** 6 trạng thái cố định; mockup màn 14/15 có 6 mốc chi tiết hơn → map như sau, mốc phụ hiện làm dòng con có thời gian:
 
-## 3. Spec từng màn
+| Trạng thái (enum) | Mốc mockup 14/15 |
+|---|---|
+| `cho_coc` – Chờ cọc | Đã đặt hàng |
+| `da_coc` – Đã cọc | Đã thanh toán cọc 50% |
+| `dang_chuan_bi` – Đang chuẩn bị | Đang sản xuất in 3D; Đóng gói và tạo vận đơn |
+| `da_giao_van_chuyen` – Đã giao vận chuyển | Viettel Post đang vận chuyển (kèm mã vận đơn) |
+| `hoan_thanh` – Hoàn thành | Giao thành công |
+| `da_huy` – Đã hủy | (badge danger, dừng stepper) |
 
-1. **Trang chủ PC:** header; hàng trên: sidebar danh mục (240px) | banner hero ("Sáng tạo cùng in 3D", CTA primary) | cột 3 ô dịch vụ (Đặt in 3D theo yêu cầu, Giao hàng toàn quốc, Thanh toán an toàn). Section "Gợi ý cho bạn" + link "Xem tất cả": grid **5 cột** (lg), 4 cột (md).
-2. **Trang chủ mobile:** header 56; banner full-width radius xl; hàng icon danh mục cuộn ngang (5 icon); "Gợi ý cho bạn" grid **2 cột**, gap 12; bottom nav.
-3. **Danh mục PC:** breadcrumb; sidebar filter 260px (Danh mục checkbox + số lượng, Lọc theo giá, Màu sắc swatch, Vật liệu PLA/PETG/ABS); tiêu đề "Mô hình 3D (N sản phẩm)" + Sắp xếp (select); grid **4 cột** (≥1280 có thể 5); phân trang/“Xem thêm”.
-4. **Danh mục mobile:** header back + tiêu đề + số SP; ô tìm kiếm; thanh chip sticky dưới header (Bộ lọc → mở Sheet bottom, Phổ biến, Giá, Mới nhất); grid **2 cột**; bottom nav.
-5. **Chi tiết SP PC:** 2 cột: gallery (thumbnail dọc 64px + ảnh chính 1:1) | thông tin: tên 2xl, rating/đã bán, giá 3xl brand-text, chọn màu (swatch tròn 32, có viền khi chọn + tên màu), số lượng, 2 nút **Thêm vào giỏ (secondary)** + **Mua ngay (primary)**; dải cam kết (in theo yêu cầu, giao toàn quốc, đổi trả 7 ngày). Dưới: Tabs (Mô tả, Thông số, Đánh giá, Hỏi đáp).
-6. **Chi tiết SP mobile:** ảnh carousel full-width 1:1 + chấm chỉ số; info xếp dọc; tabs dạng accordion. **Sticky bottom bar** (fixed, shadow bar, safe-area): [Thêm vào giỏ] [Mua ngay] mỗi nút flex-1, cao 44. Ẩn bottom nav.
-7. **Giỏ hàng PC:** 2 cột 8/4: bảng item (checkbox, ảnh 64, tên + phân loại, đơn giá, stepper, thành tiền, xóa) + "Chọn tất cả"; cột phải sticky top 80: Tóm tắt đơn (PriceSummary) + nút "Thanh toán", ô mã giảm giá.
-8. **Giỏ hàng mobile:** list item dạng card (ảnh 72, tên, giá, stepper, xóa); **sticky bottom bar**: checkbox tất cả | Tổng cộng (**tính từ item, ví dụ 148.000đ**) | nút "Thanh toán (n)".
-9. **Thanh toán PC:** stepper ngang (Giỏ hàng → Thanh toán → Hoàn tất); 2 cột 8/4: Địa chỉ nhận hàng (card, nút Thay đổi), Vận chuyển (đơn vị + phí từ config), **Phương thức thanh toán: chỉ 1 luồng** – "Cọc 50% qua chuyển khoản QR, phần còn lại COD" (hiển thị dạng thông tin, không phải radio nhiều lựa chọn; **bỏ "Viettel Post COD"**). Cột phải sticky: PriceSummary 3 dòng + slot chính sách hoàn cọc + nút "Đặt hàng & thanh toán cọc".
-10. **Thanh toán mobile:** các section xếp dọc như PC; **sticky bottom bar**: "Cọc ngay: 74.000đ" (lớn) + dòng nhỏ "COD khi nhận: …" + nút "Đặt hàng".
-11. **Thanh toán QR PC:** 2 cột: trái card QR (VietQR, ~240px), số tiền cọc lớn, ngân hàng/STK/chủ TK (nút copy), **nội dung CK `IN3D{mã đơn}`** (nút copy), **đếm ngược 30:00** (warning; hết giờ → đơn chuyển "Đã hủy"/hết hạn, hiện nút đặt lại); nút **"Đã chuyển khoản, kiểm tra ngay"** chỉ gọi refresh trạng thái đơn (không tự đánh dấu đã cọc), có loading + thông báo "Chưa nhận được, thử lại sau ít phút". Phải: Thông tin đơn + PriceSummary. Mobile: xếp dọc, QR trên cùng, thêm nút "Lưu ảnh QR".
-12. **Theo dõi đơn PC:** tiêu đề "Đơn hàng #mã" + badge trạng thái; 2 cột: Order status stepper dọc (có thời gian, mã vận đơn khi "Đã giao vận chuyển") | thông tin đơn (item, PriceSummary, đã cọc/còn COD, địa chỉ). Mobile: 1 cột.
-13. **Admin dashboard PC (phase sau cho phần biểu đồ):** sidebar tối `#132130` 240px; KPI cards 4 cột (doanh thu, đơn, khách, …); chart doanh thu 7 ngày; bảng đơn gần đây.
-14. **POS tablet (phase sau):** 2 cột 8/4: grid SP 4 cột (tablet) với ô tìm/quét mã | panel đơn hiện tại: item + stepper, Tổng tiền, chọn Tiền mặt/Chuyển khoản, nút "Thanh toán" lớn (h-12). Tap target ≥ 48.
+  Trạng thái nội bộ admin (sản xuất `QUEUED/PRINTING/QA/REPRINT_REQUIRED/PACKED/READY_TO_SHIP`, vận chuyển, COD) là vòng đời riêng, chỉ hiện ở admin; trạng thái khách được suy ra.
+- **PriceSummary:** 1 component + 1 hàm `calcOrderTotals(items, config)` dùng chung FE/BE (mục 4).
+- **AdminShell:** sidebar navy 240px, logo "3D Store Admin", menu: Tổng quan, Đơn hàng, Sản phẩm, Sản xuất, Tồn kho, Vận chuyển, Khách hàng, Báo cáo, Nhân viên, Cài đặt (phase 1 chỉ bật Tổng quan, Đơn hàng, Sản phẩm, Cài đặt). KPI card: nhãn, số lớn, delta.
 
-## 4. Sửa bắt buộc (logic tiền)
+## 3. Spec từng màn (24)
 
-- **Lỗi mockup màn 8:** tổng hiển thị 748.000đ nhưng 89.000 + 59.000 = **148.000đ**. Tổng **luôn tính** từ item (`Σ đơn giá × số lượng` của item được chọn), không hard-code ở UI.
-- Mọi giá/phí đọc từ config `config/shop-config.json` (nguồn `/workspace/web-in-3d/shop-config.json`): phí ship placeholder **20.000đ**, tỉ lệ cọc 0.5, thời hạn cọc 30 phút, prefix nội dung CK `IN3D`, thông tin ngân hàng, tên shop/logo.
-- **PriceSummary hiển thị 3 dòng:**
-  1. **Tiền hàng** = Σ item
-  2. **Cọc 50% tiền hàng (trả ngay qua QR)** = `ceil(tiền hàng × 0.5 / 1000) × 1000` (làm tròn **lên** hàng nghìn)
-     → ngay dưới: slot ghi chú ngắn chính sách hoàn cọc (`<DepositPolicyNote />`, nội dung Nhất gửi sau; để text trong config/CMS).
-  3. **COD khi nhận** = tiền hàng − cọc + phí ship
-- Ví dụ (ship 20.000 theo config): hàng 148.000 → cọc 74.000, COD 74.000 + 20.000 = **94.000đ**. (Với ship 30.000: COD 104.000đ.) Ví dụ làm tròn: hàng 149.000 → cọc 75.000, COD 74.000 + ship.
-- Tính tiền ở 1 hàm thuần dùng chung FE/BE (`calcOrderTotals`); server tính lại khi tạo đơn, không tin số từ client. Định dạng `Intl.NumberFormat('vi-VN')` + "đ".
+| # | Màn | Phase |
+|---|---|---|
+| 01–04 | Home Desktop 1440 / Laptop 1280 / Tablet 834 / Mobile 390 | 1 |
+| 05–06 | Catalog Desktop / Mobile | 1 |
+| 07–08 | Product Desktop / Mobile | 1 |
+| 09–10 | Cart Desktop / Mobile | 1 |
+| 11–12 | Checkout Desktop / Mobile | 1 |
+| 13 | QR Deposit | 1 |
+| 14–15 | Tracking Desktop / Mobile | 1 |
+| 16–17 | Custom Print Desktop / Mobile | 2 |
+| 18 | Admin Dashboard (bản đơn giản) | 1 |
+| 19 | Admin Orders | 1 |
+| 20 | Admin Production | 3 |
+| 21–22 | POS Tablet / Mobile | 3 |
+| 23 | Admin Reports | 3 |
+| 24 | Vận chuyển & đối soát COD Viettel Post (admin) | 3 |
+
+**01 Home Desktop 1440:** topline + header + menu. Hero 3 cột `245px | 1fr | 245px`, gap 16: sidebar danh mục | hero navy→cam, h ≥292, "Sáng tạo không giới hạn cùng in 3D", phụ "Mô hình · Quà tặng · Phụ kiện · Cá nhân hóa", CTA "Khám phá ngay →" | 3 ô lợi ích: "Đặt in 3D theo yêu cầu – Gửi file và nhận báo giá", "Giao hàng toàn quốc – Viettel Post", "Thanh toán linh hoạt – Cọc 50% · COD còn lại". Section "Gợi ý cho bạn" (10 SP) grid **5 cột**, section "Sản phẩm cá nhân hóa" (5 SP).
+**02 Home Laptop 1280:** như 01, grid **4 cột** (chính xác hơn: 5 nếu container ≥1240 không có sidebar; mockup hiển thị 5 – chấp nhận 4–5), cột lợi ích có thể thu 220px.
+**03 Home Tablet 834:** ẩn sidebar danh mục (thay bằng hàng chip/icon danh mục cuộn ngang), hero full-width, lợi ích thành 3 ô ngang dưới hero, grid **3 cột**. Menu ngang cuộn được hoặc gom vào ☰.
+**04 Home Mobile 390:** header mobile + ô tìm kiếm; hero full-width (chữ 32); lợi ích xếp dọc/2 cột; grid **2 cột**; bottom nav.
+**05 Catalog Desktop:** breadcrumb "Trang chủ › Mô hình 3D"; sidebar "Bộ lọc sản phẩm" 260px: Danh mục (Mô hình động vật, Mô hình trang trí, **Mô hình nhân vật & fantasy** – đổi từ "Mô hình anime", Phụ kiện 3D), Khoảng giá (Dưới 50.000đ / 50.000–100.000đ / 100.000–200.000đ / Trên 200.000đ – mốc đọc từ config), Màu sắc (swatch), Vật liệu (PLA, PETG, TPU). Đầu list: "Mô hình 3D · 120 sản phẩm" + tab sắp xếp Phổ biến / Mới nhất / Bán chạy / Giá ↑↓ + "Sắp xếp ▼". Grid **4 cột** (có sidebar), phân trang.
+**06 Catalog Mobile:** tiêu đề + số SP; thanh sticky: [Bộ lọc] mở Sheet từ dưới (cùng nội dung sidebar, nút "Áp dụng"), chip sắp xếp cuộn ngang; grid **2 cột**.
+**07 Product Desktop:** breadcrumb; 2 cột: gallery (ảnh chính 1:1 + 5 thumbnail) | "Rồng 3D khớp động nhiều màu", "★★★★★ 4.9 · 124 đánh giá · Đã bán 350+", giá 89.000đ, Màu sắc, Kích thước (10/15/20cm – giá theo biến thể nếu khác), Số lượng, "Có sẵn / in theo yêu cầu", nút **＋ Thêm vào giỏ hàng** (secondary) + **Mua ngay** (primary); dải cam kết "In 3D chất lượng · Viettel Post toàn quốc · Cọc 50% · COD phần còn lại". Dưới: Mô tả (ví dụ "Thời gian in dự kiến 1–3 ngày…" – số ngày lấy từ dữ liệu SP).
+**08 Product Mobile:** ảnh carousel 1:1, info xếp dọc, mô tả accordion; **sticky bottom bar** [Thêm vào giỏ] [Mua ngay] flex-1 h-44 + safe-area; ẩn bottom nav.
+**09 Cart Desktop:** "Giỏ hàng (3 sản phẩm)"; 2 cột 8/4: list item (checkbox, ảnh, tên, biến thể "Màu: Đỏ · Kích thước: 15cm", đơn giá, stepper, xóa) | "Tóm tắt đơn hàng" sticky: Tạm tính (n sản phẩm) = Σ, Mã giảm giá, Phí vận chuyển "Tính khi đặt hàng" (hoặc phí flat từ config), Tổng tiền hàng, nút "Tiến hành thanh toán", ghi chú cọc 50%. Ví dụ mockup 89.000 + 59.000 + 39.000 = 187.000đ ✔.
+**10 Cart Mobile:** item dạng card; **sticky bar**: chọn tất cả | Tổng (tính) | "Thanh toán (n)".
+**11 Checkout Desktop:** stepper 1 Giỏ hàng — 2 Thanh toán — 3 Hoàn tất. 2 cột: Địa chỉ nhận hàng (card + Thay đổi; form địa chỉ cho khách mới) · Đơn vị vận chuyển: Viettel Post "Giao toàn quốc · Thu COD còn lại", phí từ config · **Thanh toán: chỉ 1 dòng thông tin cố định** "Cọc 50% tiền hàng qua chuyển khoản QR, phần còn lại COD khi nhận" (không radio; **bỏ "Thanh toán toàn bộ trước – Không thu COD"** của mockup). Cột phải sticky: PriceSummary (mục 4) + `<DepositPolicyNote />` + nút "Đặt hàng & thanh toán cọc".
+**12 Checkout Mobile:** các section xếp dọc; **sticky bar**: "Cọc ngay: 94.000đ" + dòng nhỏ "COD khi nhận: …" + nút "Đặt hàng".
+**13 QR Deposit:** card giữa (max 560): "Thanh toán đặt cọc đơn hàng", Mã đơn, QR VietQR (~240px, nút "Lưu ảnh QR" trên mobile), số tiền cọc lớn, ngân hàng/STK/chủ TK (copy), **Nội dung chuyển khoản `IN3D{mã đơn}`** (copy; mockup ghi `3DS20261024001` → sửa), **đếm ngược 30:00** (warning, `aria-live` mỗi phút; hết hạn → đơn `da_huy`/hết hạn + nút đặt lại), nút **"Đã chuyển khoản, kiểm tra ngay"** chỉ refresh trạng thái (không tự xác nhận; chỉ webhook SePay hợp lệ mới chuyển `da_coc`), ghi chú "Hệ thống xác nhận tự động khi nhận giao dịch hợp lệ". Bên cạnh/dưới: PriceSummary rút gọn. Nhãn "QR minh họa" chỉ có ở mockup, không đưa lên production. Mobile: cùng nội dung 1 cột.
+**14 Tracking Desktop:** breadcrumb "Tài khoản › Đơn hàng › mã"; tiêu đề "Đơn hàng #mã" + badge; 2 cột: stepper dọc 6 mốc có thời gian | "Thông tin vận chuyển": Viettel Post, Mã vận đơn, **Tiền COD còn lại** (từ PriceSummary), Trạng thái, link "Xem trên Viettel Post"; khối Sản phẩm. Truy cập qua tài khoản hoặc link có token (không lộ dữ liệu theo mã đoán được).
+**15 Tracking Mobile:** 1 cột: badge + stepper → vận chuyển → sản phẩm.
+**16 Custom Print Desktop (phase 2):** "Đặt in 3D theo yêu cầu – Gửi mẫu thiết kế, chọn chất liệu và nhận báo giá trước khi thanh toán." 3 cột/3 bước: **1. Thông tin yêu cầu** (Tên sản phẩm/dự án, Mô tả, Liên hệ SĐT/email) · **2. File và thông số in** (dropzone "Kéo thả file STL / 3MF vào đây", giới hạn dung lượng từ config, Vật liệu select, Màu sắc) · **3. Nhận báo giá** (giải thích + checklist Duyệt thiết kế → Xác nhận giá & thời gian → Đặt cọc 50% → In và giao Viettel Post). Nút "Gửi yêu cầu báo giá". Sau khi admin báo giá, khách duyệt → vào cùng luồng cọc QR (màn 13). Upload vào R2 qua presigned URL, kiểm tra đuôi/kích thước/MIME.
+**17 Custom Print Mobile (phase 2):** 3 bước xếp dọc (hoặc wizard 1/3–3/3), nút gửi sticky dưới.
+**18 Admin Dashboard (phase 1 = bản đơn giản):** "Tổng quan kinh doanh" + ngày; phase 1 chỉ: KPI đếm đơn theo trạng thái (Chờ cọc, Đã cọc, Đang chuẩn bị, Đang giao) + bảng "Đơn hàng gần đây". Phase 3: KPI doanh thu/COD chưa đối soát, chart "Doanh thu 7 ngày", khối "Quản lý tại một nơi".
+**19 Admin Orders (phase 1):** "Quản lý đơn hàng"; tab lọc (Tất cả, Chờ cọc, Đã cọc, Đang chuẩn bị, Đang giao, Hoàn thành, Đã hủy – thay bộ tab mockup để khớp enum), ô tìm (mã đơn/tên/SĐT), "Xuất CSV"; bảng Mã đơn | Khách | Kênh (Online/POS) | Giá trị | Trạng thái (badge) | "Chi tiết →". Chi tiết đơn: item, PriceSummary, lịch sử cọc (giao dịch SePay), đổi trạng thái, nhập mã vận đơn.
+**20 Admin Production (phase 3):** KPI + "Hàng đợi in 3D" (Mã phiếu, SP/vật liệu, Thời gian ước tính, Máy in, Trạng thái: Chờ in/Đang in/Chờ kiểm tra/In lỗi/Hoàn tất, Thao tác), nút "＋ Tạo phiếu sản xuất", khối quy trình (Đã nhận cọc → Chờ in → Đang in → QA → Đóng gói → Sẵn sàng giao → Tạo vận đơn).
+**21 POS Tablet (phase 3):** 1024×768, 2 panel: header "3D Store POS · Nhân viên · Quầy", ô "Tìm sản phẩm / quét mã SKU", grid SP 3–4 cột | "Giỏ hàng tại quầy (n)", stepper, Tổng tiền (tính), chọn Tiền mặt / QR chuyển khoản, "Hoàn tất thanh toán" (h-48). Tap ≥48.
+**22 POS Mobile (phase 3):** 1 cột, grid 2 cột, giỏ thành sheet/sticky bar tổng + nút thanh toán.
+**23 Admin Reports (phase 3):** doanh thu theo nguồn (Website/Quầy/Bán sỉ), chi phí & dòng tiền, COD chờ đối soát; quy tắc "không cộng tiền cọc và COD hai lần".
+**24 Vận chuyển & đối soát COD Viettel Post (phase 3, ADMIN):** đã kiểm tra – đây **là màn admin**, không phải phương thức thanh toán của khách. KPI Chờ đóng gói / Sẵn sàng tạo vận đơn / Đang giao / COD chờ nhận; bảng Đơn | Mã VTP | COD cần thu | Trạng thái | Đối soát (Chưa đối soát / Chờ chuyển tiền / Đã nhận COD) | Xem →. Chỉ tạo vận đơn khi đã đóng gói. COD cần thu lấy từ `calcOrderTotals`.
+
+## 4. Logic tiền (bắt buộc)
+
+Config (`config/shop-config.json`): `deposit.rate 0.5`, `deposit.rounding "ceilTo1000"`, `shipping.flatFee 20000` (placeholder, **chờ An chốt**), `payment.transferContentPattern "IN3D{orderCode}"`, `payment.depositExpiryMinutes 30`.
+
+PriceSummary hiển thị đúng 3 dòng chính (+ dòng phí ship và tổng khách trả làm thông tin phụ):
+1. **Tiền hàng** = Σ(đơn giá × SL) (sau giảm giá nếu có)
+2. **Cọc 50% tiền hàng (trả ngay qua QR)** = `ceil(tiền hàng × rate / 1000) × 1000`
+   → ngay dưới: `<DepositPolicyNote />` – slot 1–2 dòng chính sách hoàn cọc (nội dung Nhất gửi sau, để trong config/CMS)
+3. **COD khi nhận** = tiền hàng − cọc + phí ship
+
+Ví dụ:
+- Giỏ mockup 187.000đ, ship config 20.000 → cọc **94.000** (93.500 làm tròn lên), COD 93.000 + 20.000 = **113.000đ**, tổng 207.000đ.
+- Nếu ship 25.000 như mockup → cọc 94.000, COD **118.000đ** (mockup ghi 93.500/118.500 – sai quy tắc làm tròn, sửa).
+- 148.000 + ship 20.000 → cọc 74.000, COD 94.000.
+
+Server tính lại khi tạo đơn, không tin số client; định dạng `Intl.NumberFormat('vi-VN')` + "đ". Xác nhận cọc theo `confirmRule`: số tiền ≥ cọc và nội dung chứa mã đơn; idempotent theo `sepay.transactionId`.
 
 ## 5. SEO / Accessibility
 
-- `alt` mô tả mọi ảnh SP ("Mô hình rồng khớp động in 3D màu đỏ"); ảnh trang trí `alt=""`.
-- Ảnh **WebP** (AVIF nếu được) qua Cloudflare Images/`srcset`, khai báo `width/height` hoặc aspect-ratio để tránh CLS; `loading="lazy"` cho ảnh dưới fold, ảnh hero/ảnh chính SP `fetchpriority="high"`.
-- Focus rõ: `focus-visible:ring-2 ring-ring ring-offset-2` cho mọi phần tử tương tác; không bỏ outline.
-- Contrast AA: chữ cam dùng `#C2410C` (5.18:1); `#F06D19` (3.04:1) chỉ cho nền nút/icon. Muted `#6B7280` trên trắng 4.8:1 OK.
-- Tap target ≥ 44px; swatch màu có tên (aria-label + text), không chỉ dựa vào màu; đếm ngược có `aria-live="polite"` (cập nhật mỗi phút, không mỗi giây).
-- SEO: mỗi route có `meta()` title/description; URL slug tiếng Việt không dấu (`/san-pham/rong-khop-dong`); JSON-LD `Product` (giá, rating) trên chi tiết SP; breadcrumb `BreadcrumbList`; `lang="vi"`; SSR qua React Router trên Workers.
+- Thay toàn bộ emoji placeholder bằng ảnh thật **WebP/AVIF** (Cloudflare Images, `srcset`, width/height cố định); `loading="lazy"` dưới fold, ảnh hero/ảnh chính SP `fetchpriority="high"`; icon dùng bộ SVG thống nhất (lucide) thay ký tự ⌂ ▦ 🛒.
+- `alt` mô tả ("Rồng khớp động in 3D nhựa PLA màu đỏ"); ảnh trang trí `alt=""`; icon-only button có `aria-label`.
+- Focus: `focus-visible:ring-2 ring-ring ring-offset-2`, không bỏ outline.
+- Contrast: chữ cam `#C2410C`; `#F4511E` chỉ cho nền nút/viền/icon; chữ trên badge success/warning dùng tông đậm (`#15803D`, `#B45309`); chữ trắng trên hero gradient phần cam phải kiểm tra (đặt chữ ở phần navy).
+- Swatch màu có tên; tap target ≥44 (POS ≥48); đếm ngược `aria-live="polite"`.
+- SEO: `meta()` mỗi route, slug không dấu, JSON-LD `Product` + `BreadcrumbList`, `lang="vi"`, SSR trên Workers; trang chính sách (giao hàng, đổi trả/hoàn cọc, bảo mật, điều khoản) có link ở footer.
 
 ## 6. Phase
 
-- **Phase 1:** màn 1–12 (mobile + PC), luồng cọc QR + COD, theo dõi đơn; **Admin tối giản**: thêm/sửa sản phẩm (ảnh, giá, màu, tồn kho) + danh sách đơn & đổi trạng thái (theo enum mục 2), xác nhận đã cọc.
-- **Sau:** Admin dashboard (KPI, biểu đồ – màn 13), POS tablet (màn 14), mã giảm giá, yêu thích đồng bộ tài khoản, đánh giá/hỏi đáp.
+- **Phase 1:** 01–15 + 18 (đơn giản) + 19; admin thêm/sửa sản phẩm + danh sách đơn/đổi trạng thái; luồng cọc QR (SePay webhook) + COD.
+- **Phase 2:** 16–17 Đặt in theo yêu cầu (upload STL/3MF lên R2, admin báo giá, khách duyệt, rồi cọc).
+- **Phase 3:** 20 Sản xuất, 21–22 POS, 23 Báo cáo, 24 Vận chuyển & đối soát COD Viettel Post (API VTP), cùng KPI/chart của 18.
 
-## 7. Ghi chú nội dung mockup cần thay
+## 7. Lỗi / điểm cần sửa trong bộ mockup mới
 
-- Ảnh/tên SP mẫu dùng nhân vật có bản quyền (**Pikachu, Bulbasaur, Goku, "Mô hình Pokémon"**) → thay bằng thiết kế gốc (vd. "Rồng khớp động", "Mèo phi hành gia", "Khủng long chibi", "Chậu cây hình mây").
-- Danh mục "Phim/Anime" → đổi tên (đề xuất "Nhân vật & Fantasy").
-- Bỏ lựa chọn "Viettel Post COD" riêng ở màn 9/10.
-- "3DStore" là tên tạm: không hard-code trong text/ảnh, lấy từ config.
+1. **Màn 11/12:** có lựa chọn "Thanh toán toàn bộ trước – Không thu COD" → xung đột luồng duy nhất, bỏ.
+2. **Màn 11/12/13/14/24:** cọc 93.500đ / COD 118.500đ không làm tròn lên nghìn → 94.000 / 118.000 (ship 25k) hoặc 94.000 / 113.000 (ship 20k config). Ship 25.000 trong mockup ≠ placeholder 20.000 của config.
+3. **Màn 13:** nội dung CK `3DS20261024001` → phải là `IN3D{mã đơn}`; không có đếm ngược 30 phút; không có nút "Đã chuyển khoản, kiểm tra ngay" → bổ sung.
+4. **Mã đơn không thống nhất:** `3DS-20261024-001` (13/14) vs `3DS001` (18/24) vs `3DS-001` (19) → chốt 1 định dạng (đề xuất ngắn, chỉ chữ+số để nhét vào `IN3D{mã}`, ví dụ `IN3D` + `A7K2Q9`).
+5. **Trạng thái không khớp enum:** tab màn 19 ("Chờ thanh toán", "Đã giao", "Hoàn tất") và dashboard ("Đã đặt cọc") → dùng 6 trạng thái chuẩn.
+6. **Màn 05 filter "Mô hình anime"** → đổi "Mô hình nhân vật & fantasy".
+7. **Concept boards (01_Concept_Boards):** có nhân vật bản quyền (Pikachu, Gundam, Baby Groot, mèo máy kiểu Doraemon, mô hình kiểu siêu xe/lâu đài phim) và lựa chọn "Ví điện tử (Momo, ZaloPay)", tổng giỏ concept 02 mobile đọc như 158.000đ trong khi 89.000 + 79.000 = 168.000đ (chữ nhỏ, không chắc). → Chỉ tham khảo phong cách, không dùng ảnh/chữ. 24 PNG chính dùng emoji placeholder, **không có nhân vật bản quyền**.
+8. Dashboard 3DS002 = 158.000đ nhưng màn 19 3DS-002 = 159.000đ (dữ liệu giả, chỉ cần dữ liệu thật nhất quán).
+9. README zip đề xuất Next.js + PostgreSQL và container 1320–1440 → giữ stack RR + Cloudflare; container 1320.
+10. Chữ đọc được: toàn bộ 24 màn đọc được (đối chiếu `mockup_source.html`); riêng chữ trên concept boards nhiều chỗ không đọc chính xác.
 
-## 8. Phase 2 — Đặt in theo file (màn 16 và 17)
+## 8. Phase 2 chi tiết – Đặt in theo yêu cầu (màn 16–17 + admin báo giá)
 
-Nguồn tiền: mọi số và công thức đọc từ `config/shop-config.json` → `customPrint`. Không viết cứng giá vật liệu, phí hoàn thiện, phí thiết kế, hệ số gấp, cách làm tròn, giới hạn file, danh sách màu, hay số lượng tối đa. `customPrint.upload`, `customPrint.colors`, và `customPrint.maxQty` là nguồn duy nhất cho các giới hạn đó. Giá trị hiện tại là placeholder (CHỜ AN CHỐT).
+**Nguồn số:** mọi giá/giới hạn đọc từ `config/shop-config.json` → `customPrint` (**Hà Phương phụ trách các giá trị**; hiện đang là "SỐ TẠM"). Code và spec **không tự đặt số**. Key **chưa có trong config, cần Hà Phương bổ sung** trước khi làm: `customPrint.upload.maxFileMB`, `customPrint.upload.maxFiles`, `customPrint.upload.allowedExt` (đề xuất giá trị `[".stl", ".3mf"]`), `customPrint.colors` (danh sách màu theo vật liệu), `customPrint.maxQty`. Thiếu key → form hiển thị lỗi cấu hình cho admin, không fallback số cứng.
 
-Container trang **1320px**. Chữ cam trên nền trắng dùng `#C2410C`. Font Be Vietnam Pro. Icon dùng lucide. Ảnh sản phẩm chưa có thì dùng placeholder, không dùng nhân vật có bản quyền. Màn có thanh hành động dính đáy thì ẩn bottom nav.
+### 8.1 Màn 16/17 – Form yêu cầu (khách)
+- **Bước 1 Thông tin:** Tên sản phẩm/dự án (bắt buộc, ≤120 ký tự), Mô tả/ghi chú (≤2000 ký tự: kích thước mong muốn, độ chi tiết, hạn cần), Họ tên, SĐT (bắt buộc, kiểm tra định dạng VN), email (tùy chọn). Khách đã đăng nhập → điền sẵn.
+- **Bước 2 File & thông số:**
+  - Dropzone "Kéo thả file STL / 3MF vào đây" + nút "Chọn file"; hiển thị dòng "Tối đa {maxFiles} file, mỗi file ≤ {maxFileMB} MB" lấy từ config.
+  - Vật liệu: select từ key của `customPrint.materials` (hiện PLA/PETG/TPU/Resin). Màu: swatch có tên từ `customPrint.colors[vật liệu]`. Số lượng: stepper 1…`maxQty`. Hậu kỳ: radio theo key `customPrint.postProcessFee` (none/basic/paint – nhãn tiếng Việt: Không / Cơ bản / Sơn màu).
+- **Bước 3 Báo giá:** giải thích quy trình (Duyệt thiết kế → Xác nhận giá & thời gian → Đặt cọc 50% → In và giao Viettel Post) + nút **"Gửi yêu cầu báo giá"**. Nếu `quoteMode` có báo giá tạm: hiển thị "Giá tạm tính" (nhãn rõ *chưa phải giá cuối*), chỉ khi server tính được grams/hours từ file; không thì ẩn và ghi "Admin sẽ báo giá trong vòng …" (thời gian từ config/CMS).
+- **Mobile (17):** wizard 3 bước (1/3–3/3) hoặc xếp dọc; nút Tiếp/Gửi ở sticky bar dưới + safe-area, ẩn bottom nav.
 
-### Màn 16 — Form yêu cầu (mobile trước, rồi PC)
+### 8.2 Upload (R2)
+- Luồng: client xin **presigned PUT URL** (`POST /api/custom-print/uploads` với tên, size, ext) → server kiểm tra ext/size theo config, trả URL hết hạn ngắn + `uploadId` → client PUT trực tiếp R2 → `POST .../uploads/{id}/complete` → server kiểm tra lại (HEAD object: size thật; đọc header: STL binary `80 byte + uint32 số tam giác` khớp độ dài, STL ASCII bắt đầu `solid`; 3MF là ZIP có `3D/3dmodel.model`). Sai → xóa object, báo lỗi.
+- Không tin MIME từ trình duyệt (STL thường là `application/octet-stream`); kiểm tra theo đuôi + nội dung. Tên file lưu bằng ID ngẫu nhiên, giữ tên gốc làm metadata. File chưa gắn yêu cầu sau 24h → dọn (cron).
+- **Tiến trình:** mỗi file 1 dòng: tên, dung lượng, thanh % (XHR `upload.onprogress`), nút Hủy; xong → ✓ "Đã tải lên" + nút Xóa. Nút gửi khóa khi còn file đang tải/lỗi. `aria-live` báo hoàn tất/lỗi.
+- **Thông báo lỗi (copy):** "Chỉ nhận file .STL hoặc .3MF" · "File vượt quá {maxFileMB} MB" · "Tối đa {maxFiles} file" · "File bị hỏng hoặc không đọc được, vui lòng xuất lại" · "Tải lên thất bại, thử lại" (nút Thử lại) · "Mạng bị gián đoạn". Lỗi hiển thị ngay dưới dòng file, màu danger, không xóa dữ liệu form đã nhập.
 
-- Route `/dat-in-3d`.
-- Khách nhập họ tên, số điện thoại, ghi chú.
-- Tải một hoặc nhiều file lên R2. Kiểm tra phía server (không tin extension của trình duyệt):
-  - đuôi file thuộc `customPrint.upload.allowedExt` (hiện là `stl`, `3mf`, `obj`);
-  - dung lượng từng file ≤ `upload.maxFileMB`, số file ≤ `upload.maxFiles`;
-  - nội dung: STL ASCII phải có `facet` và `endsolid`; STL nhị phân phải có kích thước `84 + số mặt * 50`; 3MF phải là ZIP (`PK`); OBJ phải có dòng đỉnh `v` và dòng mặt `f`.
-- Chọn vật liệu, màu (swatch có tên), số lượng (1…`maxQty`), hoàn thiện, tùy chọn thiết kế giúp, tùy chọn làm gấp.
-- Cột tóm tắt hiện **ước tính** tính bằng `customPrint.formula` (cùng hàm với admin). Ghi rõ đây là ước tính, cửa hàng sẽ chốt.
-- Thanh dưới dính (mobile): nút gửi yêu cầu. Ẩn bottom nav.
+### 8.3 Trạng thái yêu cầu báo giá (tách khỏi enum đơn hàng)
+`cho_bao_gia` (Chờ báo giá) → `da_bao_gia` (Đã báo giá) → `da_chap_nhan` (Khách đồng ý → **tạo đơn** trạng thái `cho_coc`) | `tu_choi` (Khách từ chối, kèm lý do tùy chọn) | `het_han` (quá `quoteValidHours` kể từ lúc báo giá) | `admin_huy` (file không in được, kèm lý do). Admin có thể **báo giá lại** khi `da_bao_gia` (ghi lịch sử phiên bản giá).
+- Khách xem tại "Tài khoản › Yêu cầu đặt in" hoặc link có token (gửi qua SMS/email/Zalo), không truy cập theo mã đoán được. Badge: Chờ báo giá (warning), Đã báo giá (info), Đã đồng ý (success), Từ chối/Hết hạn/Đã hủy (muted/danger).
 
-### Màn 17 — Báo giá đã gửi
+### 8.4 Màn admin "Yêu cầu đặt in" (phase 2, thêm vào AdminShell)
+- **Danh sách:** tab theo 6 trạng thái trên; cột Mã YC | Khách/SĐT | Vật liệu·Màu·SL | Số file | Ngày gửi | Trạng thái | "Chi tiết →".
+- **Chi tiết + báo giá:** thông tin khách, ghi chú, tải từng file (link R2 có hạn), (tùy chọn) xem 3D. Form nhập: **khối lượng (gram)**, **thời gian in (giờ)**, vật liệu, hậu kỳ, SL (sửa được), thời gian hoàn thành dự kiến, ghi chú cho khách. Bảng tính bên phải **hiển thị từng thành phần** theo `customPrint.formula`: nhựa = grams × pricePerGram × (1+wasteRate); máy+điện = hours × (machinePerHour + electricityPerHour); hậu kỳ; × markup; max(minOrder, …); × qty; làm tròn `rounding`. Có ô **"Giá cuối"** cho admin ghi đè (bắt buộc ghi lý do, lưu log). Nút "Gửi báo giá" → `da_bao_gia`, ghi hạn = now + `quoteValidHours`. Nút "Từ chối yêu cầu" (lý do bắt buộc).
+- Server luôn tự tính lại theo config; client chỉ hiển thị.
 
-- Route `/bao-gia/:code`, chỉ người giữ cookie yêu cầu (hoặc tra bằng mã + số điện thoại) xem được.
-- Khi chưa gửi giá: trạng thái đang chờ cửa hàng.
-- Khi đã gửi: hiện số tiền đã chốt, nút chấp nhận. Chấp nhận tạo đơn `cho_coc` và chuyển sang luồng QR/cọc hiện có (`IN3D{mã đơn}`, cọc theo `calcOrderTotals` trên tiền hàng đã chốt). Đơn in theo yêu cầu không trừ tồn kho catalog.
-
-### Sáu trạng thái báo giá
-
-Đọc từ `customPrint.quoteStatuses`:
-
-1. `moi_yeu_cau` — khách vừa gửi
-2. `dang_bao_gia` — admin đang tính
-3. `da_gui` — đã gửi giá cho khách
-4. `da_chap_nhan` — khách chấp nhận, đã tạo đơn `cho_coc`
-5. `tu_choi` — khách từ chối
-6. `het_han` — quá hạn trong `customPrint.quoteExpiryHours` mà chưa chấp nhận
-
-### Admin báo giá
-
-- Danh sách và màn chi tiết trong khu quản trị (Cloudflare Access, hoặc local auth khi chạy máy).
-- Giá gợi ý = đánh giá `customPrint.formula` với biến lấy từ vật liệu, hoàn thiện, số lượng, cờ thiết kế và cờ gấp trong config.
-- Admin được sửa giá. Nếu giá khác kết quả công thức thì bắt buộc có lý do. Mỗi lần lưu ghi log (ai, giá công thức, giá chốt, lý do, thời điểm).
-- Chỉ trạng thái `da_gui` mới cho khách chấp nhận.
-
-### Phase 3 (không thuộc màn 16/17)
-
-POS (`/pos`), sản xuất, báo cáo, đối soát COD và Viettel Post làm sau, đọc `pos`, `codReconciliation`, `reports`, `shipping.carrier`. `carrierCodFeeRate: null` thì đối soát gắn cờ đúng chuỗi `needs fee config`, không tính phí bằng 0. Viettel Post chỉ bật khi `shipping.carrier.apiEnabled` và không có credential trong repo; mặc định nhập mã vận đơn tay.
+### 8.5 Khách duyệt → cọc 50% (dùng lại luồng có sẵn)
+- Trang báo giá cho khách: thông số, giá cuối, thời gian dự kiến, hạn hiệu lực (đếm ngược theo `quoteValidHours`), địa chỉ nhận + phí ship (`shipping` config), **PriceSummary** (mục 4) với tiền hàng = giá báo, nút **"Đồng ý & đặt cọc"** và "Từ chối".
+- Đồng ý → tạo đơn (item loại `custom_print`, giá khóa theo báo giá) trạng thái `cho_coc` → chuyển **màn 13 QR** y hệt đơn thường: cọc `deposit.rate` làm tròn `ceilTo1000`, nội dung `IN3D{mã đơn}`, hạn `depositExpiryMinutes`, xác nhận qua webhook SePay; phần còn lại + ship thu COD. Sau `da_coc` theo dõi bằng màn 14/15 như đơn thường. Hết hạn cọc → đơn `da_huy`, yêu cầu báo giá cho phép "Đặt lại" nếu báo giá còn hiệu lực.

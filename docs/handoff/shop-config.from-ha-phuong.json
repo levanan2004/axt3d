@@ -1,0 +1,115 @@
+{
+  "_note": "Cấu hình tiền cho web in 3D. Mọi số đọc từ file này, không viết cứng vào code. Các giá trị 'CHỜ AN CHỐT' là tạm.",
+  "currency": "VND",
+  "deposit": {
+    "rate": 0.5,
+    "base": "itemsSubtotal",
+    "rounding": "ceilTo1000",
+    "codFormula": "itemsSubtotal - deposit + shippingFee"
+  },
+  "shipping": {
+    "mode": "flat",
+    "flatFee": 20000,
+    "freeShipThreshold": null,
+    "_status": "CHỜ AN CHỐT: phí cố định hay theo bảng Viettel Post; có miễn ship từ mức nào không"
+  },
+  "payment": {
+    "depositGateway": "sepay",
+    "method": "bank_transfer_qr",
+    "transferContentPattern": "IN3D{orderCode}",
+    "depositExpiryMinutes": 30,
+    "idempotencyKey": "sepay.transactionId",
+    "confirmRule": "amount >= depositAmount AND content contains orderCode"
+  },
+  "orderStatuses": [
+    "cho_coc",
+    "da_coc",
+    "dang_chuan_bi",
+    "da_giao_van_chuyen",
+    "hoan_thanh",
+    "da_huy"
+  ],
+  "customPrint": {
+    "_status": "SỐ TẠM, CHỜ AN gửi giá nhựa và giá máy",
+    "materials": {
+      "PLA": {
+        "pricePerGram": 250
+      },
+      "PETG": {
+        "pricePerGram": 300
+      },
+      "TPU": {
+        "pricePerGram": 450
+      },
+      "Resin": {
+        "pricePerGram": 700
+      }
+    },
+    "machinePerHour": 8000,
+    "electricityPerHour": 600,
+    "wasteRate": 0.1,
+    "postProcessFee": {
+      "none": 0,
+      "basic": 20000,
+      "paint": 80000
+    },
+    "markup": 1.6,
+    "minOrder": 50000,
+    "rounding": "ceilTo1000",
+    "formula": "ceil1000(max(minOrder,((grams*pricePerGram*(1+wasteRate))+hours*(machinePerHour+electricityPerHour)+postProcessFee)*markup)*qty)",
+    "quoteMode": "Khách tải file lên thì web báo giá tạm; Admin xác nhận giá cuối rồi đơn mới vào cọc 50%",
+    "quoteValidHours": 48,
+    "depositRule": "giống đơn thường: cọc 50% qua QR SePay, còn lại COD",
+    "upload": {
+      "maxFileMB": 50,
+      "maxFiles": 5,
+      "allowedExt": [
+        "stl",
+        "3mf",
+        "obj"
+      ]
+    },
+    "colors": [
+      "Trắng",
+      "Đen",
+      "Xám",
+      "Đỏ",
+      "Cam",
+      "Vàng",
+      "Xanh lá",
+      "Xanh dương",
+      "Tím",
+      "Hồng"
+    ],
+    "maxQty": 50
+  },
+  "pos": {
+    "methods": [
+      "cash",
+      "bank_transfer_qr"
+    ],
+    "deposit": false,
+    "shippingFee": 0,
+    "transferContentPattern": "POS{orderCode}",
+    "rounding": "none",
+    "statusOnPaid": "hoan_thanh"
+  },
+  "codReconciliation": {
+    "carrier": "viettel_post",
+    "expected": "codAmount - carrierCodFee - shippingFeeCharged",
+    "carrierCodFeeRate": null,
+    "_status": "CHỜ AN: phí thu hộ theo hợp đồng Viettel Post",
+    "mismatchTolerance": 0,
+    "onMismatch": "đánh dấu lệch, báo Admin, không tự sửa"
+  },
+  "reports": {
+    "revenueRecognizedAt": "hoan_thanh",
+    "refundsSubtract": true,
+    "timezone": "Asia/Ho_Chi_Minh",
+    "profit": {
+      "formula": "revenue - materialCost - machineCost - electricityCost - postProcessCost - carrierCodFee - shippingCostPaid - refunds",
+      "costSource": "customPrint rates; sản phẩm có sẵn dùng costPrice nhập trong Admin",
+      "_status": "SỐ TẠM theo customPrint"
+    }
+  }
+}
