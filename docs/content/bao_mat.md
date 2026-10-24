@@ -2,10 +2,10 @@
 
 Có hiệu lực từ {NGAY_HIEU_LUC}.
 
-Chính sách này giải thích {TEN_SHOP} xử lý dữ liệu cá nhân của bạn thế nào, theo Nghị định 13/2023/NĐ-CP về bảo vệ dữ liệu cá nhân và quy định pháp luật liên quan.
+Chính sách này giải thích AXT 3D xử lý dữ liệu cá nhân của bạn thế nào, theo Nghị định 13/2023/NĐ-CP về bảo vệ dữ liệu cá nhân và quy định pháp luật liên quan.
 
 ## Thông tin chủ sở hữu website
-- Tên shop: {TEN_SHOP} – Website: https://{TEN_MIEN}
+- Tên shop: AXT 3D – Website: https://{TEN_MIEN}
 - Chủ sở hữu: {CHU_SHOP} ({LOAI_CHU_THE})
 - Số ĐKKD/MST: {SO_DKKD}, cấp ngày {NGAY_CAP_DKKD} tại {NOI_CAP_DKKD}
 - Địa chỉ: {DIA_CHI}
@@ -17,7 +17,7 @@ Bên kiểm soát và xử lý dữ liệu: {CHU_SHOP}.
 - Họ tên, số điện thoại, email (nếu có), địa chỉ nhận hàng.
 - Lịch sử đơn hàng: sản phẩm, số tiền, trạng thái, mã vận đơn.
 - Thông tin giao dịch chuyển khoản: số tiền, thời gian, nội dung, mã giao dịch. Shop không nhận và không lưu mật khẩu hay thông tin đăng nhập ngân hàng.
-- File STL/3MF và mô tả bạn gửi khi đặt in.
+- File in (STL, 3MF, OBJ) và mô tả bạn gửi khi đặt in.
 - Dữ liệu kỹ thuật: địa chỉ IP, loại trình duyệt, nhật ký truy cập, dùng để vận hành và chống lạm dụng. Giỏ hàng lưu trên trình duyệt của bạn.
 
 ## 2. Mục đích
@@ -37,7 +37,7 @@ Shop chỉ chia sẻ phần dữ liệu cần thiết:
 Khi dữ liệu được lưu ngoài Việt Nam, shop thực hiện thủ tục chuyển dữ liệu ra nước ngoài theo Nghị định 13/2023/NĐ-CP.
 
 ## 4. Thời gian lưu
-- File STL/3MF: {SO_NGAY_GIU_FILE} ngày sau khi đơn hoàn thành hoặc hủy, sau đó xóa.
+- File in (STL, 3MF, OBJ): {SO_NGAY_GIU_FILE} ngày sau khi đơn hoàn thành hoặc hủy, sau đó xóa.
 - Thông tin đơn hàng và giao dịch: trong thời gian pháp luật kế toán, thuế yêu cầu.
 - Nhật ký kỹ thuật: lưu ngắn hạn theo mặc định của nhà cung cấp.
 

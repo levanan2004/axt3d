@@ -4,11 +4,12 @@ Thư mục này chứa toàn bộ chữ tiếng Việt cho web: trang khách, đ
 
 ## 1. An cần điền trước khi lên web
 
+Tên shop: **AXT 3D** (Phú đã xác nhận, chờ An chốt lần cuối). Đã thay sẵn ở mọi file.
+
 Tìm và thay toàn bộ các chuỗi sau (tìm theo dấu `{`):
 
 | Placeholder | Điền gì | Dùng ở |
 |---|---|---|
-| `{TEN_SHOP}` | Tên shop hiển thị | mọi file |
 | `{TEN_MIEN}` | Tên miền, không có `https://`, ví dụ `vidu.vn` | seo.md, pháp lý |
 | `{CHU_SHOP}` | Tên chủ thể: họ tên cá nhân hoặc tên hộ kinh doanh | footer, pháp lý |
 | `{LOAI_CHU_THE}` | "Cá nhân kinh doanh" hoặc "Hộ kinh doanh" | footer, pháp lý |
@@ -17,7 +18,7 @@ Tìm và thay toàn bộ các chuỗi sau (tìm theo dấu `{`):
 | `{DIA_CHI}` | Địa chỉ liên hệ/kinh doanh | footer, pháp lý, JSON-LD |
 | `{SDT}` | Số điện thoại/Zalo hỗ trợ | footer, pháp lý, JSON-LD |
 | `{EMAIL}` | Email hỗ trợ | footer, pháp lý |
-| `{SO_NGAY_GIU_FILE}` | Số ngày giữ file STL/3MF sau khi đơn xong rồi xóa | bao_mat.md, dieu_khoan.md, dat-in |
+| `{SO_NGAY_GIU_FILE}` | Số ngày giữ file in (STL, 3MF, OBJ) sau khi đơn xong rồi xóa | bao_mat.md, dieu_khoan.md, dat-in |
 | `{SO_NGAY_DOI_TRA}` | Số ngày nhận yêu cầu đổi trả kể từ khi nhận hàng | doi_tra_hoan_tien.md, FAQ |
 | `{SO_NGAY_HOAN_TIEN}` | Số ngày làm việc để shop hoàn tiền sau khi xác nhận | doi_tra_hoan_tien.md |
 | `{NGAY_HIEU_LUC}` | Ngày các chính sách có hiệu lực (dd/mm/yyyy) | 4 trang pháp lý |

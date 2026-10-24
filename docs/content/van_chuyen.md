@@ -3,7 +3,7 @@
 Có hiệu lực từ {NGAY_HIEU_LUC}.
 
 ## Thông tin chủ sở hữu website
-- Tên shop: {TEN_SHOP} – Website: https://{TEN_MIEN}
+- Tên shop: AXT 3D – Website: https://{TEN_MIEN}
 - Chủ sở hữu: {CHU_SHOP} ({LOAI_CHU_THE})
 - Số ĐKKD/MST: {SO_DKKD}, cấp ngày {NGAY_CAP_DKKD} tại {NOI_CAP_DKKD}
 - Địa chỉ: {DIA_CHI}

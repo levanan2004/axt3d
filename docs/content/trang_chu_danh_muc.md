@@ -7,7 +7,7 @@
 - Nút phụ: **Gửi file in 3D**
 
 ## 2. Ba ô lợi ích cạnh hero
-1. **In 3D theo yêu cầu** – Tải file STL/3MF, nhận báo giá trước khi trả tiền.
+1. **In 3D theo yêu cầu** – Tải file STL, 3MF, OBJ, nhận báo giá trước khi trả tiền.
 2. **Giao hàng toàn quốc** – Gửi qua Viettel Post.
 3. **Cọc 50%, còn lại COD** – Chuyển khoản cọc qua QR, phần còn lại trả khi nhận.
 
@@ -48,7 +48,7 @@ Chậu cây in 3D cỡ mini cho sen đá, xương rồng và cây để bàn. Nh
 Hộp đựng bút in 3D, khay để bàn và đồ sắp xếp góc học tập. Thiết kế chia ngăn để bút, thước, kéo đứng thẳng, dễ lấy. Một số mẫu in được tên lên mặt trước, hợp làm quà cho học sinh hoặc đồng nghiệp. Đáy hộp có độ dày vừa đủ để không bị lật khi rút bút. Trang sản phẩm ghi kích thước trong lòng hộp để bạn biết vừa những gì.
 
 ## 6. Footer
-**Cột 1 – {TEN_SHOP}**
+**Cột 1 – AXT 3D**
 Shop đồ in 3D và nhận in theo yêu cầu. Giao toàn quốc qua Viettel Post.
 
 **Cột 2 – Mua sắm**: Tất cả sản phẩm · Nhân vật & Fantasy · Quà tặng cá nhân hóa · Phụ kiện công nghệ · Đồ trang trí · Đặt in theo yêu cầu
@@ -59,14 +59,14 @@ Shop đồ in 3D và nhận in theo yêu cầu. Giao toàn quốc qua Viettel Po
 
 **Khối thông tin chủ sở hữu (bắt buộc, dùng cho thông báo website với Bộ Công Thương)**
 ```
-{TEN_SHOP} – {LOAI_CHU_THE}: {CHU_SHOP}
+AXT 3D – {LOAI_CHU_THE}: {CHU_SHOP}
 Số ĐKKD/MST: {SO_DKKD}, cấp ngày {NGAY_CAP_DKKD} tại {NOI_CAP_DKKD}
 Địa chỉ: {DIA_CHI}
 Điện thoại: {SDT} · Email: {EMAIL}
 ```
 Kèm logo "Đã thông báo Bộ Công Thương" link tới `{LINK_DA_THONG_BAO_BCT}` (chỉ gắn sau khi được xác nhận).
 
-Dòng cuối: `© {nam} {TEN_SHOP}. Ảnh sản phẩm do shop tự chụp.`
+Dòng cuối: `© {nam} AXT 3D. Ảnh sản phẩm do shop tự chụp.`
 
 ## 7. FAQ (trang chủ và /dat-in)
 
@@ -92,7 +92,7 @@ Có. Bạn được mở gói kiểm tra trước khi trả phần COD. Hãy qua
 Hàng in 3D có sai lệch nhỏ về kích thước và màu so với ảnh. Mức sai lệch này ghi trong chính sách đổi trả và không tính là lỗi.
 
 8. **Tôi có file 3D riêng, shop in được không?**
-Được. Vào mục Đặt in, tải file STL hoặc 3MF, chọn nhựa và màu để xem giá tạm tính. Shop kiểm tra file và gửi báo giá chính thức. Bạn đồng ý thì mới cọc 50%.
+Được. Vào mục Đặt in, tải file STL, 3MF hoặc OBJ, chọn nhựa và màu rồi gửi yêu cầu. Shop kiểm tra file và gửi báo giá. Bạn đồng ý thì mới cọc 50%.
 
 ### FAQPage JSON-LD
 ```json
@@ -107,7 +107,7 @@ Hàng in 3D có sai lệch nhỏ về kích thước và màu so với ảnh. M�
     { "@type": "Question", "name": "Bao lâu thì nhận được hàng?", "acceptedAnswer": { "@type": "Answer", "text": "Mỗi sản phẩm ghi thời gian in dự kiến. Sau khi giao cho Viettel Post, thời gian vận chuyển tùy khu vực. Bạn theo dõi đơn bằng mã đơn và số điện thoại." } },
     { "@type": "Question", "name": "Tôi có được xem hàng trước khi trả tiền không?", "acceptedAnswer": { "@type": "Answer", "text": "Có. Bạn được mở gói kiểm tra trước khi trả phần COD. Hãy quay video lúc mở hộp để shop xử lý nhanh nếu có vấn đề." } },
     { "@type": "Question", "name": "Kích thước, màu có đúng 100% như ảnh không?", "acceptedAnswer": { "@type": "Answer", "text": "Hàng in 3D có sai lệch nhỏ về kích thước và màu so với ảnh. Mức sai lệch này ghi trong chính sách đổi trả và không tính là lỗi." } },
-    { "@type": "Question", "name": "Tôi có file 3D riêng, shop in được không?", "acceptedAnswer": { "@type": "Answer", "text": "Được. Vào mục Đặt in, tải file STL hoặc 3MF, chọn nhựa và màu để xem giá tạm tính. Shop kiểm tra file và gửi báo giá chính thức. Bạn đồng ý thì mới cọc 50%." } }
+    { "@type": "Question", "name": "Tôi có file 3D riêng, shop in được không?", "acceptedAnswer": { "@type": "Answer", "text": "Được. Vào mục Đặt in, tải file STL, 3MF hoặc OBJ, chọn nhựa và màu rồi gửi yêu cầu. Shop kiểm tra file và gửi báo giá. Bạn đồng ý thì mới cọc 50%." } }
   ]
 }
 ```
