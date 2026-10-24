@@ -55,7 +55,7 @@
   },
   "orderStatuses": ["cho_coc", "da_coc", "dang_chuan_bi", "da_giao_van_chuyen", "hoan_thanh", "da_huy"],
   "customPrint": {
-    "_status": "CHỜ AN CHỐT: mọi số tiền là placeholder, không phải giá bán.",
+    "_status": "CHỜ AN CHỐT: mọi số tiền, màu in, và số lượng tối đa là placeholder, không phải giá bán.",
     "formula": "basePrice + materialFee * quantity + finishFee + designFee * designHelp + (basePrice + materialFee * quantity + finishFee + designFee * designHelp) * rush * rushExtraRate",
     "quoteRounding": "ceilTo1000",
     "quoteExpiryHours": 72,
@@ -72,9 +72,15 @@
       { "id": "son", "name": "Sơn hoàn thiện", "fee": 50000 }
     ],
     "quoteStatuses": ["moi_yeu_cau", "dang_bao_gia", "da_gui", "da_chap_nhan", "tu_choi", "het_han"],
-    "upload": { "maxFileMB": null, "maxFiles": null, "allowedExt": null },
-    "colors": null,
-    "maxQty": null
+    "upload": { "maxFileMB": 50, "maxFiles": 5, "allowedExt": ["stl", "3mf", "obj"] },
+    "colors": [
+      { "id": "trang", "name": "Trắng", "hex": "#F4F4F5" },
+      { "id": "den", "name": "Đen", "hex": "#1C1917" },
+      { "id": "xam", "name": "Xám", "hex": "#9CA3AF" },
+      { "id": "xanh-duong", "name": "Xanh dương", "hex": "#2563EB" },
+      { "id": "do", "name": "Đỏ", "hex": "#DC2626" }
+    ],
+    "maxQty": 10
   },
   "pos": {
     "_status": "CHỜ AN CHỐT: bán tại quầy thu đủ tiền hàng, phí ship placeholder 0.",

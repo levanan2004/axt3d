@@ -135,7 +135,7 @@ theme: {
 
 ## 8. Phase 2 — Đặt in theo file (màn 16 và 17)
 
-Nguồn tiền: mọi số và công thức đọc từ `config/shop-config.json` → `customPrint`. Không viết cứng giá vật liệu, phí hoàn thiện, phí thiết kế, hệ số gấp, hay cách làm tròn. Các khóa `customPrint.upload.maxFileMB`, `customPrint.upload.maxFiles`, `customPrint.upload.allowedExt`, `customPrint.colors`, `customPrint.maxQty` chủ shop sẽ chốt sau. Khi khóa vắng hoặc `null`, code dùng mặc định kỹ thuật được ghi rõ `DEFAULT_PENDING_OWNER` (không coi đó là giá bán).
+Nguồn tiền: mọi số và công thức đọc từ `config/shop-config.json` → `customPrint`. Không viết cứng giá vật liệu, phí hoàn thiện, phí thiết kế, hệ số gấp, cách làm tròn, giới hạn file, danh sách màu, hay số lượng tối đa. `customPrint.upload`, `customPrint.colors`, và `customPrint.maxQty` là nguồn duy nhất cho các giới hạn đó. Giá trị hiện tại là placeholder (CHỜ AN CHỐT).
 
 Container trang **1320px**. Chữ cam trên nền trắng dùng `#C2410C`. Font Be Vietnam Pro. Icon dùng lucide. Ảnh sản phẩm chưa có thì dùng placeholder, không dùng nhân vật có bản quyền. Màn có thanh hành động dính đáy thì ẩn bottom nav.
 
@@ -143,10 +143,10 @@ Container trang **1320px**. Chữ cam trên nền trắng dùng `#C2410C`. Font 
 
 - Route `/dat-in-3d`.
 - Khách nhập họ tên, số điện thoại, ghi chú.
-- Tải một hoặc nhiều file **STL/3MF** lên R2. Kiểm tra phía server (không tin extension của trình duyệt):
-  - đuôi file thuộc `allowedExt` (mặc định kỹ thuật `stl`, `3mf` nếu config null);
-  - dung lượng từng file ≤ `maxFileMB`, số file ≤ `maxFiles`;
-  - nội dung: STL ASCII phải có `solid` và `endsolid`/`facet`; STL nhị phân phải có kích thước `84 + số mặt * 50`; 3MF phải là ZIP (`PK`).
+- Tải một hoặc nhiều file lên R2. Kiểm tra phía server (không tin extension của trình duyệt):
+  - đuôi file thuộc `customPrint.upload.allowedExt` (hiện là `stl`, `3mf`, `obj`);
+  - dung lượng từng file ≤ `upload.maxFileMB`, số file ≤ `upload.maxFiles`;
+  - nội dung: STL ASCII phải có `facet` và `endsolid`; STL nhị phân phải có kích thước `84 + số mặt * 50`; 3MF phải là ZIP (`PK`); OBJ phải có dòng đỉnh `v` và dòng mặt `f`.
 - Chọn vật liệu, màu (swatch có tên), số lượng (1…`maxQty`), hoàn thiện, tùy chọn thiết kế giúp, tùy chọn làm gấp.
 - Cột tóm tắt hiện **ước tính** tính bằng `customPrint.formula` (cùng hàm với admin). Ghi rõ đây là ước tính, cửa hàng sẽ chốt.
 - Thanh dưới dính (mobile): nút gửi yêu cầu. Ẩn bottom nav.
