@@ -10,6 +10,7 @@ React Router (SSR), TypeScript, Tailwind CSS, shadcn/ui, chạy trên Cloudflare
 
 - [Danh sách việc phase 1](docs/TASKS.md)
 - [Spec giao diện](docs/spec_giao_dien.md)
+- [Mockup gốc 14 màn](docs/giao_dien_14_man.png) — mockup nguồn của spec giao diện.
 - [Cấu hình cửa hàng](config/shop-config.json) — giá, cọc 50%, phí vận chuyển và quy tắc SePay. Code đọc các số tiền từ file này.
 
 ## Quy trình
