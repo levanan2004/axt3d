@@ -53,9 +53,8 @@ export const sepaySchema=z.object({id:z.union([z.number().int().positive(),z.str
 export function transferContent(code:string) { return shopConfig.payment.transferContentPattern.replace('{orderCode}',code); }
 export async function recordPayment(db:D1Database,payload:z.infer<typeof sepaySchema>,now=Date.now()) {
  const parsed=sepaySchema.parse(payload);
- const escaped=shopConfig.payment.transferContentPattern.replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace('\\{orderCode\\}','([A-F0-9]{12})');
- const match=parsed.content.toUpperCase().match(new RegExp(`${escaped}(?![A-Z0-9])`,'i'));
- const code=match?.[1] || '';
+ const patterns=[shopConfig.payment.transferContentPattern, shopConfig.pos.transferContentPattern];
+ const code=patterns.map(pattern=>{const escaped=pattern.replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace('\\{orderCode\\}','([A-F0-9]{12})');return parsed.content.toUpperCase().match(new RegExp(`${escaped}(?![A-Z0-9])`,'i'))?.[1]||'';}).find(Boolean)||'';
  const order=code?await db.prepare('SELECT id FROM orders WHERE code=?').bind(code).first<{id:string}>():null;
  const result=await db.prepare('INSERT INTO payments(transaction_id,order_id,amount,direction,content,account_number,received_at) VALUES(?,?,?,?,?,?,?) ON CONFLICT(transaction_id) DO NOTHING').bind(String(parsed.id),order?.id||null,parsed.transferAmount,parsed.transferType,parsed.content,parsed.accountNumber,now).run();
  return {duplicate:result.meta.changes===0};
