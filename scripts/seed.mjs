@@ -3,9 +3,6 @@ import { spawnSync } from 'node:child_process';
 const config = JSON.parse(readFileSync(new URL('../config/shop-config.json', import.meta.url), 'utf8'));
 const copy = readFileSync(new URL('../docs/content/mo_ta_san_pham_mau.md', import.meta.url), 'utf8');
 const q = value => `'${String(value).replaceAll("'", "''")}'`;
-if (config.catalog.seedProducts.some(product => product.id === 'robot' || product.slug === 'robot')) {
- throw new Error('Do not seed robot until the money owner sets a price.');
-}
 function descriptionFor(id) {
  const section = copy.split(/^##\s+/m).slice(1).find(item => item.includes(`(slug: \`${id}\`)`));
  if (!section) return '';
@@ -17,7 +14,7 @@ function descriptionFor(id) {
 }
 const previous = existsSync('seed/local.sql') ? readFileSync('seed/local.sql', 'utf8') : '';
 const stamped = Number(previous.match(/,(\d{13}),\1\)/)?.[1] || Date.now());
-const sql = ['-- Generated from config/shop-config.json and docs/content/mo_ta_san_pham_mau.md. Inserts skip existing rows. Names and descriptions are refreshed. Robot is not seeded.'];
+const sql = ['-- Generated from config/shop-config.json and docs/content/mo_ta_san_pham_mau.md. Inserts skip existing rows. Names and descriptions are refreshed.'];
 for (const p of config.catalog.seedProducts) {
  const image = `/images/${p.image}.webp`;
  const description = descriptionFor(p.id);

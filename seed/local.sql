@@ -1,4 +1,4 @@
--- Generated from config/shop-config.json and docs/content/mo_ta_san_pham_mau.md. Inserts skip existing rows. Names and descriptions are refreshed. Robot is not seeded.
+-- Generated from config/shop-config.json and docs/content/mo_ta_san_pham_mau.md. Inserts skip existing rows. Names and descriptions are refreshed.
 INSERT OR IGNORE INTO products(id,slug,name,category,description,image,images,badge,created_at,updated_at) VALUES('dragon','rong-khop-dong','Rồng khớp động','mo-hinh-3d','Rồng in 3D liền khối có khớp động, uốn lượn được. Nhựa PLA nhẹ, nhiều màu và nhiều cỡ. Để bàn hoặc làm quà.
 
 Con rồng được in liền một lần, các đốt thân nối với nhau ngay trong lúc in. Lấy ra là cử động được, không cần lắp hay dán.
@@ -150,5 +150,12 @@ Chú robot thân hộp, đầu tròn với một mắt cảm biến, ăng-ten ng
 Mẫu là thiết kế gốc của shop, không mô phỏng robot hay nhân vật của phim, truyện, game nào. Hợp với bàn học, góc làm việc, hoặc làm quà cho người thích đồ công nghệ.
 
 Lưu ý: có chi tiết nhỏ, không phù hợp với trẻ dưới 3 tuổi. Đừng xoay khớp quá mạnh. Vân lớp in mỏng trên bề mặt là đặc trưng của in 3D.','/images/robot.webp','["/images/robot.webp","/images/robot-detail.webp"]','',1792861349575,1792861349575);
+UPDATE products SET name='Mô hình robot', description='Mô hình robot in 3D do shop tự thiết kế, dáng vuông vức, tay xoay được. Để bàn, kệ sách hoặc làm quà.
+
+Chú robot thân hộp, đầu tròn với một mắt cảm biến, ăng-ten ngắn trên đỉnh. Tay gắn khớp xoay để đổi tư thế chào, cầm đồ nhỏ hoặc giơ cao.
+
+Mẫu là thiết kế gốc của shop, không mô phỏng robot hay nhân vật của phim, truyện, game nào. Hợp với bàn học, góc làm việc, hoặc làm quà cho người thích đồ công nghệ.
+
+Lưu ý: có chi tiết nhỏ, không phù hợp với trẻ dưới 3 tuổi. Đừng xoay khớp quá mạnh. Vân lớp in mỏng trên bề mặt là đặc trưng của in 3D.' WHERE id='robot';
 INSERT OR IGNORE INTO variants(id,product_id,sku,color,color_hex,material,price,stock) VALUES('robot-1','robot','ROBOT-1','Xám','#7d8794','PLA',189000,10);
 INSERT OR IGNORE INTO variants(id,product_id,sku,color,color_hex,material,price,stock) VALUES('robot-2','robot','ROBOT-2','Kem','#e5d6bc','PLA',189000,10);

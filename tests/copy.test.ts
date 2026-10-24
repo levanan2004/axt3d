@@ -17,7 +17,7 @@ describe('copy tokens', () => {
   it('falls back when a product description file is absent', () => {
     expect(productDescription('khong-co', 'Mô tả gốc')).toBe('Mô tả gốc');
   });
-  it('applies product copy by catalog slug and keeps robot out of the seed catalog', () => {
+  it('applies product copy by catalog slug, including the robot model', () => {
     expect(productDescription('gia-do-dien-thoai', 'gốc')).toContain('mèo ngồi');
     expect(productDescription('stand', 'gốc')).toContain('mèo ngồi');
     expect(productSummary('moc-khoa-hinh-hoa', 'gốc')).toContain('corgi');
@@ -25,8 +25,18 @@ describe('copy tokens', () => {
     expect(productDescription('binh-hoa-xoan', 'gốc')).toContain('gờ xoắn');
     expect(productDescription('khay-de-do-hinh-may', 'gốc')).toContain('Viền thấp');
     expect(productDescription('khung-long-chibi', 'gốc')).toContain('khủng long');
-    expect(productSummary('robot', 'gốc')).toContain('robot');
-    expect(shopConfig.catalog.seedProducts.some(product => product.id === 'robot')).toBe(false);
+    expect(productSummary('robot', 'gốc')).toContain('tay xoay được');
+    expect(productDescription('robot', 'gốc')).toContain('thân hộp');
+    expect(productDescription('robot', 'gốc')).toContain('ăng-ten');
+    const robot = shopConfig.catalog.seedProducts.find(product => product.id === 'robot');
+    expect(robot).toMatchObject({
+      slug: 'robot',
+      name: 'Mô hình robot',
+      category: 'mo-hinh-3d',
+      price: 189000,
+      stock: 10,
+      image: 'robot',
+    });
     const home = routeSeo('/');
     expect(home?.title).toContain('AXT 3D');
     expect(home?.description).toContain('móc khóa corgi');

@@ -144,7 +144,7 @@ function productSection(key: string) {
   return found ? found.split(/\r?\n/).slice(1).join('\n') : null;
 }
 
-/** Short line from mo_ta_san_pham_mau.md. Used for meta and JSON-LD. Robot stays in the file and is not a catalog product. */
+/** Short line from mo_ta_san_pham_mau.md. Used for meta and JSON-LD. */
 export function productSummary(slug: string, fallback: string) {
   const body = productSection(slug);
   const short = body?.match(/\*\*Ngắn:\*\*\s*(.+)/)?.[1]?.trim();
