@@ -1,5 +1,7 @@
 import type { Product, Variant, Order, OrderItem, OrderEvent, Env } from "./types";
-export function getEnv(context: unknown): Env { return (context as { cloudflare: { env: Env } }).cloudflare.env; }
+import {cloudflareContext} from './context';
+import type {RouterContextProvider} from 'react-router';
+export function getEnv(context: unknown): Env { return (context as RouterContextProvider).get(cloudflareContext).env; }
 export async function listProducts(db: D1Database, params = new URLSearchParams()) {
  const conditions = ['p.active=1', 'v.active=1']; const values: (string | number)[] = [];
  const search = params.get('q')?.trim().slice(0,100);
