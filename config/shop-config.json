@@ -146,6 +146,19 @@
         "stock": 22,
         "image": "organizer",
         "badge": ""
+      },
+      {
+        "id": "robot",
+        "slug": "robot",
+        "name": "Mô hình robot",
+        "category": "mo-hinh-3d",
+        "price": 189000,
+        "color": "Xám",
+        "hex": "#7d8794",
+        "material": "PLA",
+        "stock": 10,
+        "image": "robot",
+        "badge": ""
       }
     ]
   },

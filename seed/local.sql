@@ -26,3 +26,12 @@ INSERT OR IGNORE INTO variants(id,product_id,sku,color,color_hex,material,price,
 INSERT OR IGNORE INTO products(id,slug,name,category,description,image,images,badge,created_at,updated_at) VALUES('organizer','hop-but-to-ong','Hộp bút tổ ong','phu-kien','Hộp bút tổ ong được in từng lớp, hoàn thiện thủ công với những đường vân đặc trưng. Nhẹ, bền và mang một chút sáng tạo vào mỗi ngày. Hình ảnh minh họa mẫu; màu sắc thực tế có thể khác nhẹ.','/images/organizer.webp','["/images/organizer.webp","/images/organizer-detail.webp"]','',1792861349575,1792861349575);
 INSERT OR IGNORE INTO variants(id,product_id,sku,color,color_hex,material,price,stock) VALUES('organizer-1','organizer','ORGANIZER-1','Xanh navy','#223c4b','PLA',99000,22);
 INSERT OR IGNORE INTO variants(id,product_id,sku,color,color_hex,material,price,stock) VALUES('organizer-2','organizer','ORGANIZER-2','Kem','#e5d6bc','PLA',99000,22);
+INSERT OR IGNORE INTO products(id,slug,name,category,description,image,images,badge,created_at,updated_at) VALUES('robot','robot','Mô hình robot','mo-hinh-3d','Mô hình robot in 3D do shop tự thiết kế, dáng vuông vức, tay xoay được. Để bàn, kệ sách hoặc làm quà.
+
+Chú robot thân hộp, đầu tròn với một mắt cảm biến, ăng-ten ngắn trên đỉnh. Tay gắn khớp xoay để đổi tư thế chào, cầm đồ nhỏ hoặc giơ cao.
+
+Mẫu là thiết kế gốc của shop, không mô phỏng robot hay nhân vật của phim, truyện, game nào. Hợp với bàn học, góc làm việc, hoặc làm quà cho người thích đồ công nghệ.
+
+Lưu ý: có chi tiết nhỏ, không phù hợp với trẻ dưới 3 tuổi. Đừng xoay khớp quá mạnh. Vân lớp in mỏng trên bề mặt là đặc trưng của in 3D.','/images/robot.webp','["/images/robot.webp","/images/robot-detail.webp"]','',1792861349575,1792861349575);
+INSERT OR IGNORE INTO variants(id,product_id,sku,color,color_hex,material,price,stock) VALUES('robot-1','robot','ROBOT-1','Xám','#7d8794','PLA',189000,10);
+INSERT OR IGNORE INTO variants(id,product_id,sku,color,color_hex,material,price,stock) VALUES('robot-2','robot','ROBOT-2','Kem','#e5d6bc','PLA',189000,10);
