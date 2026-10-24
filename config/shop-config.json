@@ -1,6 +1,32 @@
 {
   "_note": "Cấu hình tiền cho web in 3D. Mọi số đọc từ file này, không viết cứng vào code. Các giá trị 'CHỜ AN CHỐT' là tạm.",
   "currency": "VND",
+  "shop": {
+    "name": "3DStore",
+    "logoIcon": "box",
+    "logoUrl": "",
+    "tagline": "Ý tưởng nhỏ. Niềm vui lớn.",
+    "description": "Khám phá mô hình, phụ kiện và quà tặng in 3D mang dấu ấn riêng.",
+    "supportEmail": "",
+    "supportPhone": ""
+  },
+  "bank": { "bin": "", "name": "", "accountNumber": "", "accountName": "" },
+  "policies": { "depositNote": "Chính sách hoàn cọc đang được cửa hàng cập nhật.", "terms": "", "privacy": "", "returns": "", "shipping": "" },
+  "catalog": {
+    "priceRanges": [50000, 100000, 200000],
+    "seedProducts": [
+      { "id": "dragon", "slug": "rong-khop-dong", "name": "Rồng khớp động", "category": "mo-hinh-3d", "price": 89000, "color": "Cam đất", "hex": "#d86b38", "material": "PLA", "stock": 24, "image": "dragon", "badge": "Yêu thích" },
+      { "id": "stand", "slug": "gia-do-dien-thoai", "name": "Giá đỡ điện thoại", "category": "phu-kien", "price": 59000, "color": "Xanh navy", "hex": "#223c4b", "material": "PETG", "stock": 30, "image": "stand", "badge": "" },
+      { "id": "planter", "slug": "chau-cay-duong-van", "name": "Chậu cây đường vân", "category": "do-trang-tri", "price": 79000, "color": "Xanh lá", "hex": "#71826a", "material": "PLA", "stock": 18, "image": "planter", "badge": "Mới" },
+      { "id": "lamp", "slug": "den-nam-nho", "name": "Đèn nấm nhỏ", "category": "do-trang-tri", "price": 149000, "color": "Cam đất", "hex": "#d86b38", "material": "PLA", "stock": 12, "image": "lamp", "badge": "Mới" },
+      { "id": "vase", "slug": "binh-hoa-xoan", "name": "Bình hoa xoắn", "category": "do-trang-tri", "price": 129000, "color": "Kem", "hex": "#e5d6bc", "material": "PLA", "stock": 15, "image": "vase", "badge": "" },
+      { "id": "cat", "slug": "meo-phi-hanh-gia", "name": "Mèo phi hành gia", "category": "nhan-vat-fantasy", "price": 99000, "color": "Kem", "hex": "#e5d6bc", "material": "PLA", "stock": 20, "image": "cat", "badge": "Mới" },
+      { "id": "tray", "slug": "khay-de-do-hinh-may", "name": "Khay để đồ hình mây", "category": "do-gia-dung", "price": 69000, "color": "Kem", "hex": "#e5d6bc", "material": "PETG", "stock": 25, "image": "tray", "badge": "" },
+      { "id": "dino", "slug": "khung-long-chibi", "name": "Khủng long chibi", "category": "mo-hinh-3d", "price": 89000, "color": "Xanh lá", "hex": "#71826a", "material": "PLA", "stock": 16, "image": "dino", "badge": "" },
+      { "id": "keyring", "slug": "moc-khoa-hinh-hoa", "name": "Móc khóa hình hoa", "category": "qua-tang", "price": 39000, "color": "Cam đất", "hex": "#d86b38", "material": "PLA", "stock": 40, "image": "keyring", "badge": "" },
+      { "id": "organizer", "slug": "hop-but-to-ong", "name": "Hộp bút tổ ong", "category": "phu-kien", "price": 99000, "color": "Xanh navy", "hex": "#223c4b", "material": "PLA", "stock": 22, "image": "organizer", "badge": "" }
+    ]
+  },
   "deposit": {
     "rate": 0.5,
     "base": "itemsSubtotal",
