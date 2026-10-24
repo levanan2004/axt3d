@@ -1,0 +1,5 @@
+import {Link,useLocation} from 'react-router';
+import {Package,ShoppingBag,ArrowUpRight,ShieldCheck} from 'lucide-react';
+import type {ReactNode} from 'react';
+import {Logo} from './store';
+export function AdminLayout({children,actor}:{children:ReactNode;actor:string}){const location=useLocation(),tab=new URLSearchParams(location.search).get('tab')||'orders';return <div className="admin-shell"><aside className="admin-sidebar"><Logo/><nav aria-label="Quản trị"><Link className={tab==='orders'?'active':''} to="/admin?tab=orders"><ShoppingBag size={18}/> Quản lý đơn hàng</Link><Link className={tab==='products'?'active':''} to="/admin?tab=products"><Package size={18}/> Sản phẩm & tồn kho</Link><Link className={tab==='payments'?'active':''} to="/admin?tab=payments"><ShieldCheck size={18}/> Giao dịch & hoàn tiền</Link><Link to="/"><ArrowUpRight size={18}/> Xem cửa hàng</Link></nav><div className="admin-identity">Đăng nhập: {actor}<br/>Quản trị cửa hàng · Giai đoạn 1</div></aside><main className="admin-content" id="main-content"><div className="admin-topline"><span>KHÔNG GIAN QUẢN TRỊ</span><span>Đơn hàng · Sản phẩm · Giao dịch</span></div>{children}</main></div>;}
