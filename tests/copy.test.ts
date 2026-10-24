@@ -46,9 +46,21 @@ describe('copy tokens', () => {
 describe('robots.txt', () => {
   it('disallows admin, pos and api on production', () => {
     const text = robotsTxt({ APP_ENV: 'production', SITE_URL: 'https://shop.example' });
+    expect(text).toContain('Allow: /');
     expect(text).toContain('Disallow: /admin');
     expect(text).toContain('Disallow: /pos');
     expect(text).toContain('Disallow: /api/');
     expect(text).toContain('Sitemap: https://shop.example/sitemap.xml');
+  });
+  it('keeps local crawlers out unless ALLOW_INDEXING=true', () => {
+    const closed = robotsTxt({ APP_ENV: 'local', SITE_URL: 'http://localhost:5173', ALLOW_INDEXING: '' });
+    expect(closed).toContain('Disallow: /\n');
+    expect(closed).not.toContain('Allow: /');
+    const open = robotsTxt({ APP_ENV: 'local', SITE_URL: 'http://localhost:5173', ALLOW_INDEXING: 'true' });
+    expect(open).toContain('Allow: /');
+    expect(open).toContain('Disallow: /admin');
+    expect(open).toContain('Disallow: /pos');
+    expect(open).toContain('Disallow: /api/');
+    expect(open).not.toContain('Disallow: /\n');
   });
 });

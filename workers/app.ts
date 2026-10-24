@@ -4,7 +4,7 @@ import {z} from 'zod';
 import {shopConfig} from '../app/lib/config';
 import {expireOrders,recordPayment,sepaySchema} from '../app/lib/orders.server';
 import {expireQuotes} from '../app/lib/quotes.server';
-import {expectedBankAccount,legalRoutes,robotsTxt} from '../app/lib/http';
+import {allowsIndexing,expectedBankAccount,legalRoutes,robotsTxt} from '../app/lib/http';
 import {orderDetails,publicOrder} from '../app/lib/db.server';
 import {assertSameOrigin,requireAdmin,requireOrder,secureEqual,rateLimit} from '../app/lib/security.server';
 import type {Env,Variant} from '../app/lib/types';
@@ -81,7 +81,7 @@ export default {
   const headers=new Headers(response.headers);headers.set('X-Content-Type-Options','nosniff');headers.set('Referrer-Policy','strict-origin-when-cross-origin');headers.set('X-Frame-Options','DENY');headers.set('Permissions-Policy','camera=(), microphone=(), geolocation=()');
   const path=new URL(request.url).pathname;
   if(/^\/(admin|api|thanh-toan|theo-doi-don|gio-hang|tai-khoan)/.test(path)){headers.set('Cache-Control','no-store');headers.set('X-Robots-Tag','noindex, nofollow');}
-  if(env.APP_ENV!=='production')headers.set('X-Robots-Tag','noindex, nofollow');
+  if(!allowsIndexing(env))headers.set('X-Robots-Tag','noindex, nofollow');
   return new Response(response.body,{status:response.status,statusText:response.statusText,headers});
  },
  async scheduled(_event:ScheduledController,env:Env,ctx:ExecutionContext){ctx.waitUntil(Promise.all([expireOrders(env.DB),expireQuotes(env.DB)]));}

@@ -1,7 +1,7 @@
 import type { OrderStatus } from "./config";
 export interface Env {
   DB: D1Database; IMAGES: R2Bucket; ASSETS: Fetcher;
-  APP_ENV: string; SITE_URL: string; ACCESS_TEAM_DOMAIN: string; ACCESS_AUD: string;
+  APP_ENV: string; SITE_URL: string; ACCESS_TEAM_DOMAIN: string; ACCESS_AUD: string; ALLOW_INDEXING?: string;
   SEPAY_WEBHOOK_KEY?: string; LOCAL_ADMIN_TOKEN?: string;
 }
 export interface Product { id: string; slug: string; name: string; category: string; description: string; image: string; images: string; badge: string; active: number; created_at: number; price: number; stock: number }
