@@ -22,7 +22,7 @@ npm run build
 npm run preview
 ```
 
-`npm run setup` áp migration D1 local và nạp sản phẩm mẫu. `npm run preview` chạy `wrangler dev` tại http://127.0.0.1:4173.
+`npm run setup` áp migration D1 local và nạp sản phẩm mẫu vào `.wrangler/state`. `npm run preview` chạy `wrangler dev` tại http://127.0.0.1:4173 và dùng cùng thư mục dữ liệu đó.
 
 Admin local: mở http://127.0.0.1:4173/admin/local-auth (chỉ loopback, cookie từ `.dev.vars`).
 
