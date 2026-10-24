@@ -2,7 +2,7 @@
   "_note": "Cấu hình tiền cho web in 3D. Mọi số đọc từ file này, không viết cứng vào code. Các giá trị 'CHỜ AN CHỐT' là tạm.",
   "currency": "VND",
   "shop": {
-    "name": "3DStore",
+    "name": "AXT 3D",
     "logoIcon": "box",
     "logoUrl": "",
     "tagline": "Ý tưởng nhỏ. Niềm vui lớn.",
@@ -10,21 +10,143 @@
     "supportEmail": "",
     "supportPhone": ""
   },
-  "bank": { "bin": "", "name": "", "accountNumber": "", "accountName": "" },
-  "policies": { "depositNote": "Chính sách hoàn cọc đang được cửa hàng cập nhật.", "terms": "", "privacy": "", "returns": "", "shipping": "" },
+  "bank": {
+    "bin": "",
+    "name": "",
+    "accountNumber": "",
+    "accountName": ""
+  },
+  "policies": {
+    "depositNote": "Chính sách hoàn cọc đang được cửa hàng cập nhật.",
+    "terms": "",
+    "privacy": "",
+    "returns": "",
+    "shipping": ""
+  },
   "catalog": {
-    "priceRanges": [50000, 100000, 200000],
+    "priceRanges": [
+      50000,
+      100000,
+      200000
+    ],
     "seedProducts": [
-      { "id": "dragon", "slug": "rong-khop-dong", "name": "Rồng khớp động", "category": "mo-hinh-3d", "price": 89000, "color": "Cam đất", "hex": "#d86b38", "material": "PLA", "stock": 24, "image": "dragon", "badge": "Yêu thích" },
-      { "id": "stand", "slug": "gia-do-dien-thoai", "name": "Giá đỡ điện thoại", "category": "phu-kien", "price": 59000, "color": "Xanh navy", "hex": "#223c4b", "material": "PETG", "stock": 30, "image": "stand", "badge": "" },
-      { "id": "planter", "slug": "chau-cay-duong-van", "name": "Chậu cây đường vân", "category": "do-trang-tri", "price": 79000, "color": "Xanh lá", "hex": "#71826a", "material": "PLA", "stock": 18, "image": "planter", "badge": "Mới" },
-      { "id": "lamp", "slug": "den-nam-nho", "name": "Đèn nấm nhỏ", "category": "do-trang-tri", "price": 149000, "color": "Cam đất", "hex": "#d86b38", "material": "PLA", "stock": 12, "image": "lamp", "badge": "Mới" },
-      { "id": "vase", "slug": "binh-hoa-xoan", "name": "Bình hoa xoắn", "category": "do-trang-tri", "price": 129000, "color": "Kem", "hex": "#e5d6bc", "material": "PLA", "stock": 15, "image": "vase", "badge": "" },
-      { "id": "cat", "slug": "meo-phi-hanh-gia", "name": "Mèo phi hành gia", "category": "nhan-vat-fantasy", "price": 99000, "color": "Kem", "hex": "#e5d6bc", "material": "PLA", "stock": 20, "image": "cat", "badge": "Mới" },
-      { "id": "tray", "slug": "khay-de-do-hinh-may", "name": "Khay để đồ hình mây", "category": "do-gia-dung", "price": 69000, "color": "Kem", "hex": "#e5d6bc", "material": "PETG", "stock": 25, "image": "tray", "badge": "" },
-      { "id": "dino", "slug": "khung-long-chibi", "name": "Khủng long chibi", "category": "mo-hinh-3d", "price": 89000, "color": "Xanh lá", "hex": "#71826a", "material": "PLA", "stock": 16, "image": "dino", "badge": "" },
-      { "id": "keyring", "slug": "moc-khoa-hinh-hoa", "name": "Móc khóa hình hoa", "category": "qua-tang", "price": 39000, "color": "Cam đất", "hex": "#d86b38", "material": "PLA", "stock": 40, "image": "keyring", "badge": "" },
-      { "id": "organizer", "slug": "hop-but-to-ong", "name": "Hộp bút tổ ong", "category": "phu-kien", "price": 99000, "color": "Xanh navy", "hex": "#223c4b", "material": "PLA", "stock": 22, "image": "organizer", "badge": "" }
+      {
+        "id": "dragon",
+        "slug": "rong-khop-dong",
+        "name": "Rồng khớp động",
+        "category": "mo-hinh-3d",
+        "price": 89000,
+        "color": "Cam đất",
+        "hex": "#d86b38",
+        "material": "PLA",
+        "stock": 24,
+        "image": "dragon",
+        "badge": "Yêu thích"
+      },
+      {
+        "id": "stand",
+        "slug": "gia-do-dien-thoai",
+        "name": "Giá đỡ điện thoại",
+        "category": "phu-kien",
+        "price": 59000,
+        "color": "Xanh navy",
+        "hex": "#223c4b",
+        "material": "PETG",
+        "stock": 30,
+        "image": "stand",
+        "badge": ""
+      },
+      {
+        "id": "planter",
+        "slug": "chau-cay-duong-van",
+        "name": "Chậu cây đường vân",
+        "category": "do-trang-tri",
+        "price": 79000,
+        "color": "Xanh lá",
+        "hex": "#71826a",
+        "material": "PLA",
+        "stock": 18,
+        "image": "planter",
+        "badge": "Mới"
+      },
+      {
+        "id": "lamp",
+        "slug": "den-nam-nho",
+        "name": "Đèn nấm nhỏ",
+        "category": "do-trang-tri",
+        "price": 149000,
+        "color": "Cam đất",
+        "hex": "#d86b38",
+        "material": "PLA",
+        "stock": 12,
+        "image": "lamp",
+        "badge": "Mới"
+      },
+      {
+        "id": "vase",
+        "slug": "binh-hoa-xoan",
+        "name": "Bình hoa xoắn",
+        "category": "do-trang-tri",
+        "price": 129000,
+        "color": "Kem",
+        "hex": "#e5d6bc",
+        "material": "PLA",
+        "stock": 15,
+        "image": "vase",
+        "badge": ""
+      },
+      {
+        "id": "tray",
+        "slug": "khay-de-do-hinh-may",
+        "name": "Khay để đồ hình mây",
+        "category": "do-gia-dung",
+        "price": 69000,
+        "color": "Kem",
+        "hex": "#e5d6bc",
+        "material": "PETG",
+        "stock": 25,
+        "image": "tray",
+        "badge": ""
+      },
+      {
+        "id": "dino",
+        "slug": "khung-long-chibi",
+        "name": "Khủng long chibi",
+        "category": "mo-hinh-3d",
+        "price": 89000,
+        "color": "Xanh lá",
+        "hex": "#71826a",
+        "material": "PLA",
+        "stock": 16,
+        "image": "dino",
+        "badge": ""
+      },
+      {
+        "id": "keyring",
+        "slug": "moc-khoa-hinh-hoa",
+        "name": "Móc khóa hình hoa",
+        "category": "qua-tang",
+        "price": 39000,
+        "color": "Cam đất",
+        "hex": "#d86b38",
+        "material": "PLA",
+        "stock": 40,
+        "image": "keyring",
+        "badge": ""
+      },
+      {
+        "id": "organizer",
+        "slug": "hop-but-to-ong",
+        "name": "Hộp bút tổ ong",
+        "category": "phu-kien",
+        "price": 99000,
+        "color": "Xanh navy",
+        "hex": "#223c4b",
+        "material": "PLA",
+        "stock": 22,
+        "image": "organizer",
+        "badge": ""
+      }
     ]
   },
   "deposit": {
@@ -37,13 +159,7 @@
     "mode": "flat",
     "flatFee": 20000,
     "freeShipThreshold": null,
-    "_status": "CHỜ AN CHỐT: phí cố định hay theo bảng Viettel Post; có miễn ship từ mức nào không",
-    "carrier": {
-      "provider": "viettel_post",
-      "label": "Viettel Post",
-      "apiEnabled": false,
-      "_status": "API tắt. Nhập mã vận đơn bằng tay. Không lưu credential trong repo."
-    }
+    "_status": "CHỜ AN CHỐT: phí cố định hay theo bảng Viettel Post; có miễn ship từ mức nào không"
   },
   "payment": {
     "depositGateway": "sepay",
@@ -53,63 +169,96 @@
     "idempotencyKey": "sepay.transactionId",
     "confirmRule": "amount >= depositAmount AND content contains orderCode"
   },
-  "orderStatuses": ["cho_coc", "da_coc", "dang_chuan_bi", "da_giao_van_chuyen", "hoan_thanh", "da_huy"],
+  "orderStatuses": [
+    "cho_coc",
+    "da_coc",
+    "dang_chuan_bi",
+    "da_giao_van_chuyen",
+    "hoan_thanh",
+    "da_huy"
+  ],
   "customPrint": {
-    "_status": "CHỜ AN CHỐT: mọi số tiền, màu in, và số lượng tối đa là placeholder, không phải giá bán.",
-    "formula": "basePrice + materialFee * quantity + finishFee + designFee * designHelp + (basePrice + materialFee * quantity + finishFee + designFee * designHelp) * rush * rushExtraRate",
-    "quoteRounding": "ceilTo1000",
-    "quoteExpiryHours": 72,
-    "designFee": 50000,
-    "rushExtraRate": 0.5,
-    "materials": [
-      { "id": "pla", "name": "PLA (In thường)", "leadTime": "2–4 ngày", "basePrice": 80000, "materialFee": 0 },
-      { "id": "petg", "name": "PETG (Bền hơn)", "leadTime": "3–5 ngày", "basePrice": 120000, "materialFee": 0 },
-      { "id": "resin", "name": "Nhựa Resin", "leadTime": "4–7 ngày", "basePrice": 200000, "materialFee": 0 }
-    ],
-    "finishes": [
-      { "id": "tho", "name": "Bề mặt thô", "fee": 0 },
-      { "id": "mai", "name": "Mài mịn", "fee": 25000 },
-      { "id": "son", "name": "Sơn hoàn thiện", "fee": 50000 }
-    ],
-    "quoteStatuses": ["moi_yeu_cau", "dang_bao_gia", "da_gui", "da_chap_nhan", "tu_choi", "het_han"],
-    "upload": { "maxFileMB": 50, "maxFiles": 5, "allowedExt": ["stl", "3mf", "obj"] },
+    "_status": "SỐ TẠM, CHỜ AN gửi giá nhựa và giá máy",
+    "materials": {
+      "PLA": {
+        "pricePerGram": 250
+      },
+      "PETG": {
+        "pricePerGram": 300
+      },
+      "TPU": {
+        "pricePerGram": 450
+      },
+      "Resin": {
+        "pricePerGram": 700
+      }
+    },
+    "machinePerHour": 8000,
+    "electricityPerHour": 600,
+    "wasteRate": 0.1,
+    "postProcessFee": {
+      "none": 0,
+      "basic": 20000,
+      "paint": 80000
+    },
+    "markup": 1.6,
+    "minOrder": 50000,
+    "rounding": "ceilTo1000",
+    "formula": "ceil1000(max(minOrder,((grams*pricePerGram*(1+wasteRate))+hours*(machinePerHour+electricityPerHour)+postProcessFee)*markup)*qty)",
+    "quoteMode": "Khách tải file lên thì web báo giá tạm; Admin xác nhận giá cuối rồi đơn mới vào cọc 50%",
+    "quoteValidHours": 48,
+    "depositRule": "giống đơn thường: cọc 50% qua QR SePay, còn lại COD",
+    "upload": {
+      "maxFileMB": 50,
+      "maxFiles": 5,
+      "allowedExt": [
+        "stl",
+        "3mf",
+        "obj"
+      ]
+    },
     "colors": [
-      { "id": "trang", "name": "Trắng", "hex": "#F4F4F5" },
-      { "id": "den", "name": "Đen", "hex": "#1C1917" },
-      { "id": "xam", "name": "Xám", "hex": "#9CA3AF" },
-      { "id": "xanh-duong", "name": "Xanh dương", "hex": "#2563EB" },
-      { "id": "do", "name": "Đỏ", "hex": "#DC2626" }
+      "Trắng",
+      "Đen",
+      "Xám",
+      "Đỏ",
+      "Cam",
+      "Vàng",
+      "Xanh lá",
+      "Xanh dương",
+      "Tím",
+      "Hồng"
     ],
-    "maxQty": 10
+    "maxQty": 50
   },
   "pos": {
-    "_status": "CHỜ AN CHỐT: bán tại quầy thu đủ tiền hàng, phí ship placeholder 0.",
     "methods": [
-      { "id": "cash", "label": "Tiền mặt" },
-      { "id": "bank_transfer", "label": "Chuyển khoản" }
+      "cash",
+      "bank_transfer_qr"
     ],
-    "depositRate": 1,
+    "deposit": false,
     "shippingFee": 0,
+    "transferContentPattern": "POS{orderCode}",
     "rounding": "none",
-    "receiptPrefix": "POS"
+    "statusOnPaid": "hoan_thanh"
   },
   "codReconciliation": {
-    "_status": "CHỜ AN CHỐT: carrierCodFeeRate để null cho đến khi chủ shop chốt phí COD của đơn vị vận chuyển.",
+    "carrier": "viettel_post",
+    "expected": "codAmount - carrierCodFee - shippingFeeCharged",
     "carrierCodFeeRate": null,
-    "formula": "collectedAmount - carrierFee",
-    "carrierFeeFormula": "round(expectedCod * carrierCodFeeRate)",
+    "_status": "CHỜ AN: phí thu hộ theo hợp đồng Viettel Post",
+    "mismatchTolerance": 0,
+    "onMismatch": "đánh dấu lệch, báo Admin, không tự sửa",
     "missingFeeStatus": "needs fee config"
   },
   "reports": {
-    "_status": "CHỜ AN CHỐT: cách ghi nhận doanh thu và các giai đoạn sản xuất là tạm.",
+    "revenueRecognizedAt": "hoan_thanh",
+    "refundsSubtract": true,
     "timezone": "Asia/Ho_Chi_Minh",
-    "revenueBasis": "credited_amount",
-    "dayWindows": [7, 30],
-    "productionStages": [
-      { "id": "cho_in", "label": "Chờ in" },
-      { "id": "dang_in", "label": "Đang in" },
-      { "id": "hoan_thien", "label": "Hoàn thiện" },
-      { "id": "san_sang", "label": "Sẵn sàng giao" }
-    ]
+    "profit": {
+      "formula": "revenue - materialCost - machineCost - electricityCost - postProcessCost - carrierCodFee - shippingCostPaid - refunds",
+      "costSource": "customPrint rates; sản phẩm có sẵn dùng costPrice nhập trong Admin",
+      "_status": "SỐ TẠM theo customPrint"
+    }
   }
 }

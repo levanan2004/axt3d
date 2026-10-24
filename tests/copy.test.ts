@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { productDescription, renderMarkdown, renderTokens } from '../app/lib/copy';
+import { legalCopy, productDescription, renderMarkdown, renderTokens, routeSeo } from '../app/lib/copy';
+import { extensionPhrase } from '../app/lib/quote';
 import { robotsTxt } from '../app/lib/http';
 
 describe('copy tokens', () => {
@@ -7,13 +8,22 @@ describe('copy tokens', () => {
     expect(renderTokens('Cọc {config.deposit.rate}, phí ship {config.shipping.flatFee}.')).toBe('Cọc 50%, phí ship 20.000đ.');
   });
   it('keeps unknown identity placeholders visible', () => {
-    expect(renderTokens('Đơn vị {TEN_SHOP} tại {DIA_CHI}.')).toBe('Đơn vị {TEN_SHOP} tại {DIA_CHI}.');
+    expect(renderTokens('Đơn vị {TEN_SHOP} tại {DIA_CHI}.')).toBe('Đơn vị AXT 3D tại {DIA_CHI}.');
   });
   it('escapes markdown text', () => {
     expect(renderMarkdown('**<script>alert(1)</script>**')).toBe('<p><strong>&lt;script&gt;alert(1)&lt;/script&gt;</strong></p>');
   });
   it('falls back when a product description file is absent', () => {
-    expect(productDescription('rong-khop-dong', 'Mô tả gốc')).toBe('Mô tả gốc');
+    expect(productDescription('khong-co', 'Mô tả gốc')).toBe('Mô tả gốc');
+  });
+  it('renders legal pages and replaces hard-coded upload types with config', () => {
+    const terms = legalCopy('dieu-khoan');
+    expect(terms?.body).toContain('Phạm vi');
+    const datIn = routeSeo('/dat-in');
+    expect(datIn?.title).toContain('AXT 3D');
+    expect(datIn?.description).toContain(extensionPhrase());
+    expect(datIn?.description).not.toMatch(/STL\/3MF|STL hoặc 3MF/);
+    expect(renderTokens('Kéo thả file STL / 3MF vào đây. Tối đa {config dung lượng} MB.')).toContain(extensionPhrase());
   });
 });
 

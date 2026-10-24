@@ -3,19 +3,20 @@ import { StoreLayout, Breadcrumb } from '../components/store';
 import { shopConfig } from '../lib/config';
 import { getEnv } from '../lib/db.server';
 import { legalRoutes } from '../lib/http';
-import { pageCopy, pageMeta, renderMarkdown, renderTokens } from '../lib/copy';
+import { legalCopy, pageMeta, renderMarkdown, routeSeo } from '../lib/copy';
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
   const path = new URL(request.url).pathname.replace(/\/$/, '') || '/';
   const page = legalRoutes.find(item => item.path === path);
   if (!page) throw new Response('Không tìm thấy trang.', { status: 404 });
-  const doc = pageCopy(page.id);
+  const doc = legalCopy(page.id);
+  const seoDoc = routeSeo(page.path);
   const configured = shopConfig.policies[page.policy];
   const body = doc?.body || configured || '';
   return {
     path: page.path,
-    title: doc?.title ? renderTokens(doc.title) : page.title,
-    description: doc?.description ? renderTokens(doc.description) : `${page.title} của cửa hàng.`,
+    title: seoDoc?.title || page.title,
+    description: seoDoc?.description || `${page.title} của cửa hàng.`,
     html: body ? renderMarkdown(body) : '',
     base: getEnv(context).SITE_URL,
   };

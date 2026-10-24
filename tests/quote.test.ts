@@ -20,8 +20,8 @@ const obj = new TextEncoder().encode('# demo\nv 0 0 0\nv 1 0 0\nv 0 1 0\nf 1 2 3
 describe('model files and quote formula', () => {
   it('reads upload limits, colors, and max quantity from shop config', () => {
     const limits = quoteLimits();
-    expect(limits).toMatchObject({ maxFileMB: 50, maxFiles: 5, allowedExt: ['stl', '3mf', 'obj'], maxQty: 10 });
-    expect(limits.colors.map(color => color.name)).toEqual(['Trắng', 'Đen', 'Xám', 'Xanh dương', 'Đỏ']);
+    expect(limits).toMatchObject({ maxFileMB: 50, maxFiles: 5, allowedExt: ['stl', '3mf', 'obj'], maxQty: 50 });
+    expect(limits.colors.map(color => color.name)).toEqual(['Trắng', 'Đen', 'Xám', 'Đỏ', 'Cam', 'Vàng', 'Xanh lá', 'Xanh dương', 'Tím', 'Hồng']);
   });
   it('accepts STL, 3MF, and OBJ content and rejects lookalikes', () => {
     expect(validateModelFile('part.stl', ascii)).toBe('stl');
@@ -29,16 +29,16 @@ describe('model files and quote formula', () => {
     expect(validateModelFile('part.3mf', new Uint8Array([0x50, 0x4b, 3, 4, ...new Uint8Array(20)]))).toBe('3mf');
     expect(validateModelFile('part.obj', obj)).toBe('obj');
     expect(() => validateModelFile('part.obj', ascii)).toThrow(/OBJ/);
-    expect(() => validateModelFile('part.txt', obj)).toThrow(/STL, 3MF, OBJ/);
+    expect(() => validateModelFile('part.txt', obj)).toThrow(/\.stl, \.3mf hoặc \.obj/);
     expect(() => validateModelFile('part.stl', new TextEncoder().encode('solid only a header without facets end'))).toThrow();
     expect(() => validateModelFile('part.3mf', ascii)).toThrow();
   });
   it('prices from customPrint.formula and rounds up to a thousand', () => {
-    const plain = calcQuote({ materialId: 'pla', colorId: 'trang', finishId: 'mai', quantity: 1, designHelp: false, rush: false });
-    expect(plain.amount).toBe(105000);
-    const rushed = calcQuote({ materialId: 'pla', colorId: 'trang', finishId: 'mai', quantity: 1, designHelp: false, rush: true });
-    expect(rushed.amount).toBe(158000);
-    expect(calcOrderTotals([{ unitPrice: plain.amount, quantity: 1 }])).toMatchObject({ depositAmount: 53000, codAmount: 72000, shippingFee: 20000 });
+    const plain = calcQuote({ materialId: 'PLA', colorName: 'Trắng', postProcess: 'none', quantity: 1, grams: 20, hours: 1 });
+    expect(plain.amount).toBe(50000);
+    const painted = calcQuote({ materialId: 'PLA', colorName: 'Trắng', postProcess: 'paint', quantity: 2, grams: 80, hours: 3 });
+    expect(painted.amount).toBe(409000);
+    expect(calcOrderTotals([{ unitPrice: plain.amount, quantity: 1 }])).toMatchObject({ depositAmount: 25000, codAmount: 45000, shippingFee: 20000 });
   });
 });
 
@@ -63,16 +63,19 @@ beforeEach(async () => {
 afterAll(async () => { await mf?.dispose(); });
 
 describe('quote orders', () => {
-  const input = { name: 'Nguyễn Văn An', phone: '0912345678', note: 'in thử', materialId: 'pla', colorId: 'trang', finishId: 'mai', quantity: 1, designHelp: false, rush: false };
+  const input = { project: 'Khay thử', name: 'Nguyễn Văn An', phone: '0912345678', email: '', note: 'in thử', materialId: 'PLA', colorName: 'Trắng', postProcess: 'none', quantity: 1 };
   it('keeps catalog stock when a quote becomes a deposit order', async () => {
     const quote = await createQuote(env, input, [{ filename: 'dragon.stl', bytes: ascii }], 'b'.repeat(64), now);
-    expect(quote.computed_amount).toBe(105000);
-    await saveQuotePrice(env, quote.code, 'owner@shop.test', { status: 'da_gui', override: 110000, reason: 'File lớn hơn ước tính' }, now + 1);
+    expect(quote.computed_amount).toBeNull();
+    expect(quote.status).toBe('cho_bao_gia');
+    await saveQuotePrice(env, quote.code, 'owner@shop.test', { grams: 80, hours: 3, materialId: 'PLA', postProcess: 'paint', quantity: 2, colorName: 'Trắng', override: 420000, reason: 'File lớn hơn ước tính', leadNote: '4 ngày', reject: false }, now + 1);
     const saved = (await quoteByCode(env.DB, quote.code))!.quote;
-    const accepted = await respondQuote(env, saved, true, now + 2);
+    expect(saved.computed_amount).toBe(409000);
+    expect(saved.status).toBe('da_bao_gia');
+    const accepted = await respondQuote(env, saved, true, '12 Đường Mẫu, phường An, Thành phố Hồ Chí Minh', now + 2);
     expect(accepted?.code).toMatch(/^[A-F0-9]{12}$/);
     const order = await env.DB.prepare('SELECT status,deposit_amount,cod_amount,channel FROM orders WHERE code=?').bind(accepted!.code).first<{ status: string; deposit_amount: number; cod_amount: number; channel: string }>();
-    expect(order).toMatchObject({ status: 'cho_coc', deposit_amount: 55000, cod_amount: 75000, channel: 'quote' });
+    expect(order).toMatchObject({ status: 'cho_coc', deposit_amount: 210000, cod_amount: 230000, channel: 'quote' });
     expect((await env.DB.prepare("SELECT stock FROM variants WHERE id='v'").first<{ stock: number }>())!.stock).toBe(5);
     const catalog = await createOrder(env, { name: 'Nguyễn Văn An', phone: '0912345678', address: '12 Đường Mẫu, phường An, Thành phố Hồ Chí Minh', note: '', checkoutKey: crypto.randomUUID(), items: [{ variantId: 'v', quantity: 1 }] }, 'a'.repeat(64), now);
     expect(catalog.deposit_amount).toBe(75000);
@@ -80,8 +83,12 @@ describe('quote orders', () => {
   });
   it('expires an unanswered quote once', async () => {
     const quote = await createQuote(env, input, [{ filename: 'a.3mf', bytes: new Uint8Array([0x50, 0x4b, 3, 4, ...new Uint8Array(20)]) }], 'c'.repeat(64), now);
-    await expireQuotes(env.DB, quote.expires_at);
-    await expireQuotes(env.DB, quote.expires_at + 1);
+    await saveQuotePrice(env, quote.code, 'owner@shop.test', { grams: 20, hours: 1, materialId: 'PLA', postProcess: 'none', quantity: 1, colorName: 'Trắng', override: null, reason: '', leadNote: '', reject: false }, now);
+    const sent = (await quoteByCode(env.DB, quote.code))!.quote;
+    await expireQuotes(env.DB, sent.expires_at - 1);
+    expect((await quoteByCode(env.DB, quote.code))!.quote.status).toBe('da_bao_gia');
+    await expireQuotes(env.DB, sent.expires_at);
+    await expireQuotes(env.DB, sent.expires_at + 1);
     expect((await quoteByCode(env.DB, quote.code))!.quote.status).toBe('het_han');
   });
 });

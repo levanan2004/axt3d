@@ -1,11 +1,10 @@
-import { quoteLimits } from './quote';
+import { dottedExtensionPhrase, quoteLimits } from './quote';
 import { shopConfig } from './config';
 
 export function validateModelFile(filename: string, bytes: Uint8Array, limits = quoteLimits(shopConfig)) {
   const ext = filename.split('.').pop()?.toLowerCase() || '';
-  const allowed = limits.allowedExt.map(item => item.toUpperCase()).join(', ');
-  if (!limits.allowedExt.includes(ext)) throw new Error(`Chỉ nhận file ${allowed}.`);
-  if (bytes.byteLength < 15 || bytes.byteLength > limits.maxBytes) throw new Error(`Mỗi file tối đa ${limits.maxFileMB} MB.`);
+  if (!limits.allowedExt.includes(ext)) throw new Error(`Chỉ nhận file ${dottedExtensionPhrase()}.`);
+  if (bytes.byteLength < 15 || bytes.byteLength > limits.maxBytes) throw new Error(`File lớn hơn ${limits.maxFileMB} MB.`);
   if (ext === '3mf') {
     if (bytes[0] !== 0x50 || bytes[1] !== 0x4b) throw new Error('File 3MF không đúng định dạng nén.');
     return ext;

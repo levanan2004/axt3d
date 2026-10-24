@@ -60,7 +60,7 @@ async function api(request:Request,env:Env):Promise<Response|null>{const url=new
  }
  if(path==='/sitemap.xml'){
   const products=await env.DB.prepare('SELECT slug,updated_at FROM products WHERE active=1').all<{slug:string;updated_at:number}>();
-  const entries=[...['/','/danh-muc','/lien-he','/dat-in-3d',...legalRoutes.map(page=>page.path)].map(path=>({path,date:null as number|null})),...products.results.map(p=>({path:`/san-pham/${p.slug}`,date:p.updated_at}))];
+  const entries=[...['/','/danh-muc','/lien-he','/dat-in',...legalRoutes.map(page=>page.path)].map(path=>({path,date:null as number|null})),...products.results.map(p=>({path:`/san-pham/${p.slug}`,date:p.updated_at}))];
   return new Response(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${entries.map(e=>`<url><loc>${xml(new URL(e.path,env.SITE_URL).href)}</loc>${e.date?`<lastmod>${new Date(e.date).toISOString()}</lastmod>`:''}</url>`).join('')}</urlset>`,{headers:{'Content-Type':'application/xml; charset=utf-8','Cache-Control':'public,max-age=300'}});
  }
  if(path==='/robots.txt')return new Response(robotsTxt(env),{headers:{'Content-Type':'text/plain; charset=utf-8'}});
