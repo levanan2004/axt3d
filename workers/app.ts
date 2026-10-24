@@ -3,6 +3,7 @@ import {cloudflareContext} from '../app/lib/context';
 import {z} from 'zod';
 import {shopConfig} from '../app/lib/config';
 import {expireOrders,recordPayment,sepaySchema} from '../app/lib/orders.server';
+import {expectedBankAccount,legalRoutes,robotsTxt} from '../app/lib/http';
 import {orderDetails,publicOrder} from '../app/lib/db.server';
 import {assertSameOrigin,requireAdmin,requireOrder,secureEqual,rateLimit} from '../app/lib/security.server';
 import type {Env,Variant} from '../app/lib/types';
@@ -15,8 +16,9 @@ export async function webhook(request:Request,env:Env){
  if(Number(request.headers.get('content-length')||0)>16384)return json({success:false},413);
  const raw=await request.text();if(raw.length>16384)return json({success:false},413);
  let payload:z.infer<typeof sepaySchema>;try{payload=sepaySchema.parse(JSON.parse(raw));}catch{return json({success:false,error:'Invalid payload'},400);}
- if(!shopConfig.bank.accountNumber)return json({success:false,error:'Receiving account not configured'},503);
- if(payload.accountNumber!==shopConfig.bank.accountNumber)return json({success:false,error:'Wrong receiving account'},400);
+ const expectedAccount=expectedBankAccount(env);
+ if(!expectedAccount)return json({success:false,error:'Receiving account not configured'},503);
+ if(payload.accountNumber!==expectedAccount)return json({success:false,error:'Wrong receiving account'},400);
  const result=await recordPayment(env.DB,payload);
  return json({success:true,...result});
 }
@@ -57,10 +59,10 @@ async function api(request:Request,env:Env):Promise<Response|null>{const url=new
  }
  if(path==='/sitemap.xml'){
   const products=await env.DB.prepare('SELECT slug,updated_at FROM products WHERE active=1').all<{slug:string;updated_at:number}>();
-  const entries=[...['/','/danh-muc','/lien-he',...['dieu-khoan','bao-mat','doi-tra','van-chuyen'].map(s=>`/chinh-sach/${s}`)].map(path=>({path,date:null as number|null})),...products.results.map(p=>({path:`/san-pham/${p.slug}`,date:p.updated_at}))];
+  const entries=[...['/','/danh-muc','/lien-he',...legalRoutes.map(page=>page.path)].map(path=>({path,date:null as number|null})),...products.results.map(p=>({path:`/san-pham/${p.slug}`,date:p.updated_at}))];
   return new Response(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${entries.map(e=>`<url><loc>${xml(new URL(e.path,env.SITE_URL).href)}</loc>${e.date?`<lastmod>${new Date(e.date).toISOString()}</lastmod>`:''}</url>`).join('')}</urlset>`,{headers:{'Content-Type':'application/xml; charset=utf-8','Cache-Control':'public,max-age=300'}});
  }
- if(path==='/robots.txt')return new Response(`User-agent: *\n${env.APP_ENV==='production'?'Allow: /\nDisallow: /admin\nDisallow: /api/\nDisallow: /thanh-toan\nDisallow: /gio-hang\nDisallow: /theo-doi-don':'Disallow: /'}\nSitemap: ${env.SITE_URL}/sitemap.xml\n`,{headers:{'Content-Type':'text/plain; charset=utf-8'}});
+ if(path==='/robots.txt')return new Response(robotsTxt(env),{headers:{'Content-Type':'text/plain; charset=utf-8'}});
  if(path==='/admin/local-auth'){
   if(env.APP_ENV!=='local'||!['localhost','127.0.0.1','[::1]'].includes(url.hostname)||!env.LOCAL_ADMIN_TOKEN)return new Response('Not found',{status:404});
   if(request.method==='POST'){assertSameOrigin(request);return new Response(null,{status:303,headers:{Location:'/admin','Set-Cookie':`local_admin=${env.LOCAL_ADMIN_TOKEN}; HttpOnly; SameSite=Strict; Path=/; Max-Age=28800`}});}
