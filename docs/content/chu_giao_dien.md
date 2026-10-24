@@ -90,11 +90,11 @@ Lý do hủy: `Quá hạn chuyển cọc.` · `Bạn yêu cầu hủy.` · `Shop
 ## 8. Đặt in theo yêu cầu (`/dat-in`)
 **Đầu trang**
 - H1: `In 3D theo yêu cầu`
-- Phụ: `Gửi file STL hoặc 3MF, chọn nhựa và màu. Bạn thấy giá tạm tính ngay, shop gửi báo giá chính thức, bạn đồng ý rồi mới cọc.`
+- Phụ: `Gửi file ({config.customPrint.upload.allowedExt}), chọn nhựa và màu. Shop kiểm tra file và gửi báo giá, bạn đồng ý rồi mới cọc.`
 
 **Quy trình (4 bước)**
-1. `Tải file và chọn thông số` – `Web tính giá tạm dựa trên file và nhựa bạn chọn.`
-2. `Shop kiểm tra và báo giá` – `Shop xem file, chốt giá cuối và thời gian in. Báo giá có hiệu lực {config.customPrint.quoteValidHours} giờ.`
+1. `Tải file và chọn thông số` – `Gửi file cùng thông tin yêu cầu: nhựa, màu, số lượng, hoàn thiện.`
+2. `Shop kiểm tra và báo giá` – `Shop xem file, tính giá theo khối lượng và giờ in thực tế, báo giá cùng thời gian in. Báo giá có hiệu lực {config.customPrint.quoteValidHours} giờ.`
 3. `Bạn duyệt và cọc 50%` – `Cọc qua QR như đơn thường, nội dung IN3D{maDon}.`
 4. `In và giao hàng` – `In xong, shop giao qua Viettel Post. Phần còn lại và phí ship trả khi nhận.`
 
@@ -102,14 +102,13 @@ Lý do hủy: `Quá hạn chuyển cọc.` · `Bạn yêu cầu hủy.` · `Shop
 - `Tên sản phẩm/dự án` · `Mô tả (công dụng, yêu cầu đặc biệt)` · `Họ và tên` · `Số điện thoại` · `Email (không bắt buộc)`
 
 **Bước 2 – File và thông số**
-- Dropzone: `Kéo thả file STL / 3MF vào đây` · `hoặc Chọn file` · `Tối đa {config dung lượng} MB mỗi file.`
+- Dropzone: `Kéo thả file ({config.customPrint.upload.allowedExt}) vào đây` · `hoặc Chọn file` · `Tối đa {config.customPrint.upload.maxFiles} file, mỗi file {config.customPrint.upload.maxFileMB} MB.`
 - `Chất liệu` (PLA · PETG · TPU · Resin) – gợi ý ngắn: PLA `Dễ in, nhiều màu, dùng trong nhà` · PETG `Bền, chịu nhiệt tốt hơn PLA` · TPU `Dẻo, đàn hồi` · Resin `Chi tiết mịn, hợp mô hình nhỏ`
 - `Màu sắc` · `Số lượng` · `Hoàn thiện`: `Không xử lý` · `Xử lý cơ bản (gỡ support, chà nhám)` · `Sơn màu`
-- Đang đọc file: `Đang đọc file…` · Xong: `{tenFile} · khoảng {gram} g · khoảng {gio} giờ in`
+- Đang tải: `Đang tải file…` · Xong: `{tenFile} · đã tải lên`
 
-**Bước 3 – Giá tạm tính**
-- `Giá tạm tính: {giaTam}`
-- Ghi chú: `Đây là giá ước tính tự động, chưa phải giá cuối. Shop sẽ kiểm tra file và gửi báo giá chính thức. Đơn tối thiểu {config.customPrint.minOrder}.`
+**Bước 3 – Xác nhận và gửi**
+- Ghi chú: `Web không tính giá tự động. Shop kiểm tra file rồi gửi báo giá, báo giá có hiệu lực {config.customPrint.quoteValidHours} giờ. Đơn tối thiểu {config.customPrint.minOrder}.`
 - **Cam kết quyền sử dụng file (checkbox bắt buộc):** `Tôi cam kết có quyền sử dụng file này để in (tự thiết kế, đã mua hoặc được cấp phép), và file không vi phạm quyền sở hữu trí tuệ của người khác. Tôi chịu trách nhiệm nếu có tranh chấp.`
 - **Hàng không nhận in (checkbox bắt buộc):** `Tôi xác nhận file không phải vũ khí hay bộ phận vũ khí, đồ giả mạo (giấy tờ, con dấu, tiền, hàng nhái thương hiệu), vật phẩm trái pháp luật hay thuần phong mỹ tục.` · link `Xem danh sách hàng không nhận in`
 - Đồng ý: `Tôi đồng ý với Điều khoản đặt in. Tiền cọc không hoàn lại khi shop đã bắt đầu in.`
@@ -134,7 +133,7 @@ Sau khi cọc, phần giao hàng dùng tiếp các trạng thái đơn ở mục
 - Hết hạn: `Báo giá đã hết hạn. Bấm "Yêu cầu báo giá lại" để shop xem lại giá.`
 
 **Lỗi upload**
-- `Chỉ nhận file .stl hoặc .3mf.` · `File lớn hơn giới hạn cho phép.` · `File bị lỗi hoặc không đọc được. Thử xuất lại file từ phần mềm thiết kế.` · `Mô hình lớn hơn khổ in của máy. Shop sẽ liên hệ để chia phần hoặc thu nhỏ.` · `Tải lên bị gián đoạn. Thử lại.` · `Bạn cần đánh dấu hai cam kết trước khi gửi.`
+- `Chỉ nhận file {config.customPrint.upload.allowedExt}.` · `File lớn hơn {config.customPrint.upload.maxFileMB} MB.` · `Tối đa {config.customPrint.upload.maxFiles} file mỗi yêu cầu.` · `File bị lỗi hoặc không đọc được. Thử xuất lại file từ phần mềm thiết kế.` · `Mô hình lớn hơn khổ in của máy. Shop sẽ liên hệ để chia phần hoặc thu nhỏ.` · `Tải lên bị gián đoạn. Thử lại.` · `Bạn cần đánh dấu hai cam kết trước khi gửi.`
 
 ## 9. Trạng thái trống và lỗi chung
 - Danh mục trống: `Danh mục này chưa có sản phẩm. Xem các danh mục khác nhé.`

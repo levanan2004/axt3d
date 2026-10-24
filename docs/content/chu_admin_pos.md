@@ -3,7 +3,7 @@
 Admin đăng nhập qua Cloudflare Access. Số tiền, tỉ lệ, phí lấy từ config/`calcOrderTotals`, không gõ tay vào chữ.
 
 ## 1. Khung chung
-- Logo: `{TEN_SHOP} Admin`
+- Logo: `AXT 3D Admin`
 - Menu: `Tổng quan` · `Đơn hàng` · `Đặt in` · `Sản phẩm` · `Sản xuất` · `Tồn kho` · `Vận chuyển & COD` · `Khách hàng` · `Báo cáo` · `Bán tại quầy (POS)` · `Cài đặt`
 - Nút chung: `Lưu` · `Hủy` · `Xóa` · `Sửa` · `Xem →` · `Xuất CSV` · `Lọc` · `Xóa lọc` · `Tải thêm`
 - Lưu xong: `Đã lưu.` · Lỗi lưu: `Chưa lưu được. Thử lại.` · Mất quyền: `Phiên đăng nhập hết hạn. Đăng nhập lại.`
@@ -37,7 +37,7 @@ Admin đăng nhập qua Cloudflare Access. Số tiền, tỉ lệ, phí lấy t�
 ## 4. Đặt in – báo giá
 - Tiêu đề: `Yêu cầu đặt in`
 - Tab: `Chờ báo giá` · `Đã báo giá` · `Đã cọc` · `Đang in` · `Hoàn thành` · `Đã hủy`
-- Chi tiết: `File` (nút `Tải file`) · `Chất liệu` · `Màu` · `Số lượng` · `Hoàn thiện` · `Giá tạm tính của web: {giaTam}` · `Ước tính: {gram} g · {gio} giờ`
+- Chi tiết: `File` (nút `Tải file`) · `Chất liệu` · `Màu` · `Số lượng` · `Hoàn thiện`
 - Form báo giá: `Khối lượng thực tế (g)` · `Giờ in thực tế` · `Hoàn thiện` · `Giá cuối` · `Thời gian in dự kiến` · `Ghi chú cho khách`
 - Gợi ý: `Giá theo công thức config: {giaCongThuc}. Bạn có thể sửa giá cuối.`
 - Nút: `Gửi báo giá` · xác nhận `Gửi báo giá {giaCuoi} cho khách? Báo giá có hiệu lực {config.customPrint.quoteValidHours} giờ.`
@@ -92,7 +92,7 @@ Admin đăng nhập qua Cloudflare Access. Số tiền, tỉ lệ, phí lấy t�
 - Xuất: `Xuất báo cáo CSV`
 
 ## 9. POS – bán tại quầy (màn 21 tablet, 22 mobile)
-- Header: `{TEN_SHOP} POS · {tenNhanVien} · {quay}`
+- Header: `AXT 3D POS · {tenNhanVien} · {quay}`
 - Tìm: `Tìm sản phẩm hoặc quét mã SKU`
 - Giỏ: `Giỏ tại quầy ({n})` · `Xóa giỏ` · xác nhận `Xóa toàn bộ giỏ?`
 - Tổng: `Tổng tiền {tong}` (POS không cọc, không phí ship)
