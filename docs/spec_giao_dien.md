@@ -26,12 +26,12 @@ Stack: React Router + TypeScript + Tailwind + shadcn/ui, deploy Cloudflare. **Mo
 - **Radius:** sm 6 · md 8 (input, nút) · lg 12 (card) · xl 16 (sheet, banner) · full (badge, avatar).
 - **Spacing:** thang 4px Tailwind; padding trang 16 (mobile) / 24 (PC); gap grid 12 mobile / 16–20 PC.
 - **Shadow:** card `0 1px 2px rgb(16 24 40/.06)`; hover card `0 4px 12px rgb(16 24 40/.08)`; sticky bar `0 -2px 8px rgb(16 24 40/.08)`.
-- **Breakpoints:** mobile `<768` · tablet `md: 768–1023` · desktop `lg: ≥1024`; container max **1280px**.
+- **Breakpoints:** mobile `<768` · tablet `md: 768–1023` · desktop `lg: ≥1024`; container max **1320px**.
 
 ### tailwind.config (theme.extend)
 ```ts
 theme: {
-  container: { center: true, padding: { DEFAULT: "1rem", lg: "1.5rem" }, screens: { "2xl": "1280px" } },
+  container: { center: true, padding: { DEFAULT: "1rem", lg: "1.5rem" }, screens: { "2xl": "1320px" } },
   extend: {
     fontFamily: { sans: ['"Be Vietnam Pro"', "system-ui", "sans-serif"] },
     colors: {
@@ -132,3 +132,49 @@ theme: {
 - Danh mục "Phim/Anime" → đổi tên (đề xuất "Nhân vật & Fantasy").
 - Bỏ lựa chọn "Viettel Post COD" riêng ở màn 9/10.
 - "3DStore" là tên tạm: không hard-code trong text/ảnh, lấy từ config.
+
+## 8. Phase 2 — Đặt in theo file (màn 16 và 17)
+
+Nguồn tiền: mọi số và công thức đọc từ `config/shop-config.json` → `customPrint`. Không viết cứng giá vật liệu, phí hoàn thiện, phí thiết kế, hệ số gấp, hay cách làm tròn. Các khóa `customPrint.upload.maxFileMB`, `customPrint.upload.maxFiles`, `customPrint.upload.allowedExt`, `customPrint.colors`, `customPrint.maxQty` chủ shop sẽ chốt sau. Khi khóa vắng hoặc `null`, code dùng mặc định kỹ thuật được ghi rõ `DEFAULT_PENDING_OWNER` (không coi đó là giá bán).
+
+Container trang **1320px**. Chữ cam trên nền trắng dùng `#C2410C`. Font Be Vietnam Pro. Icon dùng lucide. Ảnh sản phẩm chưa có thì dùng placeholder, không dùng nhân vật có bản quyền. Màn có thanh hành động dính đáy thì ẩn bottom nav.
+
+### Màn 16 — Form yêu cầu (mobile trước, rồi PC)
+
+- Route `/dat-in-3d`.
+- Khách nhập họ tên, số điện thoại, ghi chú.
+- Tải một hoặc nhiều file **STL/3MF** lên R2. Kiểm tra phía server (không tin extension của trình duyệt):
+  - đuôi file thuộc `allowedExt` (mặc định kỹ thuật `stl`, `3mf` nếu config null);
+  - dung lượng từng file ≤ `maxFileMB`, số file ≤ `maxFiles`;
+  - nội dung: STL ASCII phải có `solid` và `endsolid`/`facet`; STL nhị phân phải có kích thước `84 + số mặt * 50`; 3MF phải là ZIP (`PK`).
+- Chọn vật liệu, màu (swatch có tên), số lượng (1…`maxQty`), hoàn thiện, tùy chọn thiết kế giúp, tùy chọn làm gấp.
+- Cột tóm tắt hiện **ước tính** tính bằng `customPrint.formula` (cùng hàm với admin). Ghi rõ đây là ước tính, cửa hàng sẽ chốt.
+- Thanh dưới dính (mobile): nút gửi yêu cầu. Ẩn bottom nav.
+
+### Màn 17 — Báo giá đã gửi
+
+- Route `/bao-gia/:code`, chỉ người giữ cookie yêu cầu (hoặc tra bằng mã + số điện thoại) xem được.
+- Khi chưa gửi giá: trạng thái đang chờ cửa hàng.
+- Khi đã gửi: hiện số tiền đã chốt, nút chấp nhận. Chấp nhận tạo đơn `cho_coc` và chuyển sang luồng QR/cọc hiện có (`IN3D{mã đơn}`, cọc theo `calcOrderTotals` trên tiền hàng đã chốt). Đơn in theo yêu cầu không trừ tồn kho catalog.
+
+### Sáu trạng thái báo giá
+
+Đọc từ `customPrint.quoteStatuses`:
+
+1. `moi_yeu_cau` — khách vừa gửi
+2. `dang_bao_gia` — admin đang tính
+3. `da_gui` — đã gửi giá cho khách
+4. `da_chap_nhan` — khách chấp nhận, đã tạo đơn `cho_coc`
+5. `tu_choi` — khách từ chối
+6. `het_han` — quá hạn trong `customPrint.quoteExpiryHours` mà chưa chấp nhận
+
+### Admin báo giá
+
+- Danh sách và màn chi tiết trong khu quản trị (Cloudflare Access, hoặc local auth khi chạy máy).
+- Giá gợi ý = đánh giá `customPrint.formula` với biến lấy từ vật liệu, hoàn thiện, số lượng, cờ thiết kế và cờ gấp trong config.
+- Admin được sửa giá. Nếu giá khác kết quả công thức thì bắt buộc có lý do. Mỗi lần lưu ghi log (ai, giá công thức, giá chốt, lý do, thời điểm).
+- Chỉ trạng thái `da_gui` mới cho khách chấp nhận.
+
+### Phase 3 (không thuộc màn 16/17)
+
+POS (`/pos`), sản xuất, báo cáo, đối soát COD và Viettel Post làm sau, đọc `pos`, `codReconciliation`, `reports`, `shipping.carrier`. `carrierCodFeeRate: null` thì đối soát gắn cờ đúng chuỗi `needs fee config`, không tính phí bằng 0. Viettel Post chỉ bật khi `shipping.carrier.apiEnabled` và không có credential trong repo; mặc định nhập mã vận đơn tay.
