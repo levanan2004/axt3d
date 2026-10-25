@@ -25,5 +25,6 @@
   "rate_limit_countdown": "(còn {giay} giây)",
   "quota_daily": "Hôm nay bạn đã dùng hết 20 câu hỏi với trợ lý. Bạn nhắn Zalo hoặc gọi shop để được hỗ trợ tiếp, hoặc quay lại vào ngày mai nhé.",
   "quota_shop": "Trợ lý tạm nghỉ vì đã nhận quá nhiều câu hỏi. Bạn nhắn Zalo hoặc gọi shop để được hỗ trợ ngay nhé.",
-  "too_long": "Câu hỏi dài quá 500 ký tự. Bạn rút gọn lại giúp mình nhé."
+  "too_long": "Câu hỏi dài quá 500 ký tự. Bạn rút gọn lại giúp mình nhé.",
+  "bot_chao_alt": "Linh vật {TEN_SHOP} vẫy tay chào"
 }

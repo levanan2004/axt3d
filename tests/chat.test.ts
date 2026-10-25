@@ -164,6 +164,7 @@ describe('chat copy and FAQ', () => {
     expect(JSON.stringify(chatCopy)).not.toMatch(/\{TEN_SHOP\}|\[PH/);
     expect(chatCopy.quota_daily).toContain(`${base.perVisitorPerDay} câu`);
     expect(chatCopy.too_long).toContain(`${base.maxInputChars} ký tự`);
+    expect(chatCopy.bot_chao_alt).toBe(`Linh vật ${shopConfig.shop.name} vẫy tay chào`); expect(shopConfig.shop.name).toBe('AXT 3D');
     expect(retryCountdown(42)).toContain('42'); expect(retryCountdown(90)).toContain('1:30');
   });
   it('homepage FAQ has the 10 items and JSON-LD text matches', () => {

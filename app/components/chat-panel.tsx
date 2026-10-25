@@ -127,7 +127,7 @@ export default function ChatPanel({ open, onClose }: { open: boolean; onClose: (
         <button type="button" className="chat-close" aria-label={chatCopy.close_aria} onClick={onClose}><X size={22} aria-hidden="true"/></button>
       </header>
       <div ref={log} className="chat-log" role="log" aria-live="polite" aria-relevant="additions">
-        <div className="chat-welcome"><Mascot name="bot_chao" size={120}/><p className="chat-disclaimer">{chatCopy.disclaimer}</p></div>
+        <div className="chat-welcome"><Mascot name="bot_chao" size={120} label={chatCopy.bot_chao_alt}/><p className="chat-disclaimer">{chatCopy.disclaimer}</p></div>
         <div className="chat-row bot"><Mascot name="bot_avatar" size={32}/><div className="chat-bubble bot">{chatCopy.greeting}</div></div>
         {messages.length === 0 && <div className="chat-chips" role="group" aria-label={chatCopy.chips_group_aria}>
           {[chatCopy.chip_1, chatCopy.chip_2, chatCopy.chip_3].map(c => <button key={c} type="button" className="chat-chip" onClick={() => send(c)}>{c}</button>)}
