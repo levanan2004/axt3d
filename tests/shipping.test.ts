@@ -1,0 +1,20 @@
+import {describe,it,expect,vi,afterEach} from 'vitest';
+import {customPrintWeightGram,deliveryDays,fetchShippingQuote,orderWeightGram,pickService,priceAllBody} from '../app/lib/shipping';
+import {shopConfig} from '../app/lib/config';
+const req={provinceId:1,wardId:49823,weightGram:500,goodsValue:89000,cod:89000};
+const ok=(body:unknown)=>Promise.resolve(new Response(JSON.stringify(body),{status:200}));
+afterEach(()=>vi.useRealTimers());
+describe('packed weight',()=>{
+ it('sums weight × quantity and defaults missing weights to 300g',()=>{expect(orderWeightGram([{weightGram:120,quantity:2},{weightGram:null,quantity:1},{quantity:3}])).toBe(240+300+900);});
+ it('reads the default from config',()=>expect(orderWeightGram([{quantity:2}],{...shopConfig.shipping,defaultPackedWeightGram:250})).toBe(500));
+ it('custom prints use quoted plastic grams + 150g box',()=>{expect(customPrintWeightGram(80)).toBe(230);expect(customPrintWeightGram(80,2)).toBe(310);expect(customPrintWeightGram(0)).toBe(150);});
+});
+describe('VTP fee',()=>{
+ it('picks the cheapest service and converts hours to days',async()=>{const f=vi.fn(()=>ok([{MA_DV_CHINH:'LCOD',GIA_CUOC:40141,THOI_GIAN:'72 giờ'},{MA_DV_CHINH:'STK',GIA_CUOC:35841,THOI_GIAN:'72 giờ'},{MA_DV_CHINH:'NCOD',GIA_CUOC:54879,THOI_GIAN:'36 giờ'}]));const q=await fetchShippingQuote(req,'t',f as unknown as typeof fetch);expect(q).toEqual({fee:35841,fallback:false,days:3,service:'STK',weightGram:500});});
+ it('sends sender ids from config and the Token header',async()=>{const f=vi.fn((_u:string,_i:RequestInit)=>ok([{MA_DV_CHINH:'STK',GIA_CUOC:1000}]));await fetchShippingQuote(req,'secret',f as unknown as typeof fetch);const [url,init]=f.mock.calls[0];expect(url).toBe('https://partner.viettelpost.vn/v2/order/getPriceAll');expect((init.headers as Record<string,string>).Token).toBe('secret');expect(JSON.parse(String(init.body))).toMatchObject({SENDER_PROVINCE:shopConfig.shipping.sender.provinceId,SENDER_WARD:shopConfig.shipping.sender.wardId,RECEIVER_WARD:49823,PRODUCT_WEIGHT:500});});
+ it('no delivery time -> days null',async()=>{const q=await fetchShippingQuote(req,'t',(()=>ok([{MA_DV_CHINH:'X',GIA_CUOC:25000}])) as unknown as typeof fetch);expect(q.days).toBeNull();expect(q.fallback).toBe(false);});
+ it('falls back to the config fee when VTP takes longer than apiTimeoutMs',async()=>{vi.useFakeTimers();const hang=vi.fn((_u:string,init:RequestInit)=>new Promise<Response>((_r,reject)=>init.signal?.addEventListener('abort',()=>reject(new Error('aborted')))));const pending=fetchShippingQuote(req,'t',hang as unknown as typeof fetch);await vi.advanceTimersByTimeAsync(shopConfig.shipping.apiTimeoutMs+10);const q=await pending;expect(q).toEqual({fee:shopConfig.shipping.fallbackFee,fallback:true,days:null,service:null,weightGram:500});expect(q.fee).toBe(20000);});
+ it('a fetch that never settles still falls back on time',async()=>{vi.useFakeTimers();const pending=fetchShippingQuote(req,'t',(()=>new Promise<Response>(()=>{})) as unknown as typeof fetch);await vi.advanceTimersByTimeAsync(shopConfig.shipping.apiTimeoutMs+10);expect((await pending).fallback).toBe(true);});
+ it('falls back on VTP errors, HTTP errors and missing token',async()=>{expect((await fetchShippingQuote(req,'t',(()=>ok({status:204,error:true,message:'Price does not apply'})) as unknown as typeof fetch)).fallback).toBe(true);expect((await fetchShippingQuote(req,'t',(()=>Promise.resolve(new Response('x',{status:500}))) as unknown as typeof fetch)).fallback).toBe(true);expect((await fetchShippingQuote(req,'t',(()=>Promise.reject(new Error('net')))  as unknown as typeof fetch)).fallback).toBe(true);expect((await fetchShippingQuote(req,undefined)).fee).toBe(shopConfig.shipping.fallbackFee);});
+ it('parses delivery time and ignores zero prices',()=>{expect(deliveryDays('36 giờ')).toBe(2);expect(deliveryDays('2 ngày')).toBe(2);expect(deliveryDays('')).toBeNull();expect(pickService([{GIA_CUOC:0},{GIA_CUOC:5}])?.GIA_CUOC).toBe(5);expect(priceAllBody(req).TYPE).toBe(1);});
+});

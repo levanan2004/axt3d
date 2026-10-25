@@ -6,7 +6,7 @@ import { robotsTxt } from '../app/lib/http';
 
 describe('copy tokens', () => {
   it('renders money and rates from shop config', () => {
-    expect(renderTokens('Cọc {config.deposit.rate}, phí ship {config.shipping.flatFee}.')).toBe('Cọc 50%, phí ship 20.000đ.');
+    expect(renderTokens('Cọc {config.deposit.rate}, phí ship {config.shipping.fallbackFee}.')).toBe('Cọc 50%, phí ship 20.000đ.');
   });
   it('keeps unknown identity placeholders visible', () => {
     expect(renderTokens('Đơn vị {TEN_SHOP} tại {DIA_CHI}.')).toBe('Đơn vị AXT 3D tại {DIA_CHI}.');
