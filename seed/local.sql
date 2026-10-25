@@ -157,5 +157,5 @@ Chú robot thân hộp, đầu tròn với một mắt cảm biến, ăng-ten ng
 Mẫu là thiết kế gốc của shop, không mô phỏng robot hay nhân vật của phim, truyện, game nào. Hợp với bàn học, góc làm việc, hoặc làm quà cho người thích đồ công nghệ.
 
 Lưu ý: có chi tiết nhỏ, không phù hợp với trẻ dưới 3 tuổi. Đừng xoay khớp quá mạnh. Vân lớp in mỏng trên bề mặt là đặc trưng của in 3D.' WHERE id='robot';
-INSERT OR IGNORE INTO variants(id,product_id,sku,color,color_hex,material,price,stock) VALUES('robot-1','robot','ROBOT-1','Xám','#7d8794','PLA',189000,10);
-INSERT OR IGNORE INTO variants(id,product_id,sku,color,color_hex,material,price,stock) VALUES('robot-2','robot','ROBOT-2','Kem','#e5d6bc','PLA',189000,10);
+INSERT OR IGNORE INTO variants(id,product_id,sku,color,color_hex,material,price,stock) VALUES('robot-1','robot','ROBOT-1','Xám','#7d8794','PLA',189000,5);
+INSERT OR IGNORE INTO variants(id,product_id,sku,color,color_hex,material,price,stock) VALUES('robot-2','robot','ROBOT-2','Kem','#e5d6bc','PLA',189000,5);

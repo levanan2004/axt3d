@@ -22,7 +22,9 @@ for (const p of config.catalog.seedProducts) {
  sql.push(`INSERT OR IGNORE INTO products(id,slug,name,category,description,image,images,badge,created_at,updated_at) VALUES(${[p.id,p.slug,p.name,p.category,description,image,JSON.stringify([image,`/images/${p.image}-detail.webp`]),p.badge].map(q).join(',')},${stamped},${stamped});`);
  sql.push(`UPDATE products SET name=${q(p.name)}, description=${q(description)} WHERE id=${q(p.id)};`);
  for (const [i,color,hex] of [[1,p.color,p.hex],[2,'Kem','#e5d6bc']]) {
-  sql.push(`INSERT OR IGNORE INTO variants(id,product_id,sku,color,color_hex,material,price,stock) VALUES(${[`${p.id}-${i}`,p.id,`${p.id.toUpperCase()}-${i}`,color,hex,p.material].map(q).join(',')},${p.price},${p.stock});`);
+  // Robot's config stock is the total. Xám and Kem each get half.
+  const stock = p.id === 'robot' ? p.stock / 2 : p.stock;
+  sql.push(`INSERT OR IGNORE INTO variants(id,product_id,sku,color,color_hex,material,price,stock) VALUES(${[`${p.id}-${i}`,p.id,`${p.id.toUpperCase()}-${i}`,color,hex,p.material].map(q).join(',')},${p.price},${stock});`);
  }
 }
 mkdirSync('seed', { recursive: true });
