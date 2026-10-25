@@ -12,10 +12,9 @@
   // ALLOW_INDEXING=true opens robots.txt and drops the local noindex header so Lighthouse can score SEO. Leave it empty otherwise.
   "vars": { "APP_ENV": "staging", "SITE_URL": "https://axt3d-staging.anxaitech.workers.dev", "ACCESS_TEAM_DOMAIN": "", "ACCESS_AUD": "", "ALLOW_INDEXING": "",
     // Customer accounts. Empty GOOGLE_CLIENT_ID hides Google login (routes 404). Secrets: GOOGLE_CLIENT_SECRET, TURNSTILE_SECRET (wrangler secret put).
-    "GOOGLE_CLIENT_ID": "", "EMAIL_MODE": "log", "EMAIL_FROM": "", "DEV_EMAIL_LOG": "", "TURNSTILE_SITE_KEY": "",
-    // Telegram order notifications (send-only, no webhook). Secret: TELEGRAM_BOT_TOKEN (wrangler secret put). TELEGRAM_CHAT_ID: shop group/chat id
-    // (var here or a secret). Either empty = notifications are silently off. Admin links use SITE_URL + /admin/don-hang/<code>.
-    "TELEGRAM_CHAT_ID": "" }
+    "GOOGLE_CLIENT_ID": "", "EMAIL_MODE": "log", "EMAIL_FROM": "", "DEV_EMAIL_LOG": "1", "TURNSTILE_SITE_KEY": "" }
+    // Telegram order notifications (send-only, no webhook). Secrets: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID (wrangler secret put).
+    // Either missing = notifications are silently off. Admin links use SITE_URL + /admin/don-hang/<code>.
   // Real email: after onboarding the domain to Cloudflare Email Sending add  "send_email": [{ "name": "EMAIL" }]  and set EMAIL_MODE=cloudflare, EMAIL_FROM=no-reply@<domain>.
   // Not added yet: the binding fails deploy until the sending domain is verified.
 }

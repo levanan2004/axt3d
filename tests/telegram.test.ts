@@ -1,7 +1,7 @@
 import {readFileSync} from 'node:fs';
 import {Miniflare} from 'miniflare';
 import {afterAll,afterEach,beforeAll,beforeEach,describe,expect,it,vi} from 'vitest';
-import {escapeHtml,formatOrderMessage,formatVnd,provinceFromAddress,sendTelegram,shortName,type NotifyOrder} from '../app/lib/telegram';
+import {escapeHtml,formatOrderMessage,formatVnd,sendTelegram,shortName,type NotifyOrder} from '../app/lib/telegram';
 import {expireOrdersAndNotify,notifyOrder} from '../app/lib/notify.server';
 import {createOrder,recordPayment,transferContent} from '../app/lib/orders.server';
 import {createVtpShipment,vtpWebhook} from '../app/lib/vtp-order.server';
@@ -14,7 +14,7 @@ const ok=()=>vi.fn(async(_u:RequestInfo|URL,_i?:RequestInit)=>new Response('{"ok
 
 describe('formatting',()=>{
  it('formats money like 450.000đ',()=>{expect(formatVnd(450000)).toBe('450.000đ');expect(formatVnd(0)).toBe('0đ');expect(formatVnd(1234567)).toBe('1.234.567đ');expect(formatVnd(999)).toBe('999đ');});
- it('short name and province only',()=>{expect(shortName(' Nguyễn Văn  An ')).toBe('An');expect(shortName('')).toBe('Khách');expect(provinceFromAddress(`${STREET}, ${WARD}, ${PROVINCE}`)).toBe(PROVINCE);expect(provinceFromAddress('chỉ một đoạn')).toBe('');});
+ it('short name and province only',()=>{expect(shortName(' Nguyễn Văn  An ')).toBe('An');expect(shortName('')).toBe('Khách');});
  it('escapes HTML',()=>{expect(escapeHtml('<b>A & "B"</b>')).toBe('&lt;b&gt;A &amp; &quot;B&quot;&lt;/b&gt;');const t=formatOrderMessage('created',{...sample,customer_name:'Hacker <script>'},[{product_name:'Mèo <i>x</i> & co',quantity:1}],SITE);expect(t).not.toContain('<script>');expect(t).toContain('Mèo &lt;i&gt;x&lt;/i&gt; &amp; co x1');expect(t).toContain('&lt;script&gt;');});
  const expected:Record<string,string>={created:'🆕 ĐƠN MỚI',deposited:'💰 ĐÃ NHẬN CỌC',cancelled:'❌ ĐƠN ĐÃ HUỶ',expired:'⌛ ĐƠN HẾT HẠN (quá 30 phút chưa cọc)',waybill:'🚚 ĐÃ TẠO VẬN ĐƠN VIETTEL POST',completed:'✅ KHÁCH ĐÃ NHẬN HÀNG'};
  for(const [kind,head] of Object.entries(expected))it(`message for ${kind}`,()=>{
@@ -44,7 +44,7 @@ const now=Date.UTC(2026,9,25,3),access='a'.repeat(64);
 const tgCalls:{url:string;body:{chat_id:string;text:string}}[]=[];
 beforeAll(async()=>{mf=new Miniflare({modules:true,script:'export default { fetch() { return new Response("ok"); } }',d1Databases:['DB'],compatibilityDate:'2026-07-30'});db=await mf.getD1Database('DB') as unknown as D1Database;
  env={DB:db,SITE_URL:SITE,VTP_WEBHOOK_SECRET:'hook-secret',TELEGRAM_BOT_TOKEN:TOKEN,TELEGRAM_CHAT_ID:CHAT} as Env;
- for(const file of ['0001_store','0002_quotes','0003_ops','0004_shipping','0005_vtp_order','0006_accounts']){const sql=readFileSync(`migrations/${file}.sql`,'utf8');await db.prepare(sql).run().catch(async()=>{await db.exec(sql);});}});
+ for(const file of ['0001_store','0002_quotes','0003_ops','0004_shipping','0005_vtp_order','0006_chat','0007_accounts','0008_order_province']){const sql=readFileSync(`migrations/${file}.sql`,'utf8');await db.prepare(sql).run().catch(async()=>{await db.exec(sql);});}});
 beforeEach(async()=>{tgCalls.length=0;
  vi.stubGlobal('fetch',vi.fn(async(url:RequestInfo|URL,init?:RequestInit)=>{const u=String(url);if(u.startsWith('https://api.telegram.org/')){tgCalls.push({url:u,body:JSON.parse(String(init!.body))});return new Response('{"ok":true}');}return new Response('blocked in test',{status:500});}));
  for(const table of ['vtp_webhook_events','audit_logs','payments','order_events','order_items','orders','customers','variants','products','rate_limits'])await db.prepare(`DELETE FROM ${table}`).run();
@@ -78,6 +78,10 @@ describe('order hooks (D1 + mocked Telegram)',()=>{
  it('expired after 30 minutes without deposit, once',async()=>{const c0=ctx();const o=await createOrder(env,input(),access,now,null,c0);await c0.flush();tgCalls.length=0;
   const c=ctx();await expireOrdersAndNotify(env,c,o.expires_at-1);await expireOrdersAndNotify(env,c,o.expires_at);await expireOrdersAndNotify(env,c,o.expires_at+60000);await c.flush();
   expect(tgCalls).toHaveLength(1);expect(tgCalls[0].body.text).toContain('⌛ ĐƠN HẾT HẠN (quá 30 phút chưa cọc)');expect(tgCalls[0].body.text).toContain('Trạng thái: Đã hủy');noLeak(tgCalls[0].body.text);});
+ it('province comes from the stored province_name, never parsed from the free-text address',async()=>{const c=ctx();const o=await createOrder(env,input(),access,now,null,c);await c.flush();
+  expect((await db.prepare('SELECT province_name FROM orders WHERE id=?').bind(o.id).first<{province_name:string}>())!.province_name).toBe(PROVINCE);expect(tgCalls[0].body.text).toContain(`\u00b7 ${PROVINCE}`);
+  await db.prepare("UPDATE orders SET province_name=NULL,address='Fake St, Evil Ward, Hacker City' WHERE id=?").bind(o.id).run();tgCalls.length=0;
+  const c2=ctx();notifyOrder(env,c2,'cancelled',o.code);await c2.flush();expect(tgCalls[0].body.text).not.toContain('Hacker City');expect(tgCalls[0].body.text).not.toContain('\u00b7');});
  it('late payment after expiry reports cancelled',async()=>{const o=await createOrder(env,input(),access,now);expect(await recordPayment(db,pay(o,7),o.expires_at+1)).toMatchObject({event:'cancelled',code:o.code});});
  it('silent no-op when env is missing: no fetch, no DB read',async()=>{const c=ctx();for(const e of [{...env,TELEGRAM_BOT_TOKEN:undefined},{...env,TELEGRAM_CHAT_ID:''}] as Env[]){await createOrder(e,input(),access,now,null,c);expect(await notifyOrder(e,c,'created','ABCDEF123456')).toBe(false);}await c.flush();expect(tgCalls).toHaveLength(0);expect(fetch).not.toHaveBeenCalled();});
  it('Telegram failure never breaks the order flow',async()=>{vi.stubGlobal('fetch',vi.fn(async()=>{throw new Error('network down');}));const warn=vi.spyOn(console,'warn').mockImplementation(()=>{});

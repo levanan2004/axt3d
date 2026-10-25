@@ -1,5 +1,6 @@
 import { shopConfig } from './config';
 import siteInfo from '../../config/site-info.json';
+import faqTrangChu from '../../docs/content/faq_trang_chu.json';
 import { money } from './money';
 import { dottedExtensionPhrase, extensionPhrase, quoteLimits } from './quote';
 import { seo } from './seo';
@@ -184,3 +185,10 @@ function inline(value: string) {
     .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+|\/[^\s)]*)\)/g, '<a href="$2">$1</a>')
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
 }
+
+export type FaqItem = { q: string; a: string };
+/** Homepage FAQ (docs/content/faq_trang_chu.json). Display, JSON-LD and the chatbot index all use these same rendered items. */
+export function homeFaq(): FaqItem[] {
+  return faqTrangChu.items.map(item => ({ q: renderTokens(item.hoi), a: renderTokens(item.dap) }));
+}
+export const homeFaqTitle = faqTrangChu.tieu_de;

@@ -1,0 +1,132 @@
+{
+  "tieu_de": "Câu hỏi thường gặp",
+  "ghi_chu": "Thay hết placeholder {..} trong cả items lẫn jsonLd trước khi lên web; nội dung JSON-LD phải khớp chữ hiển thị.",
+  "items": [
+    {
+      "hoi": "Phí ship tính thế nào?",
+      "dap": "Shop giao toàn quốc qua Viettel Post. Phí ship được tính ở bước thanh toán theo địa chỉ nhận và cân nặng đã đóng gói của đơn, bạn thấy phí trước khi xác nhận đặt hàng."
+    },
+    {
+      "hoi": "Đặt hàng phải cọc bao nhiêu?",
+      "dap": "Bạn cọc {config.deposit.rate} của tổng tiền hàng cộng phí ship, làm tròn lên hàng nghìn. Số tiền cọc hiện rõ ở màn thanh toán."
+    },
+    {
+      "hoi": "Chuyển cọc bằng cách nào?",
+      "dap": "Bạn quét mã QR ở màn thanh toán để chuyển khoản, giao dịch được xác nhận tự động qua SePay. Nội dung chuyển khoản là IN3D kèm mã đơn, bạn giữ đúng nội dung để hệ thống nhận ra."
+    },
+    {
+      "hoi": "Khi nhận hàng phải trả bao nhiêu?",
+      "dap": "Bạn trả phần còn lại, tức tiền hàng cộng phí ship trừ tiền cọc đã chuyển. Số tiền COD ghi trên màn thanh toán và trang Theo dõi đơn, bạn chỉ trả đúng số này."
+    },
+    {
+      "hoi": "Đặt in riêng thế nào?",
+      "dap": "Bạn tải file 3D lên trang đặt in, chọn chất liệu, màu và số lượng, web sẽ hiện giá tạm tính. Shop kiểm tra file rồi gửi báo giá chính thức, bạn đồng ý và chuyển cọc {config.deposit.rate} như đơn thường thì shop bắt đầu in."
+    },
+    {
+      "hoi": "Đặt in nhận file định dạng gì?",
+      "dap": "Shop nhận file STL, 3MF hoặc OBJ, mỗi file tối đa {maxFileMB} MB và tối đa {maxFiles} file mỗi lần gửi."
+    },
+    {
+      "hoi": "Giá tạm tính trên web có phải giá cuối không?",
+      "dap": "Không. Giá tạm tính chỉ để bạn tham khảo, shop sẽ kiểm tra file và gửi báo giá chính thức gồm giá cuối và thời gian in dự kiến. Báo giá có hiệu lực {config.customPrint.quoteValidHours} giờ."
+    },
+    {
+      "hoi": "Đổi trả hàng thế nào?",
+      "dap": "Bạn gửi yêu cầu trong {SO_NGAY_DOI_TRA} ngày kể từ khi nhận hàng, qua {SO_DIEN_THOAI} hoặc {EMAIL}, kèm mã đơn, video mở hộp và ảnh chỗ lỗi. Shop sẽ báo hướng xử lý là gửi bù, đổi hay hoàn tiền."
+    },
+    {
+      "hoi": "Làm sao theo dõi đơn hàng?",
+      "dap": "Bạn vào trang Theo dõi đơn hàng, nhập mã đơn và số điện thoại đặt hàng. Khi đơn đã giao cho Viettel Post, mã vận đơn sẽ hiện ở đây."
+    },
+    {
+      "hoi": "Từ chối nhận hàng thì có mất cọc không?",
+      "dap": "Nếu hàng không lỗi mà bạn từ chối nhận hoặc không liên lạc được, cọc dùng bù chi phí in và ship hai chiều, phần dư shop hoàn lại. Nếu hàng lỗi do shop, shop hoàn toàn bộ cọc."
+    }
+  ],
+  "jsonLd": {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Phí ship tính thế nào?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Shop giao toàn quốc qua Viettel Post. Phí ship được tính ở bước thanh toán theo địa chỉ nhận và cân nặng đã đóng gói của đơn, bạn thấy phí trước khi xác nhận đặt hàng."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Đặt hàng phải cọc bao nhiêu?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Bạn cọc {config.deposit.rate} của tổng tiền hàng cộng phí ship, làm tròn lên hàng nghìn. Số tiền cọc hiện rõ ở màn thanh toán."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Chuyển cọc bằng cách nào?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Bạn quét mã QR ở màn thanh toán để chuyển khoản, giao dịch được xác nhận tự động qua SePay. Nội dung chuyển khoản là IN3D kèm mã đơn, bạn giữ đúng nội dung để hệ thống nhận ra."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Khi nhận hàng phải trả bao nhiêu?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Bạn trả phần còn lại, tức tiền hàng cộng phí ship trừ tiền cọc đã chuyển. Số tiền COD ghi trên màn thanh toán và trang Theo dõi đơn, bạn chỉ trả đúng số này."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Đặt in riêng thế nào?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Bạn tải file 3D lên trang đặt in, chọn chất liệu, màu và số lượng, web sẽ hiện giá tạm tính. Shop kiểm tra file rồi gửi báo giá chính thức, bạn đồng ý và chuyển cọc {config.deposit.rate} như đơn thường thì shop bắt đầu in."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Đặt in nhận file định dạng gì?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Shop nhận file STL, 3MF hoặc OBJ, mỗi file tối đa {maxFileMB} MB và tối đa {maxFiles} file mỗi lần gửi."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Giá tạm tính trên web có phải giá cuối không?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Không. Giá tạm tính chỉ để bạn tham khảo, shop sẽ kiểm tra file và gửi báo giá chính thức gồm giá cuối và thời gian in dự kiến. Báo giá có hiệu lực {config.customPrint.quoteValidHours} giờ."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Đổi trả hàng thế nào?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Bạn gửi yêu cầu trong {SO_NGAY_DOI_TRA} ngày kể từ khi nhận hàng, qua {SO_DIEN_THOAI} hoặc {EMAIL}, kèm mã đơn, video mở hộp và ảnh chỗ lỗi. Shop sẽ báo hướng xử lý là gửi bù, đổi hay hoàn tiền."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Làm sao theo dõi đơn hàng?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Bạn vào trang Theo dõi đơn hàng, nhập mã đơn và số điện thoại đặt hàng. Khi đơn đã giao cho Viettel Post, mã vận đơn sẽ hiện ở đây."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Từ chối nhận hàng thì có mất cọc không?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Nếu hàng không lỗi mà bạn từ chối nhận hoặc không liên lạc được, cọc dùng bù chi phí in và ship hai chiều, phần dư shop hoàn lại. Nếu hàng lỗi do shop, shop hoàn toàn bộ cọc."
+        }
+      }
+    ]
+  }
+}

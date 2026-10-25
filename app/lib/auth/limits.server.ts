@@ -1,6 +1,8 @@
 import {hash} from '../security.server';
 // Fixed-window counters in D1 (no KV is configured). Keys are hashed so raw emails/IPs are never stored.
 export const LOGIN_LIMITS={email:{max:5,windowMs:15*60000,lockMs:15*60000},ip:{max:20,windowMs:15*60000,lockMs:15*60000},turnstileAfter:3};
+/** Turnstile is required once either the IP or the email has this many recent failures. */
+export const needsTurnstileFor=(f:{ipFailures:number;emailFailures:number})=>f.ipFailures>=LOGIN_LIMITS.turnstileAfter||f.emailFailures>=LOGIN_LIMITS.turnstileAfter;
 export const SEND_LIMITS={ipPerHour:10,emailPerHour:3,emailMinGapMs:60000};
 export const limitKey=(scope:string,value:string)=>hash(`auth:${scope}:${value.toLowerCase()}`);
 export const clientIp=(request:Request)=>request.headers.get('cf-connecting-ip')||'local';
@@ -23,14 +25,14 @@ export async function recordFailure(db:D1Database,key:string,rule:{max:number;wi
 }
 export const clearLimit=(db:D1Database,key:string)=>db.prepare('DELETE FROM auth_limits WHERE key=?').bind(key).run();
 export const minutesLeft=(ms:number)=>Math.max(1,Math.ceil(ms/60000));
-/** Login lockout: either the email or the IP being locked blocks the attempt. */
+/** Login lockout: only the IP can be hard-locked. Per-email failures never lock (anyone could lock a victim out); they only require Turnstile. */
 export async function loginLock(db:D1Database,email:string,ip:string,now=Date.now()){
  const [e,i]=await Promise.all([peekLimit(db,await limitKey('login-email',email),now),peekLimit(db,await limitKey('login-ip',ip),now)]);
- return {lockedMs:Math.max(e.lockedMs,i.lockedMs),ipFailures:i.count,emailFailures:e.count};
+ return {lockedMs:i.lockedMs,ipFailures:i.count,emailFailures:e.count};
 }
 export async function loginFailed(db:D1Database,email:string,ip:string,now=Date.now()){
- const [e,i]=await Promise.all([recordFailure(db,await limitKey('login-email',email),LOGIN_LIMITS.email,now),recordFailure(db,await limitKey('login-ip',ip),LOGIN_LIMITS.ip,now)]);
- return {lockedMs:Math.max(e.lockedMs,i.lockedMs)};
+ const [e,i]=await Promise.all([consumeLimit(db,await limitKey('login-email',email),LOGIN_LIMITS.email.max,LOGIN_LIMITS.email.windowMs,now),recordFailure(db,await limitKey('login-ip',ip),LOGIN_LIMITS.ip,now)]);
+ return {lockedMs:i.lockedMs,emailFailures:e.count,ipFailures:i.count};
 }
 export async function loginSucceeded(db:D1Database,email:string){await clearLimit(db,await limitKey('login-email',email));}
 /** Forgot-password / resend limits. ipOk=false → show "too fast"; emailOk=false → silently skip sending (no enumeration). */

@@ -2,7 +2,7 @@ import type { OrderStatus } from "./config";
 export interface Env {
   DB: D1Database; IMAGES: R2Bucket; ASSETS: Fetcher;
   APP_ENV: string; SITE_URL: string; ACCESS_TEAM_DOMAIN: string; ACCESS_AUD: string; ALLOW_INDEXING?: string;
-  SEPAY_WEBHOOK_KEY?: string; LOCAL_ADMIN_TOKEN?: string; VTP_API_TOKEN?: string; VTP_WEBHOOK_SECRET?: string;
+  SEPAY_WEBHOOK_KEY?: string; LOCAL_ADMIN_TOKEN?: string; VTP_API_TOKEN?: string; GEMINI_API_KEY?: string; CHAT_IP_SALT?: string; VTP_WEBHOOK_SECRET?: string;
   // Customer accounts (feat/11). Empty GOOGLE_CLIENT_ID disables Google login. EMAIL_MODE: 'log' | 'cloudflare'.
   GOOGLE_CLIENT_ID?: string; GOOGLE_CLIENT_SECRET?: string; EMAIL_FROM?: string; EMAIL_MODE?: string; DEV_EMAIL_LOG?: string;
   TURNSTILE_SITE_KEY?: string; TURNSTILE_SECRET?: string;
