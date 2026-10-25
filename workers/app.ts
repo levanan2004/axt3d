@@ -118,7 +118,7 @@ export default {
   try{const context=new RouterContextProvider();context.set(cloudflareContext,{env,ctx});response=await api(request,env)||await handler(request,context);}catch(error){if(error instanceof Response)response=error;else{console.error('Request failed',error instanceof Error?error.message:'unknown');response=json({error:'Không thể xử lý yêu cầu. Vui lòng thử lại.'},500);}}
   const headers=new Headers(response.headers);headers.set('X-Content-Type-Options','nosniff');headers.set('Referrer-Policy','strict-origin-when-cross-origin');headers.set('X-Frame-Options','DENY');headers.set('Permissions-Policy','camera=(), microphone=(), geolocation=()');
   const path=new URL(request.url).pathname;
-  if(/^\/(admin|api|thanh-toan|theo-doi-don|gio-hang|tai-khoan)/.test(path)){if(!/^\/api\/shipping\/(provinces|wards)$/.test(path)||response.status!==200)headers.set('Cache-Control','no-store');headers.set('X-Robots-Tag','noindex, nofollow');}
+  if(/^\/(admin|api|thanh-toan|theo-doi-don|gio-hang|tai-khoan|dang-nhap|dang-ky|quen-mat-khau|dat-lai-mat-khau|xac-nhan-email|auth)/.test(path)){if(!/^\/api\/shipping\/(provinces|wards)$/.test(path)||response.status!==200)headers.set('Cache-Control','no-store');headers.set('X-Robots-Tag','noindex, nofollow');}
   if(!allowsIndexing(env))headers.set('X-Robots-Tag','noindex, nofollow');
   return new Response(response.body,{status:response.status,statusText:response.statusText,headers});
  },
