@@ -1,5 +1,7 @@
 import { Form, redirect, useActionData, useLoaderData, useNavigation, type ActionFunctionArgs, type LoaderFunctionArgs } from 'react-router';
+import { useEffect, useMemo, useState } from 'react';
 import { LoaderCircle } from 'lucide-react';
+import { AddressPicker, ShippingFeeLine, addressComplete, emptyAddress, loadSavedContact, saveContact, useShippingFee, type AddressValue } from '../components/address-picker';
 import { StoreLayout, Breadcrumb, PriceSummary } from '../components/store';
 import { Button } from '../components/ui/button';
 import { getEnv } from '../lib/db.server';
@@ -22,8 +24,7 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
   if (!found) throw new Response('Không tìm thấy báo giá.', { status: 404 });
   const open = await allowed(request, found.quote.access_hash);
   if (!open) return { locked: true as const, code: found.quote.code };
-  const totals = found.quote.quoted_amount ? calcOrderTotals([{ unitPrice: found.quote.quoted_amount, quantity: 1 }]) : null;
-  return { locked: false as const, quote: found.quote, totals };
+  return { locked: false as const, quote: found.quote };
 }
 
 export async function action({ request, params, context }: ActionFunctionArgs) {
@@ -43,7 +44,8 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
   }
   if (!(await allowed(request, found.quote.access_hash))) return { error: 'Phiên xem báo giá đã hết. Hãy mở lại bằng số điện thoại.' };
   try {
-    const accepted = await respondQuote(env, found.quote, form.get('intent') === 'accept', String(form.get('address') || ''));
+    const address = { street: String(form.get('street') || ''), provinceId: form.get('provinceId'), wardId: form.get('wardId'), provinceName: String(form.get('provinceName') || ''), wardName: String(form.get('wardName') || '') };
+    const accepted = await respondQuote(env, found.quote, form.get('intent') === 'accept', address);
     if (!accepted) return redirect(`/bao-gia/${found.quote.code}`);
     return redirect(`/thanh-toan/${accepted.code}`, { headers: { 'Set-Cookie': orderCookie(accepted.code, accepted.token, request) } });
   } catch (error) {
@@ -56,6 +58,16 @@ export default function QuotePage() {
   const result = useActionData<typeof action>();
   const navigation = useNavigation();
   if (data.locked) return <StoreLayout><Breadcrumb items={[{ label: 'Báo giá' }]}/><Form method="post" className="tracking-form panel"><h1>Xem báo giá #{data.code}</h1><p>Nhập số điện thoại đã gửi yêu cầu.</p><label className="field">Số điện thoại<input name="phone" required/></label><input type="hidden" name="intent" value="unlock"/>{result?.error && <p className="error-message" role="alert">{result.error}</p>}<Button type="submit">Xem báo giá</Button></Form></StoreLayout>;
-  const { quote, totals } = data;
-  return <StoreLayout><Breadcrumb items={[{ label: `Báo giá #${quote.code}` }]}/><div className="order-heading"><h1>Báo giá #{quote.code}</h1><span className="status-badge">{quoteStatusLabels[quote.status] || quote.status}</span></div>{result?.error && <p className="error-message" role="alert">{result.error}</p>}<div className="two-column"><section className="panel form-section"><h2>Yêu cầu của bạn</h2><p>{quote.customer_name} · {quote.phone}</p><p className="help-text">{quote.note || 'Không có ghi chú.'}</p><p>Trạng thái: {quoteStatusLabels[quote.status] || quote.status}</p>{quote.status === 'da_bao_gia' && totals && <Form method="post" className="form-section"><label className="field">Địa chỉ nhận hàng<textarea name="address" required minLength={8}/></label><div className="admin-footer-actions"><Button type="submit" name="intent" value="accept" disabled={navigation.state === 'submitting'}>{navigation.state === 'submitting' && <LoaderCircle className="spin" size={16}/>} Đồng ý và cọc</Button><Button type="submit" name="intent" value="reject" variant="outline">Từ chối báo giá</Button></div></Form>}{quote.status === 'cho_bao_gia' && <p className="notice">Shop đang kiểm tra file. Chưa có giá tạm vì khối lượng và thời gian in chưa được đo.</p>}{quote.status === 'het_han' && <p className="notice">Báo giá đã hết hạn.</p>}</section>{totals && <aside className="summary-panel panel"><h2>Thanh toán khi chấp nhận</h2><PriceSummary totals={totals}/><p className="help-text">Giá chốt {money(quote.quoted_amount || 0)}. Cọc đi qua QR như đơn hàng thường.</p></aside>}</div></StoreLayout>;
+  return <QuoteDetail quote={data.quote} error={result?.error} submitting={navigation.state === 'submitting'}/>;
+}
+
+function QuoteDetail({ quote, error, submitting }: { quote: Awaited<ReturnType<typeof loader>> extends infer T ? T extends { locked: false; quote: infer Q } ? Q : never : never; error?: string; submitting: boolean }) {
+  const [address, setAddress] = useState<AddressValue>(emptyAddress);
+  useEffect(() => { const saved = loadSavedContact(); if (saved.address?.provinceId) setAddress({ ...emptyAddress, ...saved.address }); }, []);
+  const payload = useMemo(() => quote.status === 'da_bao_gia' && quote.quoted_amount ? { quoteCode: quote.code } : null, [quote.status, quote.quoted_amount, quote.code]);
+  const fee = useShippingFee(address, payload);
+  const totals = quote.quoted_amount ? calcOrderTotals([{ unitPrice: quote.quoted_amount, quantity: 1 }], fee.status === 'done' ? fee.fee : null) : null;
+  const result = error ? { error } : null;
+  const navigation = { state: submitting ? 'submitting' : 'idle' };
+  return <StoreLayout><Breadcrumb items={[{ label: `Báo giá #${quote.code}` }]}/><div className="order-heading"><h1>Báo giá #{quote.code}</h1><span className="status-badge">{quoteStatusLabels[quote.status] || quote.status}</span></div>{result?.error && <p className="error-message" role="alert">{result.error}</p>}<div className="two-column"><section className="panel form-section"><h2>Yêu cầu của bạn</h2><p>{quote.customer_name} · {quote.phone}</p><p className="help-text">{quote.note || 'Không có ghi chú.'}</p><p>Trạng thái: {quoteStatusLabels[quote.status] || quote.status}</p>{quote.status === 'da_bao_gia' && totals && <Form method="post" className="form-section" onSubmit={() => saveContact({ ...loadSavedContact(), address })}><div className="form-grid"><AddressPicker value={address} onChange={setAddress}/><div className="field-wide"><ShippingFeeLine state={fee}/></div></div><div className="admin-footer-actions"><Button type="submit" name="intent" value="accept" disabled={navigation.state === 'submitting' || !addressComplete(address) || fee.status !== 'done'}>{navigation.state === 'submitting' && <LoaderCircle className="spin" size={16}/>} Đồng ý và cọc</Button><Button type="submit" name="intent" value="reject" variant="outline">Từ chối báo giá</Button></div></Form>}{quote.status === 'cho_bao_gia' && <p className="notice">Shop đang kiểm tra file. Chưa có giá tạm vì khối lượng và thời gian in chưa được đo.</p>}{quote.status === 'het_han' && <p className="notice">Báo giá đã hết hạn.</p>}</section>{totals && <aside className="summary-panel panel"><h2>Thanh toán khi chấp nhận</h2><PriceSummary totals={totals}/><p className="help-text">Giá chốt {money(quote.quoted_amount || 0)}. Cọc đi qua QR như đơn hàng thường.</p></aside>}</div></StoreLayout>;
 }
