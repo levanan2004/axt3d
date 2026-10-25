@@ -5,7 +5,8 @@ import {shopConfig} from '../app/lib/config';
 import {expireOrders,recordPayment,sepaySchema} from '../app/lib/orders.server';
 import {expireQuotes} from '../app/lib/quotes.server';
 import {allowsIndexing,expectedBankAccount,legalRoutes,robotsTxt} from '../app/lib/http';
-import {orderDetails,publicOrder} from '../app/lib/db.server';
+import {orderDetails,customerOrder} from '../app/lib/db.server';
+import {vtpWebhook} from '../app/lib/vtp-order.server';
 import {assertSameOrigin,requireAdmin,requireOrder,secureEqual,rateLimit} from '../app/lib/security.server';
 import type {Env,Variant} from '../app/lib/types';
 import {listProvinces,listWards,quoteShipping} from '../app/lib/shipping.server';
@@ -29,6 +30,7 @@ export async function webhook(request:Request,env:Env){
  return json({success:true,...result});
 }
 async function api(request:Request,env:Env):Promise<Response|null>{const url=new URL(request.url),path=url.pathname;
+ if(path==='/api/webhooks/viettelpost')return vtpWebhook(request,env);
  if(path==='/api/webhooks/sepay'){if(request.method!=='POST')return json({success:false},405);return webhook(request,env);}
  if(path==='/api/shipping/provinces'||path==='/api/shipping/wards'){
   if(request.method!=='GET')return json({error:'Method not allowed'},405);
@@ -74,7 +76,7 @@ async function api(request:Request,env:Env):Promise<Response|null>{const url=new
   if(request.method!=='GET')return json({error:'Method not allowed'},405);
   const code=path.split('/').at(-1)!;const initial=await orderDetails(env.DB,code);await requireOrder(request,initial?.order||null);
   await expireOrders(env.DB);const details=(await orderDetails(env.DB,code))!;
-  return json({order:publicOrder(details.order),items:details.items,events:details.events});
+  return json({order:customerOrder(details.order),items:details.items,events:details.events});
  }
  if(path==='/api/admin/images'){
   if(request.method!=='POST')return json({error:'Method not allowed'},405);
