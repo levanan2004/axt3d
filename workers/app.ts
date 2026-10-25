@@ -23,7 +23,8 @@ export async function webhook(request:Request,env:Env){
  let payload:z.infer<typeof sepaySchema>;try{payload=sepaySchema.parse(JSON.parse(raw));}catch{return json({success:false,error:'Invalid payload'},400);}
  const expectedAccount=expectedBankAccount(env);
  if(!expectedAccount)return json({success:false,error:'Receiving account not configured'},503);
- if(payload.accountNumber!==expectedAccount)return json({success:false,error:'Wrong receiving account'},400);
+ // BIDV via SePay: accountNumber is the main account, subAccount is the VA shown in the QR.
+ if(payload.accountNumber!==expectedAccount&&payload.subAccount!==expectedAccount)return json({success:false,error:'Wrong receiving account'},400);
  const result=await recordPayment(env.DB,payload);
  return json({success:true,...result});
 }
