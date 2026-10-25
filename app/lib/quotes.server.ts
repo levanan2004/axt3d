@@ -30,7 +30,7 @@ export async function quoteByCode(db: D1Database, code: string) {
 
 export async function createQuote(env: Env, input: Omit<QuoteSelection, 'grams' | 'hours'> & { project: string; name: string; phone: string; email: string; note: string }, files: { filename: string; bytes: Uint8Array }[], accessToken: string, now = Date.now()) {
   const limits = quoteLimits();
-  if (files.length < 1 || files.length > limits.maxFiles) throw new Error(`Tối đa ${limits.maxFiles} file.`);
+  if (files.length < 1 || files.length > limits.maxFiles) throw new Error(`Tối đa ${limits.maxFiles} file mỗi yêu cầu.`);
   const id = crypto.randomUUID();
   const code = crypto.randomUUID().replaceAll('-', '').slice(0, 12).toUpperCase();
   const accessHash = await hash(accessToken);
