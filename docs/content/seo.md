@@ -1,64 +1,64 @@
 # SEO
 
-Quy ước: `{TEN_SHOP}` thường ngắn. Nếu title dài hơn 60 ký tự sau khi thay biến, cắt tên sản phẩm/danh mục trước, giữ `| {TEN_SHOP}` ở cuối. Meta description cắt ở 155 ký tự theo ranh giới từ. Mọi trang có canonical tuyệt đối `https://{TEN_MIEN}{path}` (bỏ query lọc/sắp xếp/phân trang ở canonical, trừ `?page=` từ trang 2 trở đi giữ chính nó).
+Quy ước: `AXT 3D` thường ngắn. Nếu title dài hơn 60 ký tự sau khi thay biến, cắt tên sản phẩm/danh mục trước, giữ `| AXT 3D` ở cuối. Meta description cắt ở 155 ký tự theo ranh giới từ. Mọi trang có canonical tuyệt đối `https://{TEN_MIEN}{path}` (bỏ query lọc/sắp xếp/phân trang ở canonical, trừ `?page=` từ trang 2 trở đi giữ chính nó).
 
 ## 1. Theo route
 
 ### `/` Trang chủ
-- Title: `{TEN_SHOP} – Mô hình, quà tặng và in 3D theo yêu cầu`
-- Meta: `Shop đồ in 3D: mô hình, móc khóa tên, chậu cây mini, phụ kiện bàn làm việc. Nhận in theo file STL/3MF. Cọc 50%, phần còn lại COD.`
+- Title: `AXT 3D – Mô hình, quà tặng và in 3D theo yêu cầu`
+- Meta: `Shop đồ in 3D: mô hình, móc khóa corgi, chậu cây hình mèo, phụ kiện bàn làm việc. Nhận in theo file STL, 3MF, OBJ. Cọc 50%, phần còn lại COD.`
 - H1: `Đồ in 3D làm tại xưởng, giao toàn quốc`
-- OG title: `{TEN_SHOP} – Đồ in 3D và in theo yêu cầu`
+- OG title: `AXT 3D – Đồ in 3D và in theo yêu cầu`
 - OG description: `Mô hình, quà tặng, phụ kiện in 3D. Gửi file để nhận báo giá in riêng. Giao Viettel Post, thu COD phần còn lại.`
 
 ### `/danh-muc/[slug]`
-- Title: `{tenDanhMuc} in 3D | {TEN_SHOP}` (trang 2+: `{tenDanhMuc} in 3D – Trang {n} | {TEN_SHOP}`)
+- Title: `{tenDanhMuc} in 3D | AXT 3D` (trang 2+: `{tenDanhMuc} in 3D – Trang {n} | AXT 3D`)
 - Meta: `{tenDanhMuc} in 3D bằng nhựa PLA/PETG, nhiều màu và kích thước. Xem giá, chọn mẫu, cọc 50% qua QR, nhận hàng trả phần còn lại.`
 - H1: `{tenDanhMuc}`
-- OG title: `{tenDanhMuc} in 3D – {TEN_SHOP}`
+- OG title: `{tenDanhMuc} in 3D – AXT 3D`
 - OG description: dùng 155 ký tự đầu của đoạn giới thiệu danh mục trong `trang_chu_danh_muc.md`.
 
 ### `/san-pham/[slug]`
-- Title: `{tenSanPham} | {TEN_SHOP}`
+- Title: `{tenSanPham} | AXT 3D`
 - Meta: `{moTaNgan}` (mô tả ngắn của sản phẩm, ≤155 ký tự). Nếu trống: `{tenSanPham} in 3D, chất liệu {chatLieu}. Giá {gia}. Cọc 50% qua QR, nhận hàng trả phần còn lại.`
 - H1: `{tenSanPham}`
 - OG title: `{tenSanPham}`
 - OG description: như meta. OG image: ảnh chính sản phẩm 1200×1200 hoặc 1200×630. `og:type = product`.
 
 ### `/gio-hang`
-- Title: `Giỏ hàng | {TEN_SHOP}`
+- Title: `Giỏ hàng | AXT 3D`
 - Meta: `Xem lại sản phẩm trong giỏ hàng trước khi đặt.`
 - H1: `Giỏ hàng`
 - OG: không cần (trang noindex).
 
 ### `/thanh-toan`
-- Title: `Thanh toán | {TEN_SHOP}`
+- Title: `Thanh toán | AXT 3D`
 - Meta: `Nhập địa chỉ nhận hàng, cọc 50% tiền hàng qua QR, phần còn lại trả khi nhận.`
 - H1: `Thanh toán`
-- OG: không cần (noindex). Trang QR cọc dùng cùng quy tắc, title `Chuyển khoản cọc đơn {maDon} | {TEN_SHOP}`.
+- OG: không cần (noindex). Trang QR cọc dùng cùng quy tắc, title `Chuyển khoản cọc đơn {maDon} | AXT 3D`.
 
 ### `/theo-doi-don`
-- Title: `Theo dõi đơn hàng | {TEN_SHOP}`
+- Title: `Theo dõi đơn hàng | AXT 3D`
 - Meta: `Tra trạng thái đơn bằng mã đơn và số điện thoại đặt hàng.`
 - H1: `Theo dõi đơn hàng`
-- OG title: `Theo dõi đơn hàng – {TEN_SHOP}`; OG description như meta.
+- OG title: `Theo dõi đơn hàng – AXT 3D`; OG description như meta.
 
 ### `/dat-in`
-- Title: `In 3D theo yêu cầu từ file STL, 3MF | {TEN_SHOP}`
-- Meta: `Tải file STL hoặc 3MF, chọn nhựa và màu, xem giá tạm tính ngay. Shop gửi báo giá chính thức, bạn duyệt rồi mới cọc 50%.`
+- Title: `In 3D theo yêu cầu từ file STL, 3MF, OBJ | AXT 3D`
+- Meta: `Tải file STL, 3MF hoặc OBJ, chọn nhựa và màu. Shop kiểm tra file và gửi báo giá, bạn duyệt rồi mới cọc 50%.`
 - H1: `In 3D theo yêu cầu`
-- OG title: `In 3D theo yêu cầu – {TEN_SHOP}`
-- OG description: `Gửi file STL/3MF, nhận báo giá trước khi trả tiền. In PLA, PETG, TPU, resin. Giao Viettel Post toàn quốc.`
+- OG title: `In 3D theo yêu cầu – AXT 3D`
+- OG description: `Gửi file STL, 3MF, OBJ, nhận báo giá trước khi trả tiền. In PLA, PETG, TPU, resin. Giao Viettel Post toàn quốc.`
 
 ### Trang pháp lý
 | Route | Title | Meta | H1 |
 |---|---|---|---|
-| `/dieu-khoan` | `Điều khoản sử dụng | {TEN_SHOP}` | `Điều kiện mua hàng, đặt cọc, đặt in theo yêu cầu và trách nhiệm của hai bên khi mua tại {TEN_SHOP}.` | `Điều khoản sử dụng` |
-| `/chinh-sach-bao-mat` | `Chính sách bảo mật | {TEN_SHOP}` | `{TEN_SHOP} thu thập dữ liệu gì, dùng để làm gì, giữ bao lâu và quyền của bạn theo Nghị định 13/2023/NĐ-CP.` | `Chính sách bảo mật` |
-| `/doi-tra-hoan-tien` | `Đổi trả và hoàn tiền | {TEN_SHOP}` | `Khi nào được đổi trả, khi nào hoàn cọc, dung sai của hàng in 3D và cách gửi yêu cầu.` | `Chính sách đổi trả và hoàn tiền` |
-| `/van-chuyen` | `Chính sách vận chuyển | {TEN_SHOP}` | `Giao hàng toàn quốc qua Viettel Post, thu COD phần còn lại, được xem hàng trước khi trả tiền.` | `Chính sách vận chuyển` |
+| `/dieu-khoan` | `Điều khoản sử dụng | AXT 3D` | `Điều kiện mua hàng, đặt cọc, đặt in theo yêu cầu và trách nhiệm của hai bên khi mua tại AXT 3D.` | `Điều khoản sử dụng` |
+| `/chinh-sach-bao-mat` | `Chính sách bảo mật | AXT 3D` | `AXT 3D thu thập dữ liệu gì, dùng để làm gì, giữ bao lâu và quyền của bạn theo Nghị định 13/2023/NĐ-CP.` | `Chính sách bảo mật` |
+| `/doi-tra-hoan-tien` | `Đổi trả và hoàn tiền | AXT 3D` | `Khi nào được đổi trả, khi nào hoàn cọc, dung sai của hàng in 3D và cách gửi yêu cầu.` | `Chính sách đổi trả và hoàn tiền` |
+| `/van-chuyen` | `Chính sách vận chuyển | AXT 3D` | `Giao hàng toàn quốc qua Viettel Post, thu COD phần còn lại, được xem hàng trước khi trả tiền.` | `Chính sách vận chuyển` |
 
-OG cho trang pháp lý: OG title = title bỏ `| {TEN_SHOP}`, OG description = meta.
+OG cho trang pháp lý: OG title = title bỏ `| AXT 3D`, OG description = meta.
 
 ## 2. JSON-LD
 
@@ -67,7 +67,7 @@ OG cho trang pháp lý: OG title = title bỏ `| {TEN_SHOP}`, OG description = m
 {
   "@context": "https://schema.org",
   "@type": "Organization",
-  "name": "{TEN_SHOP}",
+  "name": "AXT 3D",
   "url": "https://{TEN_MIEN}/",
   "logo": "https://{TEN_MIEN}/logo.png",
   "email": "{EMAIL}",
@@ -97,7 +97,7 @@ Một sản phẩm nhiều biến thể có giá khác nhau thì dùng `Aggregat
   "description": "{moTaNgan}",
   "image": ["{anh1Url}", "{anh2Url}"],
   "sku": "{sku}",
-  "brand": { "@type": "Brand", "name": "{TEN_SHOP}" },
+  "brand": { "@type": "Brand", "name": "AXT 3D" },
   "material": "{chatLieu}",
   "category": "{tenDanhMuc}",
   "offers": {
@@ -107,7 +107,7 @@ Một sản phẩm nhiều biến thể có giá khác nhau thì dùng `Aggregat
     "price": "{gia}",
     "availability": "https://schema.org/{InStock|OutOfStock|PreOrder}",
     "itemCondition": "https://schema.org/NewCondition",
-    "seller": { "@type": "Organization", "name": "{TEN_SHOP}" }
+    "seller": { "@type": "Organization", "name": "AXT 3D" }
   }
 }
 ```
@@ -171,5 +171,5 @@ Dùng tự nhiên trong H1, đoạn giới thiệu, mô tả. Không nhồi.
 - Ảnh danh mục: `Các mẫu {tenDanhMuc} in 3D`.
 - Ảnh hero/trang trí không mang thông tin: `alt=""`.
 - Ảnh QR cọc: `Mã QR chuyển khoản cọc đơn {maDon}`.
-- Logo: `{TEN_SHOP}`.
+- Logo: `AXT 3D`.
 - Không viết "hình ảnh của...", không nhồi từ khóa, không quá ~125 ký tự.

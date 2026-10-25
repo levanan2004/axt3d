@@ -3,6 +3,7 @@ import {cloudflareContext} from '../app/lib/context';
 import {z} from 'zod';
 import {shopConfig} from '../app/lib/config';
 import {expireOrders,recordPayment,sepaySchema} from '../app/lib/orders.server';
+import {expireQuotes} from '../app/lib/quotes.server';
 import {allowsIndexing,expectedBankAccount,legalRoutes,robotsTxt} from '../app/lib/http';
 import {orderDetails,publicOrder} from '../app/lib/db.server';
 import {assertSameOrigin,requireAdmin,requireOrder,secureEqual,rateLimit} from '../app/lib/security.server';
@@ -59,10 +60,12 @@ async function api(request:Request,env:Env):Promise<Response|null>{const url=new
  }
  if(path==='/sitemap.xml'){
   const products=await env.DB.prepare('SELECT slug,updated_at FROM products WHERE active=1').all<{slug:string;updated_at:number}>();
-  const entries=[...['/','/danh-muc','/lien-he',...legalRoutes.map(page=>page.path)].map(path=>({path,date:null as number|null})),...products.results.map(p=>({path:`/san-pham/${p.slug}`,date:p.updated_at}))];
+  const entries=[...['/','/danh-muc','/lien-he','/dat-in',...legalRoutes.map(page=>page.path)].map(path=>({path,date:null as number|null})),...products.results.map(p=>({path:`/san-pham/${p.slug}`,date:p.updated_at}))];
   return new Response(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${entries.map(e=>`<url><loc>${xml(new URL(e.path,env.SITE_URL).href)}</loc>${e.date?`<lastmod>${new Date(e.date).toISOString()}</lastmod>`:''}</url>`).join('')}</urlset>`,{headers:{'Content-Type':'application/xml; charset=utf-8','Cache-Control':'public,max-age=300'}});
  }
  if(path==='/robots.txt')return new Response(robotsTxt(env),{headers:{'Content-Type':'text/plain; charset=utf-8'}});
+ const quoteFile=path.match(/^\/api\/admin\/quote-files\/([A-F0-9]{12})\/([0-9a-f-]{36})$/);
+ if(quoteFile){if(request.method!=='GET')return new Response(null,{status:405});const actor=await requireAdmin(request,env);const row=await env.DB.prepare('SELECT f.r2_key,f.filename FROM quote_files f JOIN quotes q ON q.id=f.quote_id WHERE q.code=? AND f.id=?').bind(quoteFile[1],quoteFile[2]).first<{r2_key:string;filename:string}>();if(!row)return new Response(null,{status:404});const object=await env.IMAGES.get(row.r2_key);if(!object)return new Response(null,{status:404});await env.DB.prepare('INSERT INTO audit_logs(actor,action,entity_id,detail,created_at) VALUES(?,?,?,?,?)').bind(actor,'download_quote_file',row.r2_key,row.filename,Date.now()).run();const headers=new Headers();object.writeHttpMetadata(headers);headers.set('Content-Disposition',`attachment; filename="${row.filename.replace(/["\r\n]/g,'')}"`);return new Response(object.body,{headers});}
  if(path==='/admin/local-auth'){
   if(env.APP_ENV!=='local'||!['localhost','127.0.0.1','[::1]'].includes(url.hostname)||!env.LOCAL_ADMIN_TOKEN)return new Response('Not found',{status:404});
   if(request.method==='POST'){assertSameOrigin(request);return new Response(null,{status:303,headers:{Location:'/admin','Set-Cookie':`local_admin=${env.LOCAL_ADMIN_TOKEN}; HttpOnly; SameSite=Strict; Path=/; Max-Age=28800`}});}
@@ -81,5 +84,5 @@ export default {
   if(!allowsIndexing(env))headers.set('X-Robots-Tag','noindex, nofollow');
   return new Response(response.body,{status:response.status,statusText:response.statusText,headers});
  },
- async scheduled(_event:ScheduledController,env:Env,ctx:ExecutionContext){ctx.waitUntil(expireOrders(env.DB));}
+ async scheduled(_event:ScheduledController,env:Env,ctx:ExecutionContext){ctx.waitUntil(Promise.all([expireOrders(env.DB),expireQuotes(env.DB)]));}
 } satisfies ExportedHandler<Env>;

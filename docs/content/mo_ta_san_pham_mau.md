@@ -23,7 +23,7 @@ Thông số:
 
 ---
 
-## 1. Rồng khớp động
+## 1. Rồng khớp động (slug: `dragon`)
 **Ngắn:** Rồng in 3D liền khối có khớp động, uốn lượn được. Nhựa PLA nhẹ, nhiều màu và nhiều cỡ. Để bàn hoặc làm quà.
 
 **Dài:**
@@ -35,43 +35,43 @@ Lưu ý: có chi tiết nhỏ, không phù hợp với trẻ dưới 3 tuổi. �
 
 **Thông số:** PLA · Cỡ 10 / 15 / 20 cm (chiều dài thân) · Màu: đơn sắc hoặc chuyển màu, theo lựa chọn trên trang · Sai số theo chính sách dung sai · Khối lượng: {…} g
 
-## 2. Giá đỡ điện thoại
-**Ngắn:** Giá đỡ điện thoại in 3D, đứng chắc, có rãnh luồn dây sạc. Dùng được khi xem video hoặc gọi video.
+## 2. Giá đỡ điện thoại hình mèo (slug: `stand`)
+**Ngắn:** Giá đỡ điện thoại in 3D hình mèo ngồi, đứng chắc, có rãnh luồn dây sạc. Dùng khi xem video hoặc gọi video.
 
 **Dài:**
-Giá đỡ có góc nghiêng cố định, dễ nhìn màn hình khi ngồi bàn. Rãnh phía dưới cho dây sạc đi qua, vừa sạc vừa dùng được.
+Giá đỡ tạo dáng một chú mèo ngồi, lưng mèo là chỗ tựa máy với góc nghiêng cố định, dễ nhìn màn hình khi ngồi bàn. Rãnh phía dưới cho dây sạc đi qua, vừa sạc vừa dùng được.
 
-Hợp với phần lớn điện thoại, kể cả khi có ốp. Kiểm tra độ dày máy và ốp với số đo khe đỡ ở thông số trước khi mua.
+Hợp với phần lớn điện thoại, kể cả khi có ốp. Kiểm tra độ dày máy và ốp với số đo khe đỡ ở thông số trước khi mua. Mẫu mèo do shop tự thiết kế, không phải nhân vật có bản quyền.
 
 Bản PETG chịu nhiệt tốt hơn, nên chọn nếu để gần cửa sổ nắng.
 
 **Thông số:** PLA hoặc PETG · Kích thước: {…} mm · Khe đỡ rộng: {…} mm · Màu: theo lựa chọn · Sai số theo chính sách dung sai
 
-## 3. Móc khóa tên
-**Ngắn:** Móc khóa in 3D theo tên bạn nhập. Chữ nổi hai màu, dễ đọc. Kèm khoen kim loại.
+## 3. Móc khóa hình corgi (slug: `keyring`)
+**Ngắn:** Móc khóa in 3D hình chú chó corgi, nhẹ, màu tươi. Có thể thêm tên ngắn ở thân. Kèm khoen kim loại.
 
 **Dài:**
-Bạn nhập tên hoặc chữ ngắn khi đặt hàng. Shop in đúng nội dung đó, chữ nổi một màu trên nền màu khác.
+Chú corgi được in nổi, phối màu lông và màu nền theo lựa chọn. Dùng gắn chìa khóa, balo, hoặc làm quà cho người mê chó.
 
-Dùng gắn chìa khóa, balo, hoặc làm quà cho nhóm, lớp. Mỗi chiếc in riêng theo chữ của bạn.
+Nếu chọn bản có tên, bạn nhập tên hoặc chữ ngắn khi đặt hàng, shop in chữ nổi trên thân corgi. Hãy kiểm tra kỹ chính tả và dấu; chữ đã in xong thì không đổi được. Số ký tự tối đa hiện ở ô nhập.
 
-Vì in theo nội dung bạn nhập, hãy kiểm tra kỹ chính tả và dấu. Chữ đã in xong thì không đổi được. Số ký tự tối đa hiện ở ô nhập.
+Có chi tiết nhỏ, không phù hợp với trẻ dưới 3 tuổi.
 
-**Thông số:** PLA · Dài khoảng {…} mm tùy số chữ · Dày {…} mm · Màu nền và màu chữ: theo lựa chọn · Kèm khoen kim loại · Hàng cá nhân hóa, in sau khi nhận cọc
+**Thông số:** PLA · Dài khoảng {…} mm · Dày {…} mm · Màu: theo lựa chọn · Kèm khoen kim loại · Bản có tên: hàng cá nhân hóa, in sau khi nhận cọc
 
-## 4. Chậu cây mini
-**Ngắn:** Chậu cây mini in 3D cho sen đá, xương rồng. Có lỗ thoát nước và đĩa lót.
+## 4. Chậu cây mini hình mèo (slug: `planter`)
+**Ngắn:** Chậu cây mini in 3D hình mèo cho sen đá, xương rồng. Có lỗ thoát nước và đĩa lót.
 
 **Dài:**
-Chậu nhỏ gọn, hợp với cây để bàn. Đáy có lỗ thoát nước, đĩa lót đi kèm để không đọng nước ra bàn.
+Chậu nhỏ gọn dáng đầu mèo có tai, hợp với cây để bàn. Đáy có lỗ thoát nước, đĩa lót đi kèm để không đọng nước ra bàn.
 
-Nhựa nhẹ, không vỡ khi rơi như sứ. Dáng chậu và màu chọn ở trang sản phẩm.
+Nhựa nhẹ, không vỡ khi rơi như sứ. Màu chọn ở trang sản phẩm. Mẫu do shop tự thiết kế.
 
 Nên để trong nhà hoặc nơi có mái che. Nắng gắt lâu ngày có thể làm bạc màu, nhất là với PLA.
 
 **Thông số:** PLA hoặc PETG · Đường kính miệng {…} mm · Cao {…} mm · Màu: theo lựa chọn · Kèm đĩa lót · Không kèm cây và đất
 
-## 5. Hộp đựng bút
+## 5. Hộp đựng bút (slug: `organizer`)
 **Ngắn:** Hộp đựng bút in 3D chia ngăn, giữ bút, thước, kéo đứng gọn trên bàn.
 
 **Dài:**
@@ -83,7 +83,7 @@ Lau bằng khăn ẩm. Không ngâm nước nóng.
 
 **Thông số:** PLA · Kích thước: {…} mm · Số ngăn: {…} · Màu: theo lựa chọn · Sai số theo chính sách dung sai
 
-## 6. Đèn ngủ
+## 6. Đèn ngủ (slug: `lamp`)
 **Ngắn:** Đèn ngủ in 3D chao xoắn, ánh sáng dịu. Dùng bóng LED, cấp nguồn qua cổng USB.
 
 **Dài:**
@@ -95,9 +95,57 @@ Không dùng bóng sợi đốt hay bóng tỏa nhiệt cao thay thế. Để xa
 
 **Thông số:** Chao PLA hoặc PETG · Cao {…} mm · Đường kính {…} mm · Nguồn: {USB …V} · Ánh sáng: {vàng ấm / trắng} · Màu chao: theo lựa chọn · Kèm dây cấp nguồn: {có/không}
 
-## (Thêm) Đồ trang trí bàn
+## (Thêm) Đồ trang trí bàn (chưa gắn slug – chưa có trong danh sách slug)
 **Ngắn:** Khối trang trí hình học in 3D cho bàn làm việc, dùng làm chặn giấy hoặc decor kệ.
 
 **Dài:** Dáng hình học đơn giản, bề mặt có vân lớp nhẹ. Đặt một chiếc hoặc ghép nhiều màu thành bộ. Nặng vừa đủ để chặn giấy nhẹ.
 
 **Thông số:** PLA · Kích thước: {…} mm · Màu: theo lựa chọn
+
+## 7. Mô hình robot (slug: `robot`)
+**Ngắn:** Mô hình robot in 3D do shop tự thiết kế, dáng vuông vức, tay xoay được. Để bàn, kệ sách hoặc làm quà.
+
+**Dài:**
+Chú robot thân hộp, đầu tròn với một mắt cảm biến, ăng-ten ngắn trên đỉnh. Tay gắn khớp xoay để đổi tư thế chào, cầm đồ nhỏ hoặc giơ cao.
+
+Mẫu là thiết kế gốc của shop, không mô phỏng robot hay nhân vật của phim, truyện, game nào. Hợp với bàn học, góc làm việc, hoặc làm quà cho người thích đồ công nghệ.
+
+Lưu ý: có chi tiết nhỏ, không phù hợp với trẻ dưới 3 tuổi. Đừng xoay khớp quá mạnh. Vân lớp in mỏng trên bề mặt là đặc trưng của in 3D.
+
+**Thông số:** PLA · Cao {…} mm · Khối lượng: {…} g · Màu: theo lựa chọn · Sai số theo chính sách dung sai · Giá: lấy từ {config} / Hà Phương điền
+
+## 8. Bình hoa trang trí (slug: `vase`)
+**Ngắn:** Bình hoa/lọ trang trí in 3D dáng xoắn, cắm hoa khô hoặc để trơn làm decor kệ, bàn.
+
+**Dài:**
+Thân bình in thành các gờ xoắn, bắt sáng đẹp khi đặt gần cửa sổ hay đèn bàn. Hợp cắm hoa khô, cành lá giả hoặc để trơn trang trí.
+
+Muốn cắm hoa tươi, hãy đặt một ống/lọ thủy tinh nhỏ đựng nước bên trong. Bình in 3D không đảm bảo kín nước tuyệt đối.
+
+Không đựng nước nóng. Lau bằng khăn ẩm. Vân lớp in mỏng là đặc trưng của in 3D.
+
+**Thông số:** PLA hoặc PETG · Cao {…} mm · Đường kính {…} mm · Màu: theo lựa chọn · Sai số theo chính sách dung sai · Giá: lấy từ {config}
+
+## 9. Khay đựng đồ nhỏ (slug: `tray`)
+**Ngắn:** Khay in 3D đựng đồ nhỏ: chìa khóa, trang sức, kẹp giấy. Đáy phẳng, viền thấp, dễ lấy đồ.
+
+**Dài:**
+Khay gom các món hay để lung tung trên bàn, kệ đầu giường hoặc cạnh cửa ra vào. Viền thấp để lấy đồ nhanh, đáy phẳng không trượt.
+
+Chọn bản một ngăn hoặc chia ngăn ở trang sản phẩm.
+
+Không dùng đựng thức ăn. Lau bằng khăn ẩm, không ngâm nước nóng.
+
+**Thông số:** PLA hoặc PETG · Kích thước: {…} mm · Số ngăn: {…} · Màu: theo lựa chọn · Sai số theo chính sách dung sai · Giá: lấy từ {config}
+
+## 10. Mô hình khủng long (slug: `dino`)
+**Ngắn:** Mô hình khủng long in 3D do shop tự thiết kế, dáng tròn trịa dễ thương. Để bàn, kệ sách hoặc làm quà.
+
+**Dài:**
+Chú khủng long đứng hai chân, đuôi dài cân bằng thân, đặt chắc trên mặt phẳng. Có thể phối thân và gai lưng hai màu.
+
+Mẫu là thiết kế gốc của shop, không mô phỏng khủng long hay nhân vật của phim, truyện, game nào. Hợp với bàn học, góc làm việc, hoặc làm quà cho người thích khủng long.
+
+Lưu ý: có chi tiết nhỏ, không phù hợp với trẻ dưới 3 tuổi. Vân lớp in mỏng trên bề mặt là đặc trưng của in 3D.
+
+**Thông số:** PLA · Cao {…} mm · Dài {…} mm · Khối lượng: {…} g · Màu: theo lựa chọn · Sai số theo chính sách dung sai · Giá: lấy từ {config}

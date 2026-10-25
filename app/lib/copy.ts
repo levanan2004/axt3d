@@ -1,6 +1,7 @@
 import { shopConfig } from './config';
 import siteInfo from '../../config/site-info.json';
 import { money } from './money';
+import { dottedExtensionPhrase, extensionPhrase, quoteLimits } from './quote';
 import { seo } from './seo';
 
 const pageFiles = import.meta.glob('../../docs/content/*.md', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
@@ -34,10 +35,11 @@ export function pageCopy(id: string) {
 }
 
 export function pageMeta(id: string, fallbackTitle: string, fallbackDescription: string, path: string, base: string, image?: string) {
+  const fromRoute = routeSeo(path);
   const doc = pageCopy(id);
-  const title = doc?.title ? renderTokens(doc.title) : fallbackTitle;
-  const description = doc?.description ? renderTokens(doc.description) : fallbackDescription;
-  return seo(title, description, path, base, image);
+  const title = fromRoute?.title || (doc?.title ? renderTokens(doc.title) : fallbackTitle);
+  const description = fromRoute?.description || (doc?.description ? renderTokens(doc.description) : applyFileTypes(fallbackDescription));
+  return seo(title, description, path, base, image, Boolean(fromRoute));
 }
 
 function readPath(source: unknown, path: string): unknown {
@@ -48,11 +50,24 @@ function readPath(source: unknown, path: string): unknown {
 }
 
 function formatConfigValue(path: string, value: unknown) {
-  if (typeof value === 'number' && Number.isSafeInteger(value) && /fee|price|amount|subtotal/i.test(path)) return money(value);
+  if (typeof value === 'number' && Number.isSafeInteger(value) && /fee|price|amount|subtotal|minOrder|PerGram|PerHour/i.test(path)) return money(value);
   if (typeof value === 'number' && path.endsWith('rate') && value > 0 && value <= 1) return `${Math.round(value * 100)}%`;
   if (value === null) return '';
   if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') return String(value);
+  if (Array.isArray(value) && path.endsWith('allowedExt')) return extensionPhrase();
   return `{config.${path}}`;
+}
+
+/** Upload hints always name the extensions and limits from config, even when the copy file says STL/3MF. */
+export function applyFileTypes(input: string) {
+  const limits = quoteLimits();
+  return input
+    .replace(/\.stl hoặc \.3mf/gi, dottedExtensionPhrase())
+    .replace(/STL\s*\/\s*3MF/gi, extensionPhrase())
+    .replace(/STL hoặc 3MF/gi, extensionPhrase())
+    .replace(/\{config dung lượng\}/g, String(limits.maxFileMB))
+    .replace(/\{maxFiles\}/g, String(limits.maxFiles))
+    .replace(/\{maxFileMB\}/g, String(limits.maxFileMB));
 }
 
 /** Replace {config.*} from shop-config. Leave {TEN_SHOP}-style tokens visible unless site-info names them. */
@@ -62,10 +77,45 @@ export function renderTokens(input: string): string {
     return value === undefined ? full : formatConfigValue(path, value);
   });
   const placeholders = siteInfo.placeholders as Record<string, string>;
-  return withMoney.replace(/\{([A-Z][A-Z0-9_]*)\}/g, (full, key: string) => {
+  const named = withMoney.replace(/\{([A-Z][A-Z0-9_]*)\}/g, (full, key: string) => {
+    if (key === 'TEN_SHOP') return shopConfig.shop.name;
     if (!Object.prototype.hasOwnProperty.call(placeholders, key)) return full;
     return placeholders[key] || full;
   });
+  return applyFileTypes(named);
+}
+
+const legalDocIds: Record<string, string> = {
+  'dieu-khoan': 'dieu_khoan',
+  'chinh-sach-bao-mat': 'bao_mat',
+  'doi-tra-hoan-tien': 'doi_tra_hoan_tien',
+  'van-chuyen': 'van_chuyen',
+};
+
+export function legalCopy(routeId: string) {
+  return pageCopy(legalDocIds[routeId] || routeId);
+}
+
+export function routeSeo(path: string) {
+  const raw = pageFiles['../../docs/content/seo.md'];
+  if (!raw) return null;
+  const { body } = parseFrontmatter(raw);
+  const blocks = body.split(/^###\s+/m).slice(1);
+  for (const block of blocks) {
+    const route = block.match(/^`([^`]+)`/)?.[1];
+    if (route !== path) continue;
+    const title = block.match(/^- Title:\s*`([^`]+)`/m)?.[1];
+    const description = block.match(/^- Meta:\s*`([^`]+)`/m)?.[1];
+    if (!title || !description) return null;
+    return { title: renderTokens(title), description: renderTokens(description) };
+  }
+  const row = body.split('\n').find(line => line.startsWith(`| \`${path}\``));
+  if (!row) return null;
+  const cells = row.split('|').map(cell => cell.trim()).filter(Boolean);
+  const title = cells[1]?.replace(/^`|`$/g, '');
+  const description = cells[2]?.replace(/^`|`$/g, '');
+  if (!title || !description) return null;
+  return { title: renderTokens(title), description: renderTokens(description) };
 }
 
 export function label(key: string, fallback: string) {

@@ -3,7 +3,7 @@
 Có hiệu lực từ {NGAY_HIEU_LUC}.
 
 ## Thông tin chủ sở hữu website
-- Tên shop: {TEN_SHOP} – Website: https://{TEN_MIEN}
+- Tên shop: AXT 3D – Website: https://{TEN_MIEN}
 - Chủ sở hữu: {CHU_SHOP} ({LOAI_CHU_THE})
 - Số ĐKKD/MST: {SO_DKKD}, cấp ngày {NGAY_CAP_DKKD} tại {NOI_CAP_DKKD}
 - Địa chỉ: {DIA_CHI}
@@ -28,8 +28,8 @@ Có hiệu lực từ {NGAY_HIEU_LUC}.
 - Shop có thể hủy đơn đã cọc nếu không thể cung cấp hàng (ví dụ lỗi giá rõ ràng, hết nguyên liệu). Khi đó shop hoàn toàn bộ tiền cọc.
 
 ## 4. Dịch vụ đặt in theo yêu cầu
-- Bạn tải file STL hoặc 3MF lên, chọn chất liệu, màu và số lượng. Website hiện giá tạm tính tự động. Giá tạm tính không phải giá bán.
-- Shop kiểm tra file và gửi báo giá chính thức gồm giá cuối và thời gian in dự kiến. Báo giá có hiệu lực trong thời gian ghi trên báo giá.
+- Bạn tải file lên (định dạng {config.customPrint.upload.allowedExt}, tối đa {config.customPrint.upload.maxFiles} file, mỗi file {config.customPrint.upload.maxFileMB} MB) kèm chất liệu, màu và số lượng. Website không hiện giá tự động.
+- Shop kiểm tra file và gửi báo giá chính thức gồm giá cuối và thời gian in dự kiến. Báo giá có hiệu lực {config.customPrint.quoteValidHours} giờ kể từ khi gửi.
 - Hợp đồng hình thành khi bạn đồng ý báo giá và shop nhận được tiền cọc 50% như đơn thường. Phần còn lại cộng phí ship trả COD.
 - **Tiền cọc không hoàn lại khi shop đã bắt đầu in.** Trước khi in, bạn hủy thì được hoàn cọc.
 - **Cam kết về file:** bạn cam kết có quyền sử dụng file để in (tự thiết kế, đã mua hoặc được cấp phép) và file không vi phạm quyền sở hữu trí tuệ, quyền nhân thân của người khác. Bạn chịu trách nhiệm với mọi khiếu nại của bên thứ ba liên quan đến file.
