@@ -1,0 +1,218 @@
+[
+  {
+    "id": "q01",
+    "chu_de": "van_chuyen",
+    "hoi": "Phí ship tính thế nào?",
+    "dap": "Shop giao toàn quốc qua Viettel Post. Phí ship được tính ở bước thanh toán theo địa chỉ nhận và cân nặng đã đóng gói của đơn, bạn thấy phí trước khi xác nhận đặt hàng."
+  },
+  {
+    "id": "q02",
+    "chu_de": "van_chuyen",
+    "hoi": "Sao phí ship hiện 20.000đ rồi lại đổi?",
+    "dap": "Nếu Viettel Post chưa trả kết quả trong 5 giây, trang thanh toán tạm hiện 20.000đ. Khi tạo đơn, hệ thống tính lại phí theo Viettel Post, nên số cuối có thể khác số tạm."
+  },
+  {
+    "id": "q03",
+    "chu_de": "van_chuyen",
+    "hoi": "Shop giao hàng bằng đơn vị nào?",
+    "dap": "Shop giao hàng toàn quốc qua Viettel Post."
+  },
+  {
+    "id": "q04",
+    "chu_de": "van_chuyen",
+    "hoi": "Shop có miễn phí ship không?",
+    "dap": "Hiện mình chưa có thông tin về chương trình miễn ship. Bạn xem phí ở bước thanh toán, hoặc nhắn shop để hỏi thêm nhé."
+  },
+  {
+    "id": "q05",
+    "chu_de": "van_chuyen",
+    "hoi": "Bao lâu thì nhận được hàng?",
+    "dap": "Hàng có sẵn được đóng gói sau khi shop nhận cọc, thời gian vận chuyển tùy khu vực và theo Viettel Post. Hàng đặt in cần thêm thời gian in, ghi trên trang sản phẩm hoặc báo giá. Thời gian chuẩn bị hàng có sẵn hiện là {THOI_GIAN_CHUAN_BI}."
+  },
+  {
+    "id": "q06",
+    "chu_de": "coc",
+    "hoi": "Đặt hàng phải cọc bao nhiêu?",
+    "dap": "Bạn cọc 50% của tổng tiền hàng cộng phí ship, làm tròn lên hàng nghìn. Số tiền cọc hiện rõ ở màn thanh toán."
+  },
+  {
+    "id": "q07",
+    "chu_de": "thanh_toan",
+    "hoi": "Chuyển cọc bằng cách nào?",
+    "dap": "Bạn quét mã QR ở màn thanh toán để chuyển khoản, giao dịch được xác nhận tự động qua SePay. Nội dung chuyển khoản là IN3D kèm mã đơn, bạn giữ đúng nội dung để hệ thống nhận ra."
+  },
+  {
+    "id": "q08",
+    "chu_de": "thanh_toan",
+    "hoi": "Có bao lâu để chuyển cọc?",
+    "dap": "Bạn có 30 phút để chuyển cọc. Quá thời gian này đơn tự hủy và hàng trả về kho."
+  },
+  {
+    "id": "q09",
+    "chu_de": "thanh_toan",
+    "hoi": "Chuyển cọc rồi mà đơn chưa xác nhận thì sao?",
+    "dap": "Hệ thống xác nhận khi nhận đủ tiền cọc với nội dung có mã đơn. Nếu bạn chuyển sai nội dung hoặc chờ lâu chưa thấy cập nhật, bạn nhắn Zalo hoặc gọi shop kèm mã đơn nhé."
+  },
+  {
+    "id": "q10",
+    "chu_de": "thanh_toan",
+    "hoi": "Shop có nhận thanh toán thẻ hay ví không?",
+    "dap": "Website chỉ có một cách thanh toán: cọc bằng chuyển khoản QR, phần còn lại trả khi nhận hàng. Bạn không cần nhập thông tin thẻ ở đâu cả."
+  },
+  {
+    "id": "q11",
+    "chu_de": "thanh_toan",
+    "hoi": "Có thanh toán toàn bộ khi nhận hàng được không?",
+    "dap": "Hiện mọi đơn đều cần cọc 50% trước bằng chuyển khoản QR, phần còn lại mới trả khi nhận hàng."
+  },
+  {
+    "id": "q12",
+    "chu_de": "cod",
+    "hoi": "Khi nhận hàng phải trả bao nhiêu?",
+    "dap": "Bạn trả phần còn lại, tức tiền hàng cộng phí ship trừ tiền cọc đã chuyển. Số tiền COD ghi trên màn thanh toán và trang Theo dõi đơn, bạn chỉ trả đúng số này."
+  },
+  {
+    "id": "q13",
+    "chu_de": "cod",
+    "hoi": "Bưu tá thu khác số tiền COD thì làm sao?",
+    "dap": "Bạn đừng trả và liên hệ shop qua {SO_DIEN_THOAI} để shop kiểm tra."
+  },
+  {
+    "id": "q14",
+    "chu_de": "cod",
+    "hoi": "Có được xem hàng trước khi trả tiền không?",
+    "dap": "Có. Bạn được mở gói kiểm tra ngoại quan như mẫu, màu, số lượng, không vỡ trước khi trả COD. Bạn nên quay video từ lúc mở gói."
+  },
+  {
+    "id": "q15",
+    "chu_de": "dat_in",
+    "hoi": "Đặt in riêng thế nào?",
+    "dap": "Bạn tải file 3D lên trang đặt in, chọn chất liệu, màu và số lượng, web sẽ hiện giá tạm tính. Shop kiểm tra file rồi gửi báo giá chính thức, bạn đồng ý và chuyển cọc 50% như đơn thường thì shop bắt đầu in."
+  },
+  {
+    "id": "q16",
+    "chu_de": "dat_in",
+    "hoi": "Đặt in nhận file định dạng gì?",
+    "dap": "Shop nhận file STL, 3MF hoặc OBJ, mỗi file tối đa 50 MB và tối đa 5 file mỗi lần gửi."
+  },
+  {
+    "id": "q17",
+    "chu_de": "dat_in",
+    "hoi": "Có những chất liệu và màu nào để đặt in?",
+    "dap": "Chất liệu có PLA, PETG, TPU và Resin. Màu có Trắng, Đen, Xám, Đỏ, Cam, Vàng, Xanh lá, Xanh dương, Tím, Hồng."
+  },
+  {
+    "id": "q18",
+    "chu_de": "dat_in",
+    "hoi": "Giá tạm tính trên web có phải giá cuối không?",
+    "dap": "Không. Giá tạm tính chỉ để bạn tham khảo, shop sẽ kiểm tra file và gửi báo giá chính thức gồm giá cuối và thời gian in dự kiến. Báo giá có hiệu lực 48 giờ."
+  },
+  {
+    "id": "q19",
+    "chu_de": "dat_in",
+    "hoi": "Đặt in mất bao lâu?",
+    "dap": "Thời gian in tùy file và được ghi trong báo giá chính thức shop gửi bạn. Thời gian thường gặp là {THOI_GIAN_IN}."
+  },
+  {
+    "id": "q20",
+    "chu_de": "dat_in",
+    "hoi": "Phí ship đơn đặt in tính theo cân nặng nào?",
+    "dap": "Cân nặng tính bằng tổng số gram nhựa của mọi món trong đơn cộng 150g hộp, phần hộp tính một lần cho mỗi đơn."
+  },
+  {
+    "id": "q21",
+    "chu_de": "dat_in",
+    "hoi": "Đặt in được tối đa bao nhiêu cái?",
+    "dap": "Mỗi mẫu đặt in tối đa 50 cái. Cần số lượng lớn hơn, bạn nhắn shop để trao đổi nhé."
+  },
+  {
+    "id": "q22",
+    "chu_de": "dat_in",
+    "hoi": "Hủy đơn đặt in có được hoàn cọc không?",
+    "dap": "Bạn hủy trước khi shop bắt đầu in thì được hoàn cọc. Khi shop đã bắt đầu in, tiền cọc không hoàn lại."
+  },
+  {
+    "id": "q23",
+    "chu_de": "dat_in",
+    "hoi": "Shop không nhận in những gì?",
+    "dap": "Shop không in vũ khí hay bộ phận vũ khí, đồ giả mạo như giấy tờ, con dấu, tiền, hàng nhái, vật phẩm pháp luật cấm, và sản phẩm dùng nhân vật hoặc logo có bản quyền mà bạn không có quyền sử dụng."
+  },
+  {
+    "id": "q24",
+    "chu_de": "doi_tra",
+    "hoi": "Đổi trả hàng thế nào?",
+    "dap": "Bạn gửi yêu cầu trong {SO_NGAY_DOI_TRA} ngày kể từ khi nhận hàng, qua {SO_DIEN_THOAI} hoặc {EMAIL}, kèm mã đơn, video mở hộp và ảnh chỗ lỗi. Shop sẽ báo hướng xử lý là gửi bù, đổi hay hoàn tiền."
+  },
+  {
+    "id": "q25",
+    "chu_de": "doi_tra",
+    "hoi": "Trường hợp nào được đổi mới hoặc hoàn tiền?",
+    "dap": "Hàng gãy, nứt, biến dạng do in lỗi hoặc vận chuyển, giao sai mẫu, màu, cỡ, thiếu hàng hoặc lệch quá dung sai thì shop đổi mới hoặc hoàn tiền và chịu phí gửi."
+  },
+  {
+    "id": "q26",
+    "chu_de": "doi_tra",
+    "hoi": "Đổi vì không thích hoặc chọn nhầm màu được không?",
+    "dap": "Shop xem xét nếu hàng còn mới, đủ hộp và bạn báo trong thời hạn. Trường hợp này bạn chịu phí gửi hai chiều."
+  },
+  {
+    "id": "q27",
+    "chu_de": "doi_tra",
+    "hoi": "Hàng đặt in có được đổi trả không?",
+    "dap": "Chỉ khi lỗi do quá trình in của shop hoặc do vận chuyển, khi đó shop in lại miễn phí. Lỗi do thiết kế trong file như sai kích thước hay thành quá mỏng không thuộc diện đổi trả."
+  },
+  {
+    "id": "q28",
+    "chu_de": "doi_tra",
+    "hoi": "Vân lớp in hay màu hơi khác ảnh có tính là lỗi không?",
+    "dap": "Không. In 3D đắp từng lớp nên có vân lớp, dấu gỡ support, kích thước lệch nhẹ và màu khác ảnh một chút, những điểm này không ảnh hưởng công dụng."
+  },
+  {
+    "id": "q29",
+    "chu_de": "doi_tra",
+    "hoi": "Bao lâu thì nhận được tiền hoàn?",
+    "dap": "Shop hoàn bằng chuyển khoản vào tài khoản bạn cung cấp trong {SO_NGAY_HOAN_TIEN} ngày làm việc sau khi xác nhận. Bạn cung cấp số tài khoản trực tiếp với shop, đừng gửi trong khung chat này."
+  },
+  {
+    "id": "q30",
+    "chu_de": "doi_tra",
+    "hoi": "Từ chối nhận hàng thì có mất cọc không?",
+    "dap": "Nếu hàng không lỗi mà bạn từ chối nhận hoặc không liên lạc được, cọc dùng bù chi phí in và ship hai chiều, phần dư shop hoàn lại. Nếu hàng lỗi do shop, shop hoàn toàn bộ cọc."
+  },
+  {
+    "id": "q31",
+    "chu_de": "theo_doi",
+    "hoi": "Làm sao theo dõi đơn hàng?",
+    "dap": "Bạn vào trang Theo dõi đơn hàng, nhập mã đơn và số điện thoại đặt hàng. Khi đơn đã giao cho Viettel Post, mã vận đơn sẽ hiện ở đây."
+  },
+  {
+    "id": "q32",
+    "chu_de": "theo_doi",
+    "hoi": "Các trạng thái đơn nghĩa là gì?",
+    "dap": "Đơn đi qua các bước Chờ cọc, Đã cọc, Đang chuẩn bị, Đã giao vận chuyển, Hoàn thành, hoặc Đã hủy. Đơn chỉ được xác nhận khi sang Đã cọc."
+  },
+  {
+    "id": "q33",
+    "chu_de": "theo_doi",
+    "hoi": "Muốn đổi địa chỉ nhận hàng thì sao?",
+    "dap": "Bạn liên hệ {SO_DIEN_THOAI} càng sớm càng tốt. Shop đổi được khi đơn chưa giao cho Viettel Post, sau đó thì tùy Viettel Post."
+  },
+  {
+    "id": "q34",
+    "chu_de": "van_chuyen",
+    "hoi": "Hàng bị thất lạc hoặc hỏng khi vận chuyển thì sao?",
+    "dap": "Shop làm việc với Viettel Post và gửi bù hoặc hoàn tiền cho bạn, bạn không phải tự khiếu nại với hãng vận chuyển."
+  },
+  {
+    "id": "q35",
+    "chu_de": "van_chuyen",
+    "hoi": "Gửi hàng từ đâu?",
+    "dap": "Hàng được gửi từ kho của shop tại {KHO_GUI}."
+  },
+  {
+    "id": "q36",
+    "chu_de": "lien_he",
+    "hoi": "Liên hệ shop bằng cách nào?",
+    "dap": "Bạn nhắn Zalo {SO_ZALO} hoặc gọi {SO_DIEN_THOAI}."
+  }
+]
