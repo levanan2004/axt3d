@@ -1,6 +1,6 @@
 # Điều khoản sử dụng
 
-Có hiệu lực từ {NGAY_HIEU_LUC}.
+Phiên bản 2. Có hiệu lực từ 25/10/2026.
 
 ## Thông tin chủ sở hữu website
 - Tên shop: AXT 3D – Website: https://{TEN_MIEN}
@@ -19,7 +19,7 @@ Có hiệu lực từ {NGAY_HIEU_LUC}.
 - Shop không bán sản phẩm dùng nhân vật hay thương hiệu có bản quyền mà shop không có quyền sử dụng.
 
 ## 3. Đặt hàng và thanh toán
-- Website chỉ có một cách thanh toán: cọc 50% tiền hàng (làm tròn lên hàng nghìn) bằng chuyển khoản QR qua SePay, phần còn lại của tiền hàng cộng phí ship trả khi nhận hàng (COD) qua Viettel Post.
+- Tiền cọc bằng 50% của tổng tiền hàng cộng phí vận chuyển, làm tròn lên hàng nghìn. Phần còn lại bạn thanh toán khi nhận hàng (COD).
 - Nội dung chuyển khoản là IN3D kèm mã đơn. Hệ thống tự xác nhận khi nhận được tiền đúng nội dung và đủ số tiền cọc.
 - Bạn có 30 phút để chuyển cọc. Quá thời gian, đơn tự hủy và hàng được trả lại kho.
 - Tiền chuyển đến sau khi đơn đã hủy sẽ được shop hoàn lại theo Chính sách đổi trả và hoàn tiền.
@@ -30,7 +30,7 @@ Có hiệu lực từ {NGAY_HIEU_LUC}.
 ## 4. Dịch vụ đặt in theo yêu cầu
 - Bạn tải file lên (định dạng {config.customPrint.upload.allowedExt}, tối đa {config.customPrint.upload.maxFiles} file, mỗi file {config.customPrint.upload.maxFileMB} MB) kèm chất liệu, màu và số lượng. Website không hiện giá tự động.
 - Shop kiểm tra file và gửi báo giá chính thức gồm giá cuối và thời gian in dự kiến. Báo giá có hiệu lực {config.customPrint.quoteValidHours} giờ kể từ khi gửi.
-- Hợp đồng hình thành khi bạn đồng ý báo giá và shop nhận được tiền cọc 50% như đơn thường. Phần còn lại cộng phí ship trả COD.
+- Hợp đồng hình thành khi bạn đồng ý báo giá và shop nhận được tiền cọc 50% như đơn thường. Tiền cọc bằng 50% của tổng tiền hàng cộng phí vận chuyển, làm tròn lên hàng nghìn. Phần còn lại bạn thanh toán khi nhận hàng (COD).
 - **Tiền cọc không hoàn lại khi shop đã bắt đầu in.** Trước khi in, bạn hủy thì được hoàn cọc.
 - **Cam kết về file:** bạn cam kết có quyền sử dụng file để in (tự thiết kế, đã mua hoặc được cấp phép) và file không vi phạm quyền sở hữu trí tuệ, quyền nhân thân của người khác. Bạn chịu trách nhiệm với mọi khiếu nại của bên thứ ba liên quan đến file.
 - **Hàng không nhận in:** vũ khí, bộ phận vũ khí, vật dụng có thể gây sát thương; đồ giả mạo như giấy tờ, con dấu, tiền, tem nhãn, hàng nhái thương hiệu; vật phẩm bị pháp luật cấm hoặc trái thuần phong mỹ tục; sản phẩm dùng nhân vật, logo có bản quyền mà bạn không có quyền sử dụng. Shop có quyền từ chối hoặc dừng in mọi yêu cầu nghi thuộc nhóm này. Nếu phát hiện sau khi đã cọc mà chưa in, shop hoàn cọc; nếu bạn cố tình khai sai, shop có thể không hoàn phần chi phí đã phát sinh.
