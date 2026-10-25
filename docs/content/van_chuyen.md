@@ -19,7 +19,7 @@ Có hiệu lực từ {NGAY_HIEU_LUC}.
 Shop giao hàng toàn quốc qua Viettel Post. Mã vận đơn được cập nhật trên trang Theo dõi đơn khi đơn chuyển sang "Đã giao vận chuyển".
 
 ## 2. Phí vận chuyển
-Phí vận chuyển hiện ở bước thanh toán, trước khi bạn xác nhận đặt hàng. Tiền cọc tính trên tổng tiền hàng cộng phí ship, phần còn lại thu khi nhận hàng (COD).
+Phí vận chuyển hiện ở bước thanh toán, trước khi bạn xác nhận đặt hàng. Tiền cọc tính trên tổng tiền hàng cộng phí ship, phần còn lại thu khi nhận hàng (COD). Với đơn đặt in riêng, cân nặng tính phí ship bằng tổng khối lượng nhựa của các món cộng thêm 150g hộp đóng gói, tính một lần cho cả đơn vì mọi món được đóng chung một hộp.
 
 ## 3. Thanh toán khi nhận (COD)
 - Bạn đã cọc 50% của tổng tiền hàng cộng phí ship khi đặt. Khi nhận, bạn trả cho bưu tá phần còn lại.
