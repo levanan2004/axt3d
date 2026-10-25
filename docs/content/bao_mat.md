@@ -61,7 +61,7 @@ Website có trợ lý chat dùng trí tuệ nhân tạo để trả lời nhanh 
 
 **Dữ liệu được gửi đi đâu.** Khi bạn gửi câu hỏi, nội dung tin nhắn và các tin trước đó trong cùng cuộc trò chuyện được gửi qua máy chủ của shop (Cloudflare) tới Google Gemini, dịch vụ AI của Google, để tạo câu trả lời. Google xử lý dữ liệu này theo điều khoản dịch vụ của Google, và máy chủ có thể đặt ngoài Việt Nam.
 
-**Lịch sử trò chuyện.** Lịch sử chỉ lưu trong bộ nhớ phiên của trình duyệt (sessionStorage) trên máy bạn và tự xóa khi bạn đóng tab. Shop không lưu lịch sử trò chuyện vào tài khoản hay cơ sở dữ liệu đơn hàng. Để chống lạm dụng và đếm lượt hỏi, hệ thống có thể ghi nhận dữ liệu kỹ thuật như địa chỉ IP và số lượt hỏi trong ngày.
+**Lịch sử trò chuyện.** Lịch sử chỉ lưu trong bộ nhớ phiên của trình duyệt (sessionStorage) trên máy bạn và tự xóa khi bạn đóng tab. Máy chủ của shop không lưu nội dung trò chuyện. Để đếm lượt hỏi và chống spam, hệ thống chỉ lưu một mã hash một chiều của địa chỉ IP (không lưu địa chỉ IP gốc) cùng số câu hỏi trong ngày. Dữ liệu này tự xoá sau {config.chatbot.usageRetentionDays} ngày.
 
 **Đừng nhập thông tin cá nhân hay thanh toán.** Bạn không nhập họ tên, số điện thoại, địa chỉ, số thẻ, số tài khoản, mã OTP hay mật khẩu vào khung chat. Trợ lý không bao giờ hỏi các thông tin này. Để tra cứu đơn, bạn dùng trang Theo dõi đơn hàng.
 

@@ -76,7 +76,7 @@ describe('/api/chat', () => {
     expect(calls[0].url).toContain(`models/${base.model}:streamGenerateContent`);
     const spend = await db.prepare('SELECT * FROM chat_spend').first<any>();
     expect(spend).toMatchObject({ requests: 1, input_tokens: 1000, output_tokens: 100 });
-    expect(spend.cost_vnd).toBeCloseTo((1000 * base.usdPerMillionInputTokens + 100 * base.usdPerMillionOutputTokens) / 1e6 * base.vndPerUsd);
+    expect(spend.cost_vnd).toBeCloseTo((1000 * base.usdPer1MInputTokens + 100 * base.usdPer1MOutputTokens) / 1e6 * base.vndPerUsd);
   });
   it('turns a FALLBACK reply into {fallback:true} without leaking the word', async () => {
     const { f } = fakeFetch(['FALL', 'BACK']);
@@ -149,7 +149,11 @@ describe('chat privacy', () => {
     expect(JSON.stringify(rows)).not.toContain('203.0.113.77');
     const subjects = rows.map(r => r.subject).sort();
     expect(subjects[0]).toBe('shop'); expect(subjects[1]).toMatch(/^v:[0-9a-f]{64}$/); expect(subjects).toHaveLength(2);
+    const burst = (await db.prepare('SELECT key,expires_at FROM rate_limits').all<any>()).results;
+    expect(burst).toHaveLength(1); expect(burst[0].key).toMatch(/^[0-9a-f]{64}$/); expect(JSON.stringify(burst)).not.toContain('203.0.113.77');
+    expect(burst[0].expires_at - now).toBeLessThanOrEqual(base.burstWindowSeconds * 1000);
     await purgeChatUsage(env, now + (base.usageRetentionDays + 1) * 86400000);
+    expect((await db.prepare('SELECT count(*) n FROM rate_limits').first<{ n: number }>())!.n).toBe(0);
     expect((await db.prepare('SELECT count(*) n FROM chat_usage').first<{ n: number }>())!.n).toBe(0);
     expect(vnDay(Date.UTC(2026, 9, 25, 18))).toBe('2026-10-26');
   });
