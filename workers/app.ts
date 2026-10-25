@@ -14,6 +14,7 @@ import {listProvinces,listWards,quoteShipping} from '../app/lib/shipping.server'
 import {handleChat,purgeChatUsage,reindexChat} from '../app/lib/chat.server';
 import {orderWeightGram} from '../app/lib/shipping';
 import {calcOrderTotals} from '../app/lib/money';
+import {MAX_IMAGE_BYTES,newImageKey,validateImageUpload} from '../app/lib/admin-images';
 import {quoteWeightGram} from '../app/lib/quotes.server';
 const handler=createRequestHandler(()=>import('virtual:react-router/server-build'),import.meta.env.MODE);
 function json(body:unknown,status=200){return Response.json(body,{status,headers:{'Cache-Control':'no-store'}});}
@@ -91,10 +92,9 @@ async function api(request:Request,env:Env,ctx?:WaitUntil):Promise<Response|null
  if(path==='/api/admin/images'){
   if(request.method!=='POST')return json({error:'Method not allowed'},405);
   assertSameOrigin(request);const actor=await requireAdmin(request,env);
-  if(Number(request.headers.get('content-length')||0)>5*1024*1024)return json({error:'Ảnh tối đa 5 MB.'},413);
-  const buffer=await request.arrayBuffer();const bytes=new Uint8Array(buffer);const ascii=(a:number,b:number)=>String.fromCharCode(...bytes.slice(a,b));
-  if(buffer.byteLength>5*1024*1024||buffer.byteLength<16||ascii(0,4)!=='RIFF'||ascii(8,12)!=='WEBP')return json({error:'Chỉ nhận ảnh WebP hợp lệ, tối đa 5 MB.'},400);
-  const key=`products/${crypto.randomUUID()}.webp`;
+  if(Number(request.headers.get('content-length')||0)>MAX_IMAGE_BYTES)return json({error:'Ảnh tối đa 5 MB.'},413);
+  const buffer=await request.arrayBuffer();const check=validateImageUpload(new Uint8Array(buffer));if(!check.ok)return json({error:check.error},check.status);
+  const key=newImageKey();
   await env.IMAGES.put(key,buffer,{httpMetadata:{contentType:'image/webp',cacheControl:'public,max-age=31536000,immutable'}});
   await env.DB.prepare('INSERT INTO audit_logs(actor,action,entity_id,detail,created_at) VALUES(?,?,?,?,?)').bind(actor,'upload_image',key,'WebP',Date.now()).run();
   return json({url:`/media/${key}`});

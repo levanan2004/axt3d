@@ -1,0 +1,6 @@
+import {z} from 'zod';
+import {categories} from './config';
+import {MAX_PRODUCT_IMAGES} from './admin-form';
+export const imageSchema=z.string().regex(/^\/(images\/[a-z0-9-]+\.webp|media\/products\/[a-f0-9-]+\.webp)$/,'Ảnh phải là WebP đã tải lên hoặc ảnh mẫu trong project.');
+export const variantSchema=z.object({id:z.string().min(1).max(100),sku:z.string().trim().min(1).max(80),color:z.string().trim().min(1).max(40),color_hex:z.string().regex(/^#[0-9a-f]{6}$/i),material:z.enum(['PLA','PETG','ABS']),size:z.string().trim().min(1).max(80),price:z.number().int().min(1000).max(100000000),stock:z.number().int().min(0).max(100000),originalStock:z.number().int().min(0).optional(),active:z.number().int().min(0).max(1)});
+export const productSchema=z.object({name:z.string().trim().min(2).max(120),slug:z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/).max(150),category:z.enum(categories.map(c=>c.slug)),description:z.string().trim().min(10).max(5000),image:imageSchema,images:z.array(imageSchema).min(1).max(MAX_PRODUCT_IMAGES,'Tối đa 8 ảnh.').refine(a=>new Set(a).size===a.length,'Ảnh bị trùng.'),active:z.number().int().min(0).max(1),packedWeightGram:z.number().int('Cân nặng đóng gói phải là số gram nguyên.').min(1,'Cân nặng đóng gói tối thiểu 1g.').max(50000,'Cân nặng đóng gói tối đa 50.000g.').nullable(),variants:z.array(variantSchema).min(1).max(30)});
