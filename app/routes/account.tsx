@@ -67,13 +67,13 @@ function Security({account}:{account:Awaited<ReturnType<typeof loader>>['account
    {r?.ok&&<p className="auth-success" role="status">{r.message}</p>}<FormError>{r?.error}</FormError>
    <SubmitButton busy={busy('change-password')}>{c.button}</SubmitButton></Form>
   :<div className="account-narrow">{cr?.ok?<p className="auth-success" role="status">{cr.message}</p>:askCreate?<Form method="post" className="auth-form"><input type="hidden" name="intent" value="create-password"/><p>{authCopy.create.explain(account.email)}</p><FormError>{cr?.error}</FormError><SubmitButton busy={busy('create-password')}>{authCopy.create.send}</SubmitButton></Form>:<button type="button" className="auth-primary" onClick={()=>setAskCreate(true)}>{authCopy.create.button}</button>}</div>}
-  <Form method="post" className="account-narrow"><input type="hidden" name="intent" value="logout"/><button className="account-outline account-wide">{authCopy.account.logout}</button></Form>
+  <Form method="post" className="account-narrow"><input type="hidden" name="intent" value="logout"/><button className="account-logout account-wide">{authCopy.account.logout}</button></Form>
   <div className="account-delete-zone"><button type="button" className="account-delete" onClick={()=>dialog.current?.showModal()}>{authCopy.del.open}</button></div>
   <dialog ref={dialog} className="account-dialog" aria-labelledby="del-title"><h2 id="del-title">{authCopy.del.title}</h2><p>{authCopy.del.body}</p><Form method="post" className="account-dialog-actions"><input type="hidden" name="intent" value="delete"/><button type="button" className="account-outline" onClick={()=>dialog.current?.close()}>{authCopy.del.cancel}</button><button className="account-delete-confirm" disabled={busy('delete')}>{authCopy.del.confirm}</button></Form></dialog>
  </div>;}
 export default function Account(){const {account,orders,addresses}=useLoaderData<typeof loader>();const [params]=useSearchParams();const tab=TABS.some(t=>t[0]===params.get('tab'))?params.get('tab')!:'don-hang';
  return <StoreLayout><div className="account-page">
-  <header className="account-head"><Avatar name={account.name} url={account.avatar} size={64}/><div className="account-id"><h1>{account.name}</h1><p>{account.email}</p></div><Form method="post"><input type="hidden" name="intent" value="logout"/><button className="account-outline">{authCopy.account.logout}</button></Form></header>
+  <header className="account-head"><Avatar name={account.name} url={account.avatar} size={64}/><div className="account-id"><h1>{account.name}</h1><p>{account.email}</p></div><Form method="post"><input type="hidden" name="intent" value="logout"/><button className="account-logout">{authCopy.account.logout}</button></Form></header>
   <nav className="account-tabs" role="tablist">{TABS.map(([id,label])=><Link key={id} role="tab" aria-selected={tab===id} className={tab===id?'active':''} to={`?tab=${id}`} replace preventScrollReset>{label}</Link>)}</nav>
   <section role="tabpanel">{tab==='don-hang'?<Orders orders={orders}/>:tab==='dia-chi'?<Addresses addresses={addresses}/>:<Security account={account}/>}</section>
  </div></StoreLayout>;}
