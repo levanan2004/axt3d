@@ -313,6 +313,40 @@
       "_status": "SỐ TẠM theo customPrint"
     }
   },
+  "chatbot": {
+    "monthlyBudgetVnd": 200000,
+    "alertAtPercent": 80,
+    "perVisitorPerDay": 20,
+    "globalPerDay": 500,
+    "maxOutputTokens": 400,
+    "maxInputChars": 500,
+    "onLimit": "Hiện câu báo hết lượt của Nhất + nút Zalo/gọi shop, không gọi API.",
+    "_note": "Dùng bản Gemini Flash rẻ nhất đủ tốt; Minh đo chi phí thật 1 tuần đầu rồi báo Phương.",
+    "model": "gemini-2.5-flash-lite",
+    "usdPer1MInputTokens": 0.1,
+    "usdPer1MOutputTokens": 0.4,
+    "vndPerUsd": 26000,
+    "temperature": 0.2,
+    "apiTimeoutMs": 18000,
+    "burstPerWindow": 10,
+    "burstWindowSeconds": 600,
+    "historyTurns": 6,
+    "usageRetentionDays": 3,
+    "retrieval": {
+      "topK": 6,
+      "minCoverage": 0.35
+    },
+    "contact": {
+      "zalo": "",
+      "phone": ""
+    },
+    "mascots": {
+      "bot_avatar": "/images/chatbot/bot_avatar",
+      "bot_chao": "/images/chatbot/bot_chao",
+      "bot_khong_biet": "/images/chatbot/bot_khong_biet"
+    },
+    "_devNote": "Model, token prices and FX come from Hà Phương (web-in-3d/shop-config.json). Usage rows (hashed visitor counts and chat burst counters) are deleted after usageRetentionDays."
+  },
   "vtpOrder": {
     "_status": "Hà Phương chốt 25/10/2026",
     "codAmount": "goods_plus_ship_minus_deposit",

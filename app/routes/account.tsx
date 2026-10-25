@@ -27,7 +27,7 @@ export async function action({request,context}:ActionFunctionArgs){const env=get
   if(!parsed.success)return data<Result>({intent,errors:fieldErrors(parsed.error)},{status:400});
   const limit=await consumeLimit(env.DB,await limitKey('change-pw',a.id),5,15*60000);
   if(!limit.allowed)return data<Result>({intent,error:authCopy.tooFast},{status:429});
-  const r=await changePassword(env,a,parsed.data.current,parsed.data.password);
+  const r=await changePassword(env,a,parsed.data.current,parsed.data.password,clientIp(request));if(!r.ok&&'rateLimited' in r)return data<Result>({intent,error:authCopy.tooFast},{status:429});
   if(!r.ok)return data<Result>({intent,errors:{current:authCopy.change.wrongCurrent}},{status:400});
   return data<Result>({intent,ok:true,message:authCopy.change.success},{headers:{'Set-Cookie':sessionCookie(request,r.token)}});}
  if(intent==='create-password'){const r=await requestCreatePassword(env,a,clientIp(request));return r.ok?data<Result>({intent,ok:true,message:authCopy.create.sent(a.email)}):data<Result>({intent,error:r.error},{status:429});}

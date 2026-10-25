@@ -3,7 +3,7 @@ import {hashPassword,verifyPassword,needsRehash} from './password.server';
 import {issueToken,consumeToken} from './tokens.server';
 import {createSession,revokeAllSessions,type Account} from './sessions.server';
 import {emailSender,renderEmail,accountLink} from './email.server';
-import {loginLock,loginFailed,loginSucceeded,sendLimits,minutesLeft,LOGIN_LIMITS} from './limits.server';
+import {loginLock,loginFailed,loginSucceeded,sendLimits,minutesLeft,needsTurnstileFor,LOGIN_LIMITS} from './limits.server';
 import {authCopy,emailCopy,PASSWORD_MIN,RESET_MINUTES,VERIFY_HOURS} from './copy';
 import {addressFields,normalizePhone} from '../orders.server';
 import type {Env} from '../types';
@@ -57,14 +57,14 @@ export type LoginResult={ok:true;account:Account}|{ok:false;error:string;lockedM
 export async function login(env:Env,input:z.infer<typeof loginSchema>,ip:string,opts:{turnstileOk:()=>Promise<boolean>},now=Date.now()):Promise<LoginResult>{
  const lock=await loginLock(env.DB,input.email,ip,now);
  if(lock.lockedMs)return {ok:false,error:authCopy.login.locked(minutesLeft(lock.lockedMs)),lockedMinutes:minutesLeft(lock.lockedMs)};
- const needsTurnstile=lock.ipFailures>=LOGIN_LIMITS.turnstileAfter;
+ const needsTurnstile=needsTurnstileFor(lock);
  if(needsTurnstile&&!await opts.turnstileOk())return {ok:false,error:authCopy.turnstile,needsTurnstile};
  const account=await findByEmail(env.DB,input.email);
  const ok=await verifyPassword(input.password,account?.password_hash);
  if(!ok||!account){
   const r=await loginFailed(env.DB,input.email,ip,now);
   if(r.lockedMs)return {ok:false,error:authCopy.login.locked(minutesLeft(r.lockedMs)),lockedMinutes:minutesLeft(r.lockedMs)};
-  return {ok:false,error:authCopy.login.wrong,needsTurnstile:needsTurnstile||lock.ipFailures+1>=LOGIN_LIMITS.turnstileAfter};
+  return {ok:false,error:authCopy.login.wrong,needsTurnstile:needsTurnstile||needsTurnstileFor(r)};
  }
  await loginSucceeded(env.DB,input.email);
  if(!account.email_verified)return {ok:false,error:authCopy.login.unverified,unverified:true};
@@ -89,9 +89,16 @@ export async function resetPassword(env:Env,token:unknown,newPassword:string,now
  return true;
 }
 /** Change password: needs the current one. Revokes every session and returns a fresh one for this device (rotation). */
-export async function changePassword(env:Env,account:Account,current:string,next:string,now=Date.now()){
- if(!account.password_hash||!await verifyPassword(current,account.password_hash))return {ok:false as const};
- await env.DB.prepare('UPDATE accounts SET password_hash=?,updated_at=? WHERE id=?').bind(await hashPassword(next),now,account.id).run();
+export async function changePassword(env:Env,account:Account,current:string,next:string,ip='local',now=Date.now()){
+ // Current-password guesses share the login failure counters (same email + IP keys).
+ const lock=await loginLock(env.DB,account.email,ip,now);
+ if(lock.lockedMs||lock.emailFailures>=LOGIN_LIMITS.email.max)return {ok:false as const,rateLimited:true as const};
+ if(!account.password_hash||!await verifyPassword(current,account.password_hash)){await loginFailed(env.DB,account.email,ip,now);return {ok:false as const};}
+ await loginSucceeded(env.DB,account.email);
+ await env.DB.batch([
+  env.DB.prepare('UPDATE accounts SET password_hash=?,updated_at=? WHERE id=?').bind(await hashPassword(next),now,account.id),
+  env.DB.prepare("DELETE FROM account_tokens WHERE account_id=? AND purpose IN('reset_password','create_password') AND used_at IS NULL").bind(account.id),
+ ]);
  await revokeAllSessions(env.DB,account.id);
  return {ok:true as const,token:await createSession(env.DB,account.id,now)};
 }

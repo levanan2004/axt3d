@@ -55,7 +55,19 @@ Website dùng cookie và bộ nhớ trình duyệt cần thiết để giữ gi�
 ## 8. Trẻ em
 Người dưới 16 tuổi nên đặt hàng cùng cha mẹ hoặc người giám hộ.
 
-## 9. Thay đổi
+## 9. Trợ lý chat AI
+
+Website có trợ lý chat dùng trí tuệ nhân tạo để trả lời nhanh các câu hỏi về sản phẩm, vận chuyển, thanh toán và đặt in.
+
+**Dữ liệu được gửi đi đâu.** Khi bạn gửi câu hỏi, nội dung tin nhắn và các tin trước đó trong cùng cuộc trò chuyện được gửi qua máy chủ của shop (Cloudflare) tới Google Gemini, dịch vụ AI của Google, để tạo câu trả lời. Google xử lý dữ liệu này theo điều khoản dịch vụ của Google, và máy chủ có thể đặt ngoài Việt Nam.
+
+**Lịch sử trò chuyện.** Lịch sử chỉ lưu trong bộ nhớ phiên của trình duyệt (sessionStorage) trên máy bạn và tự xóa khi bạn đóng tab. Máy chủ của shop không lưu nội dung trò chuyện. Để đếm lượt hỏi và chống spam, hệ thống chỉ lưu một mã hash một chiều của địa chỉ IP (không lưu địa chỉ IP gốc) cùng số câu hỏi trong ngày. Dữ liệu này tự xoá sau {config.chatbot.usageRetentionDays} ngày.
+
+**Đừng nhập thông tin cá nhân hay thanh toán.** Bạn không nhập họ tên, số điện thoại, địa chỉ, số thẻ, số tài khoản, mã OTP hay mật khẩu vào khung chat. Trợ lý không bao giờ hỏi các thông tin này. Để tra cứu đơn, bạn dùng trang Theo dõi đơn hàng.
+
+**Giới hạn.** Câu trả lời do AI tạo nên có thể chưa chính xác. Thông tin trên đơn hàng, báo giá và các trang chính sách là căn cứ cuối cùng. Mỗi câu hỏi tối đa {config.chatbot.maxInputChars} ký tự, mỗi khách hỏi tối đa {config.chatbot.perVisitorPerDay} câu mỗi ngày, và trợ lý có thể tạm nghỉ khi toàn shop đạt giới hạn trong ngày hoặc trong tháng. Khi đó bạn nhắn Zalo {SO_ZALO} hoặc gọi {SO_DIEN_THOAI} để được hỗ trợ.
+
+## 10. Thay đổi
 Khi cập nhật chính sách, shop ghi ngày hiệu lực mới ở đầu trang.
 
 ## 10. Tài khoản khách hàng (không bắt buộc)

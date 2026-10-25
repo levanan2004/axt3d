@@ -13,7 +13,7 @@ beforeAll(async () => {
   mf = new Miniflare({ modules: true, script: 'export default { fetch() { return new Response("ok"); } }', d1Databases: ['DB'], r2Buckets: ['IMAGES'], compatibilityDate: '2026-07-30' });
   const db = await mf.getD1Database('DB') as unknown as D1Database;
   env = { DB: db, IMAGES: await mf.getR2Bucket('IMAGES') as unknown as R2Bucket } as Env;
-  for (const file of ['migrations/0001_store.sql', 'migrations/0002_quotes.sql', 'migrations/0003_ops.sql', 'migrations/0004_shipping.sql', 'migrations/0006_accounts.sql']) {
+  for (const file of ['migrations/0001_store.sql', 'migrations/0002_quotes.sql', 'migrations/0003_ops.sql', 'migrations/0004_shipping.sql', 'migrations/0007_accounts.sql']) {
     const sql = readFileSync(file, 'utf8');
     await db.prepare(sql).run().catch(async () => { await db.exec(sql); });
   }

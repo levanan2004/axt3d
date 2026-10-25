@@ -44,7 +44,7 @@ Trang: `/dieu-khoan`, `/chinh-sach-bao-mat`, `/doi-tra-hoan-tien`, `/van-chuyen`
 
 ## Tài khoản khách hàng (feat/11)
 
-Không bắt buộc: khách vẫn mua hàng không cần đăng nhập. Migration `0006_accounts.sql` (local: `npm run db:migrate`).
+Không bắt buộc: khách vẫn mua hàng không cần đăng nhập. Migration `0007_accounts.sql` (local: `npm run db:migrate`).
 
 | Biến | Loại | Ghi chú |
 |---|---|---|
