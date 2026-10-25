@@ -71,7 +71,7 @@ Dòng cuối: `© {nam} AXT 3D. Ảnh sản phẩm do shop tự chụp.`
 ## 7. FAQ (trang chủ và /dat-in)
 
 1. **Tôi phải trả trước bao nhiêu?**
-Bạn chuyển khoản cọc 50% tiền hàng qua mã QR (làm tròn lên hàng nghìn). Phần còn lại và phí ship trả cho bưu tá khi nhận hàng. Màn thanh toán hiện đủ ba số trước khi bạn đặt.
+Bạn đặt cọc 50% của tổng tiền hàng cộng phí ship qua mã QR, phần còn lại trả khi nhận hàng (COD).
 
 2. **Phí vận chuyển bao nhiêu?**
 Phí vận chuyển hiện ở bước thanh toán, trước khi bạn xác nhận đặt hàng. Phí này cộng vào phần thu khi nhận.
@@ -100,7 +100,7 @@ Hàng in 3D có sai lệch nhỏ về kích thước và màu so với ảnh. M�
   "@context": "https://schema.org",
   "@type": "FAQPage",
   "mainEntity": [
-    { "@type": "Question", "name": "Tôi phải trả trước bao nhiêu?", "acceptedAnswer": { "@type": "Answer", "text": "Bạn chuyển khoản cọc 50% tiền hàng qua mã QR (làm tròn lên hàng nghìn). Phần còn lại và phí ship trả cho bưu tá khi nhận hàng. Màn thanh toán hiện đủ ba số trước khi bạn đặt." } },
+    { "@type": "Question", "name": "Tôi phải trả trước bao nhiêu?", "acceptedAnswer": { "@type": "Answer", "text": "Bạn đặt cọc 50% của tổng tiền hàng cộng phí ship qua mã QR, phần còn lại trả khi nhận hàng (COD)." } },
     { "@type": "Question", "name": "Phí vận chuyển bao nhiêu?", "acceptedAnswer": { "@type": "Answer", "text": "Phí vận chuyển hiện ở bước thanh toán, trước khi bạn xác nhận đặt hàng. Phí này cộng vào phần thu khi nhận." } },
     { "@type": "Question", "name": "Chuyển khoản cọc thế nào cho đúng?", "acceptedAnswer": { "@type": "Answer", "text": "Quét mã QR ở trang thanh toán. Giữ nguyên số tiền và nội dung chuyển khoản IN3D kèm mã đơn. Hệ thống tự xác nhận khi nhận được tiền." } },
     { "@type": "Question", "name": "Nếu tôi chưa kịp chuyển cọc thì sao?", "acceptedAnswer": { "@type": "Answer", "text": "Đơn được giữ trong 30 phút. Quá thời gian, đơn tự hủy và hàng trả lại kho. Bạn có thể đặt lại. Nếu tiền đến sau khi đơn đã hủy, shop sẽ hoàn lại cho bạn." } },

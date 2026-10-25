@@ -33,7 +33,7 @@ Quy ước: `AXT 3D` thường ngắn. Nếu title dài hơn 60 ký tự sau khi
 
 ### `/thanh-toan`
 - Title: `Thanh toán | AXT 3D`
-- Meta: `Nhập địa chỉ nhận hàng, cọc 50% tiền hàng qua QR, phần còn lại trả khi nhận.`
+- Meta: `Chọn địa chỉ, xem phí ship Viettel Post ngay và đặt cọc 50% (tiền hàng + ship) qua mã QR. Phần còn lại trả khi nhận hàng.`
 - H1: `Thanh toán`
 - OG: không cần (noindex). Trang QR cọc dùng cùng quy tắc, title `Chuyển khoản cọc đơn {maDon} | AXT 3D`.
 
