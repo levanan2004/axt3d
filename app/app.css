@@ -166,3 +166,15 @@
 .account-security{display:flex;flex-direction:column;gap:20px}.account-narrow{max-width:400px;width:100%}.account-delete-zone{border-top:1px solid #EAECF0;padding-top:20px;margin-top:20px}.account-delete{border:0;background:none;color:#D92D20;font-weight:600;padding:8px 0;min-height:44px}
 .account-dialog{border:0;border-radius:16px;padding:24px;max-width:400px;width:calc(100% - 32px)}.account-dialog::backdrop{background:rgb(16 24 40/.5)}.account-dialog h2{font-size:20px;color:#152B40;margin-bottom:8px}.account-dialog p{color:#475467;font-size:14px}.account-dialog-actions{display:flex;gap:12px;margin-top:20px}.account-dialog-actions button{flex:1;height:48px}.account-delete-confirm{border:0;border-radius:10px;background:#D92D20;color:white;font-weight:700}
 .checkout-login-strip{background:#F2F4F7;border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:14px;color:#152B40}.checkout-login-strip a{color:#152B40;text-decoration:underline;font-weight:600}
+
+/* Auth UI fixes (Phú): focus 2px #F4511E on every auth input, red border on invalid incl. password confirm, nowrap links, mobile chatbot/tab-bar spacing. */
+.auth-input:focus,.auth-input:focus-visible,input.auth-input:not([type=checkbox]):not([type=radio]):focus{outline:none;border:2px solid #F4511E;padding-left:13px}
+.auth-input.invalid,input.auth-input.invalid:not([type=checkbox]):not([type=radio]){border-color:#D92D20}
+.auth-input.invalid:focus,input.auth-input.invalid:not([type=checkbox]):not([type=radio]):focus{border:2px solid #D92D20}
+.auth-field>.auth-error{font-size:13px;margin-top:0}
+.auth-legal{font-size:13px}.auth-legal a{white-space:nowrap}
+.auth-foot a{white-space:nowrap}
+@media(max-width:767px){
+ body:has(.auth-page) .chat-fab,body:has(.account-page) .chat-fab{display:none}
+ .auth-page,.account-page{padding-bottom:calc(var(--bottom-nav-h,64px) + env(safe-area-inset-bottom) + 16px)}
+}
