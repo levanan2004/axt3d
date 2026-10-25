@@ -9,6 +9,7 @@ import {orderDetails,publicOrder} from '../app/lib/db.server';
 import {assertSameOrigin,requireAdmin,requireOrder,secureEqual,rateLimit} from '../app/lib/security.server';
 import type {Env,Variant} from '../app/lib/types';
 import {listProvinces,listWards,quoteShipping} from '../app/lib/shipping.server';
+import {handleChat,purgeChatUsage,reindexChat} from '../app/lib/chat.server';
 import {orderWeightGram} from '../app/lib/shipping';
 import {calcOrderTotals} from '../app/lib/money';
 import {quoteWeightGram} from '../app/lib/quotes.server';
@@ -28,6 +29,13 @@ export async function webhook(request:Request,env:Env){
  return json({success:true,...result});
 }
 async function api(request:Request,env:Env):Promise<Response|null>{const url=new URL(request.url),path=url.pathname;
+ if(path==='/api/chat')return handleChat(request,env);
+ if(path==='/api/admin/chat/reindex'){
+  if(request.method!=='POST')return json({error:'Method not allowed'},405);
+  assertSameOrigin(request);const actor=await requireAdmin(request,env);const result=await reindexChat(env);
+  await env.DB.prepare('INSERT INTO audit_logs(actor,action,entity_id,detail,created_at) VALUES(?,?,?,?,?)').bind(actor,'chat_reindex','chat_chunks',JSON.stringify(result),Date.now()).run();
+  return json(result);
+ }
  if(path==='/api/webhooks/sepay'){if(request.method!=='POST')return json({success:false},405);return webhook(request,env);}
  if(path==='/api/shipping/provinces'||path==='/api/shipping/wards'){
   if(request.method!=='GET')return json({error:'Method not allowed'},405);
@@ -119,5 +127,5 @@ export default {
   if(!allowsIndexing(env))headers.set('X-Robots-Tag','noindex, nofollow');
   return new Response(response.body,{status:response.status,statusText:response.statusText,headers});
  },
- async scheduled(_event:ScheduledController,env:Env,ctx:ExecutionContext){ctx.waitUntil(Promise.all([expireOrders(env.DB),expireQuotes(env.DB)]));}
+ async scheduled(_event:ScheduledController,env:Env,ctx:ExecutionContext){ctx.waitUntil(Promise.all([expireOrders(env.DB),expireQuotes(env.DB),purgeChatUsage(env)]));}
 } satisfies ExportedHandler<Env>;

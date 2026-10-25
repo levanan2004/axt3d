@@ -11,6 +11,7 @@
     "db:migrate": "wrangler d1 migrations apply DB --local",
     "db:seed": "node scripts/seed.mjs",
     "setup": "npm run db:migrate && npm run db:seed",
+    "chat:reindex": "node scripts/chat-reindex.mjs",
     "preview": "wrangler dev --config build/server/wrangler.json --port 4173 --persist-to .wrangler/state",
     "deploy:staging": "node scripts/deploy-staging.mjs"
   },
