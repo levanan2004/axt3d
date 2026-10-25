@@ -169,10 +169,33 @@
     "codFormula": "itemsSubtotal - deposit + shippingFee"
   },
   "shipping": {
-    "mode": "flat",
-    "flatFee": 20000,
-    "freeShipThreshold": null,
-    "_status": "CHỜ AN CHỐT: phí cố định hay theo bảng Viettel Post; có miễn ship từ mức nào không"
+    "mode": "viettelpost_api",
+    "_status": "Phí theo Viettel Post. An chưa chốt bù ship/miễn ship nên tạm để 0/null.",
+    "fallbackFee": 20000,
+    "apiTimeoutMs": 5000,
+    "shopSubsidy": 0,
+    "freeShippingThreshold": null,
+    "depositIncludesShipping": true,
+    "note": "Phí = số Viettel Post trả về, không cộng thêm. Lỗi/chậm >5s dùng fallbackFee.",
+    "defaultPackedWeightGram": 300,
+    "customPrintPackagingGram": 150,
+    "weightRule": "Tổng = cân nặng đóng gói từng món × số lượng; in theo file = gram nhựa báo giá + customPrintPackagingGram. Số tạm, chờ An.",
+    "sender": {
+      "address": "41 đường 29, Tân Tiến 1, xã Tân Thông Hội, Củ Chi, TP.HCM",
+      "provinceId": 2,
+      "provinceName": "Thành phố Hồ Chí Minh",
+      "wardId": 49319,
+      "wardName": "Xã Củ Chi",
+      "_note": "Theo NQ 1685/NQ-UBTVQH15, xã Tân Thông Hội (huyện Củ Chi cũ) nhập vào xã Củ Chi từ 01/7/2025. Id lấy từ VTP listProvinceNew/listWardsNew."
+    },
+    "viettelPost": {
+      "baseUrl": "https://partner.viettelpost.vn/v2",
+      "productType": "HH",
+      "orderType": 1,
+      "serviceSelection": "cheapest",
+      "locationCacheSeconds": 86400,
+      "feeCacheSeconds": 600
+    }
   },
   "payment": {
     "depositGateway": "sepay",
