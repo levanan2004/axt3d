@@ -2,6 +2,7 @@ import {useEffect,useMemo,useRef,useState} from 'react';
 import {ChevronDown,Search,X} from 'lucide-react';
 import {money} from '../lib/money';
 import {shopConfig} from '../lib/config';
+import {trackVisualViewport} from '../lib/visual-viewport';
 
 export type Place={id:number;name:string};
 export type AddressValue={provinceId:number;provinceName:string;wardId:number;wardName:string;street:string};
@@ -17,14 +18,14 @@ export const addressComplete=(a:AddressValue)=>a.provinceId>0&&a.wardId>0&&a.str
 function SearchSelect({label,placeholder,options,value,onSelect,disabled,loading,error}:{label:string;placeholder:string;options:Place[];value:Place|null;onSelect:(p:Place)=>void;disabled?:boolean;loading?:boolean;error?:string}){
  const [open,setOpen]=useState(false),[query,setQuery]=useState('');const input=useRef<HTMLInputElement>(null),root=useRef<HTMLDivElement>(null);
  const filtered=useMemo(()=>{const q=fold(query.trim());return q?options.filter(o=>fold(o.name).includes(q)):options;},[query,options]);
- useEffect(()=>{if(!open)return;setQuery('');const t=setTimeout(()=>input.current?.focus(),30);const close=(e:MouseEvent)=>{if(root.current&&!root.current.contains(e.target as Node))setOpen(false);};const esc=(e:KeyboardEvent)=>{if(e.key==='Escape')setOpen(false);};document.addEventListener('mousedown',close);document.addEventListener('keydown',esc);return()=>{clearTimeout(t);document.removeEventListener('mousedown',close);document.removeEventListener('keydown',esc);};},[open]);
+ useEffect(()=>{if(!open)return;const untrack=trackVisualViewport();setQuery('');const t=setTimeout(()=>input.current?.focus(),30);const close=(e:MouseEvent)=>{if(root.current&&!root.current.contains(e.target as Node))setOpen(false);};const esc=(e:KeyboardEvent)=>{if(e.key==='Escape')setOpen(false);};document.addEventListener('mousedown',close);document.addEventListener('keydown',esc);return()=>{untrack();clearTimeout(t);document.removeEventListener('mousedown',close);document.removeEventListener('keydown',esc);};},[open]);
  return <div className="field search-select" ref={root}><span>{label}</span>
   <button type="button" className="search-select-trigger" aria-haspopup="listbox" aria-expanded={open} disabled={disabled} onClick={()=>setOpen(o=>!o)}><span className={value?'':'muted'}>{loading?'Đang tải...':value?.name||placeholder}</span><ChevronDown size={16}/></button>
   {error&&<small className="error-message">{error}</small>}
   {open&&<><div className="search-select-backdrop" onClick={()=>setOpen(false)}/><div className="search-select-panel" role="dialog" aria-label={label}>
    <div className="search-select-head"><strong>{label}</strong><button type="button" className="icon-button" aria-label="Đóng" onClick={()=>setOpen(false)}><X size={18}/></button></div>
-   <label className="search-select-search"><Search size={15}/><input ref={input} value={query} onChange={e=>setQuery(e.target.value)} placeholder="Tìm nhanh..." aria-label={`Tìm ${label.toLowerCase()}`}/></label>
-   <ul role="listbox">{filtered.map(o=><li key={o.id} role="option" aria-selected={value?.id===o.id}><button type="button" className={value?.id===o.id?'active':''} onClick={()=>{onSelect(o);setOpen(false);}}>{o.name}</button></li>)}{!filtered.length&&<li className="muted search-select-empty">Không tìm thấy kết quả</li>}</ul>
+   <label className="search-select-search"><Search size={20}/><input ref={input} value={query} onChange={e=>setQuery(e.target.value)} placeholder="Tìm nhanh..." aria-label={`Tìm ${label.toLowerCase()}`}/></label>
+   <ul role="listbox" key={query}>{filtered.map(o=><li key={o.id} role="option" aria-selected={value?.id===o.id}><button type="button" className={value?.id===o.id?'active':''} onClick={()=>{onSelect(o);setOpen(false);}}>{o.name}</button></li>)}{!filtered.length&&<li className="muted search-select-empty">Không tìm thấy kết quả</li>}</ul>
   </div></>}
  </div>;
 }
