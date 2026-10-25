@@ -26,11 +26,6 @@ export function shortName(full: string) {
   const parts = full.trim().split(/\s+/).filter(Boolean);
   return parts.at(-1) || 'Khách';
 }
-/** Province/city = the last segment of "street, ward, province". Never return the street. */
-export function provinceFromAddress(address: string) {
-  const parts = address.split(',').map(s => s.trim()).filter(Boolean);
-  return parts.length >= 2 ? parts.at(-1)! : '';
-}
 
 const headlines: Record<OrderEventKind, string> = {
   created: '🆕 ĐƠN MỚI',

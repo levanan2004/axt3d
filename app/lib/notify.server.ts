@@ -1,5 +1,5 @@
 import { expireOrders } from './orders.server';
-import { formatOrderMessage, provinceFromAddress, sendTelegram, telegramConfigured, type OrderEventKind } from './telegram';
+import { formatOrderMessage, sendTelegram, telegramConfigured, type OrderEventKind } from './telegram';
 import type { Env, Order } from './types';
 
 /** The part of ExecutionContext we need. Undefined in tests and scripts: the send then runs unawaited. */
@@ -15,7 +15,7 @@ export function notifyOrder(env: Env, ctx: WaitUntil, kind: OrderEventKind, code
     const order = await env.DB.prepare('SELECT * FROM orders WHERE code=?').bind(code).first<Order>();
     if (!order) return false;
     const { results: items } = await env.DB.prepare('SELECT product_name,quantity FROM order_items WHERE order_id=? ORDER BY rowid').bind(order.id).all<{ product_name: string; quantity: number }>();
-    const text = formatOrderMessage(kind, { ...order, province: provinceFromAddress(order.address) }, items, env.SITE_URL);
+    const text = formatOrderMessage(kind, { ...order, province: order.province_name || '' }, items, env.SITE_URL);
     return sendTelegram(env, text, fetcher);
   })().catch(() => { console.warn('Telegram notify skipped', kind); return false; });
   try { ctx?.waitUntil(task); } catch { /* no context: task still runs */ }
