@@ -11,10 +11,10 @@
     "supportPhone": ""
   },
   "bank": {
-    "bin": "",
-    "name": "",
-    "accountNumber": "",
-    "accountName": ""
+    "bin": "970418",
+    "name": "BIDV",
+    "accountNumber": "8877022760",
+    "accountName": "LE VAN AN"
   },
   "policies": {
     "depositNote": "Chính sách hoàn cọc đang được cửa hàng cập nhật.",
