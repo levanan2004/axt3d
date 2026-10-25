@@ -1,6 +1,6 @@
 # Điều khoản sử dụng
 
-Phiên bản 2. Có hiệu lực từ 25/10/2026.
+Phiên bản 2. Có hiệu lực từ {NGAY_HIEU_LUC}.
 
 ## Thông tin chủ sở hữu website
 - Tên shop: AXT 3D – Website: https://{TEN_MIEN}
@@ -19,7 +19,7 @@ Phiên bản 2. Có hiệu lực từ 25/10/2026.
 - Shop không bán sản phẩm dùng nhân vật hay thương hiệu có bản quyền mà shop không có quyền sử dụng.
 
 ## 3. Đặt hàng và thanh toán
-- Tiền cọc bằng 50% của tổng tiền hàng cộng phí vận chuyển, làm tròn lên hàng nghìn. Phần còn lại bạn thanh toán khi nhận hàng (COD).
+- Tiền cọc được thanh toán bằng mã QR chuyển khoản qua SePay; đơn hàng được giao bởi Viettel Post.
 - Nội dung chuyển khoản là IN3D kèm mã đơn. Hệ thống tự xác nhận khi nhận được tiền đúng nội dung và đủ số tiền cọc.
 - Bạn có 30 phút để chuyển cọc. Quá thời gian, đơn tự hủy và hàng được trả lại kho.
 - Tiền chuyển đến sau khi đơn đã hủy sẽ được shop hoàn lại theo Chính sách đổi trả và hoàn tiền.
