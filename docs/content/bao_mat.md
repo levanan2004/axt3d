@@ -57,3 +57,11 @@ Người dưới 16 tuổi nên đặt hàng cùng cha mẹ hoặc người giá
 
 ## 9. Thay đổi
 Khi cập nhật chính sách, shop ghi ngày hiệu lực mới ở đầu trang.
+
+## 10. Tài khoản khách hàng (không bắt buộc)
+Bạn vẫn mua hàng được mà không cần tài khoản. Nếu tạo tài khoản, bạn chọn một trong hai cách:
+- Bằng email: chúng tôi lưu họ tên, email và mật khẩu. Mật khẩu được mã hoá một chiều, nên kể cả shop cũng không xem được.
+- Bằng Google: chúng tôi chỉ nhận tên, email và ảnh đại diện từ Google. Chúng tôi không nhận mật khẩu Google và không đăng gì lên tài khoản Google của bạn.
+
+Tài khoản dùng để lưu các địa chỉ giao hàng và để bạn xem lại đơn cũ. Chúng tôi gửi email xác nhận và email đặt lại mật khẩu tới địa chỉ của bạn, không gửi quảng cáo nếu bạn chưa đồng ý.
+Bạn có thể bấm "Xoá tài khoản" trên trang Tài khoản bất cứ lúc nào. Khi đó tài khoản và các địa chỉ đã lưu sẽ bị xoá. Thông tin các đơn đã đặt vẫn được giữ để đối soát và giải quyết khiếu nại, nhưng không còn gắn với email của bạn.
