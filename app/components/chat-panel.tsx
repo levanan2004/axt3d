@@ -51,7 +51,7 @@ export default function ChatPanel({ open, onClose }: { open: boolean; onClose: (
   }, [open]);
   useLayoutEffect(() => {
     const el = field.current; if (!el) return;
-    el.style.height = 'auto'; el.style.height = `${Math.min(el.scrollHeight, 120)}px`;
+    el.style.height = 'auto'; const maxH = 110; /* ~4 lines */ el.style.height = `${Math.min(el.scrollHeight, maxH)}px`; el.style.overflowY = el.scrollHeight > maxH ? 'auto' : 'hidden';
   }, [input]);
 
   const onKey = (e: KeyboardEvent<HTMLDivElement>) => {

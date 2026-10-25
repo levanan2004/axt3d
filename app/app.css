@@ -178,3 +178,10 @@
  body:has(.auth-page) .chat-fab,body:has(.account-page) .chat-fab{display:none}
  .auth-page,.account-page{padding-bottom:calc(var(--bottom-nav-h,64px) + env(safe-area-inset-bottom) + 16px)}
 }
+
+/* Chat input: auto-grow 1-4 lines, no native scrollbar/arrows until it overflows, then a thin one without buttons. */
+.chat-input textarea{resize:none;max-height:110px;overflow-y:hidden;scrollbar-width:thin;scrollbar-color:#C4CAD1 transparent}
+.chat-input textarea::-webkit-scrollbar{width:4px}
+.chat-input textarea::-webkit-scrollbar-button{display:none;width:0;height:0}
+.chat-input textarea::-webkit-scrollbar-track{background:transparent}
+.chat-input textarea::-webkit-scrollbar-thumb{background:#C4CAD1;border-radius:4px}
