@@ -8,7 +8,7 @@
     },
     {
       "hoi": "Đặt hàng phải cọc bao nhiêu?",
-      "dap": "Bạn cọc 50% của tổng tiền hàng cộng phí ship, làm tròn lên hàng nghìn. Số tiền cọc hiện rõ ở màn thanh toán."
+      "dap": "Bạn cọc {config.deposit.rate} của tổng tiền hàng cộng phí ship, làm tròn lên hàng nghìn. Số tiền cọc hiện rõ ở màn thanh toán."
     },
     {
       "hoi": "Chuyển cọc bằng cách nào?",
@@ -20,15 +20,15 @@
     },
     {
       "hoi": "Đặt in riêng thế nào?",
-      "dap": "Bạn tải file 3D lên trang đặt in, chọn chất liệu, màu và số lượng, web sẽ hiện giá tạm tính. Shop kiểm tra file rồi gửi báo giá chính thức, bạn đồng ý và chuyển cọc 50% như đơn thường thì shop bắt đầu in."
+      "dap": "Bạn tải file 3D lên trang đặt in, chọn chất liệu, màu và số lượng, web sẽ hiện giá tạm tính. Shop kiểm tra file rồi gửi báo giá chính thức, bạn đồng ý và chuyển cọc {config.deposit.rate} như đơn thường thì shop bắt đầu in."
     },
     {
       "hoi": "Đặt in nhận file định dạng gì?",
-      "dap": "Shop nhận file STL, 3MF hoặc OBJ, mỗi file tối đa 50 MB và tối đa 5 file mỗi lần gửi."
+      "dap": "Shop nhận file STL, 3MF hoặc OBJ, mỗi file tối đa {maxFileMB} MB và tối đa {maxFiles} file mỗi lần gửi."
     },
     {
       "hoi": "Giá tạm tính trên web có phải giá cuối không?",
-      "dap": "Không. Giá tạm tính chỉ để bạn tham khảo, shop sẽ kiểm tra file và gửi báo giá chính thức gồm giá cuối và thời gian in dự kiến. Báo giá có hiệu lực 48 giờ."
+      "dap": "Không. Giá tạm tính chỉ để bạn tham khảo, shop sẽ kiểm tra file và gửi báo giá chính thức gồm giá cuối và thời gian in dự kiến. Báo giá có hiệu lực {config.customPrint.quoteValidHours} giờ."
     },
     {
       "hoi": "Đổi trả hàng thế nào?",
@@ -60,7 +60,7 @@
         "name": "Đặt hàng phải cọc bao nhiêu?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Bạn cọc 50% của tổng tiền hàng cộng phí ship, làm tròn lên hàng nghìn. Số tiền cọc hiện rõ ở màn thanh toán."
+          "text": "Bạn cọc {config.deposit.rate} của tổng tiền hàng cộng phí ship, làm tròn lên hàng nghìn. Số tiền cọc hiện rõ ở màn thanh toán."
         }
       },
       {
@@ -84,7 +84,7 @@
         "name": "Đặt in riêng thế nào?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Bạn tải file 3D lên trang đặt in, chọn chất liệu, màu và số lượng, web sẽ hiện giá tạm tính. Shop kiểm tra file rồi gửi báo giá chính thức, bạn đồng ý và chuyển cọc 50% như đơn thường thì shop bắt đầu in."
+          "text": "Bạn tải file 3D lên trang đặt in, chọn chất liệu, màu và số lượng, web sẽ hiện giá tạm tính. Shop kiểm tra file rồi gửi báo giá chính thức, bạn đồng ý và chuyển cọc {config.deposit.rate} như đơn thường thì shop bắt đầu in."
         }
       },
       {
@@ -92,7 +92,7 @@
         "name": "Đặt in nhận file định dạng gì?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Shop nhận file STL, 3MF hoặc OBJ, mỗi file tối đa 50 MB và tối đa 5 file mỗi lần gửi."
+          "text": "Shop nhận file STL, 3MF hoặc OBJ, mỗi file tối đa {maxFileMB} MB và tối đa {maxFiles} file mỗi lần gửi."
         }
       },
       {
@@ -100,7 +100,7 @@
         "name": "Giá tạm tính trên web có phải giá cuối không?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Không. Giá tạm tính chỉ để bạn tham khảo, shop sẽ kiểm tra file và gửi báo giá chính thức gồm giá cuối và thời gian in dự kiến. Báo giá có hiệu lực 48 giờ."
+          "text": "Không. Giá tạm tính chỉ để bạn tham khảo, shop sẽ kiểm tra file và gửi báo giá chính thức gồm giá cuối và thời gian in dự kiến. Báo giá có hiệu lực {config.customPrint.quoteValidHours} giờ."
         }
       },
       {

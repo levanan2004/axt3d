@@ -34,6 +34,11 @@ export async function orderDetails(db: D1Database, code: string) {
  ]);
  return { order, items:items.results, events:events.results };
 }
+/** Customer-facing order: also hides internal Viettel Post send state. */
+export function customerOrder(order: Order) {
+ const { vtp_state, vtp_error, vtp_locked_at, ...safe } = publicOrder(order);
+ return safe;
+}
 export function publicOrder(order: Order) {
  const { access_hash, checkout_key, customer_id, ...safe } = order;
  return safe;

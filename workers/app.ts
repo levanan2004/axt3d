@@ -5,7 +5,8 @@ import {shopConfig} from '../app/lib/config';
 import {expireOrders,recordPayment,sepaySchema} from '../app/lib/orders.server';
 import {expireQuotes} from '../app/lib/quotes.server';
 import {allowsIndexing,expectedBankAccount,legalRoutes,robotsTxt} from '../app/lib/http';
-import {orderDetails,publicOrder} from '../app/lib/db.server';
+import {orderDetails,customerOrder} from '../app/lib/db.server';
+import {vtpWebhook} from '../app/lib/vtp-order.server';
 import {assertSameOrigin,requireAdmin,requireOrder,secureEqual,rateLimit} from '../app/lib/security.server';
 import type {Env,Variant} from '../app/lib/types';
 import {listProvinces,listWards,quoteShipping} from '../app/lib/shipping.server';
@@ -24,11 +25,13 @@ export async function webhook(request:Request,env:Env){
  let payload:z.infer<typeof sepaySchema>;try{payload=sepaySchema.parse(JSON.parse(raw));}catch{return json({success:false,error:'Invalid payload'},400);}
  const expectedAccount=expectedBankAccount(env);
  if(!expectedAccount)return json({success:false,error:'Receiving account not configured'},503);
- if(payload.accountNumber!==expectedAccount)return json({success:false,error:'Wrong receiving account'},400);
+ // BIDV via SePay: accountNumber is the main account, subAccount is the VA shown in the QR.
+ if(payload.accountNumber!==expectedAccount&&payload.subAccount!==expectedAccount)return json({success:false,error:'Wrong receiving account'},400);
  const result=await recordPayment(env.DB,payload);
  return json({success:true,...result});
 }
 async function api(request:Request,env:Env):Promise<Response|null>{const url=new URL(request.url),path=url.pathname;
+ if(path==='/api/webhooks/viettelpost')return vtpWebhook(request,env);
  if(path==='/api/chat')return handleChat(request,env);
  if(path==='/api/admin/chat/reindex'){
   if(request.method!=='POST')return json({error:'Method not allowed'},405);
@@ -81,7 +84,7 @@ async function api(request:Request,env:Env):Promise<Response|null>{const url=new
   if(request.method!=='GET')return json({error:'Method not allowed'},405);
   const code=path.split('/').at(-1)!;const initial=await orderDetails(env.DB,code);await requireOrder(request,initial?.order||null);
   await expireOrders(env.DB);const details=(await orderDetails(env.DB,code))!;
-  return json({order:publicOrder(details.order),items:details.items,events:details.events});
+  return json({order:customerOrder(details.order),items:details.items,events:details.events});
  }
  if(path==='/api/admin/images'){
   if(request.method!=='POST')return json({error:'Method not allowed'},405);

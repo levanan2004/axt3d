@@ -35,6 +35,19 @@ export function terms(text: string) {
 }
 
 const legalDocs: [string, string][] = [['van_chuyen', '/van-chuyen'], ['doi_tra_hoan_tien', '/doi-tra-hoan-tien'], ['dieu_khoan', '/dieu-khoan'], ['bao_mat', '/chinh-sach-bao-mat']];
+/** Money facts for the bot, built only from shop-config so it never has to guess a fee, deposit or minimum.
+ *  Product prices are never here: buildContext reads them live from D1. */
+export function pricingChunk(): Omit<Chunk, 'terms'> {
+  const c = shopConfig, cp = c.customPrint;
+  const body = [
+    `Tiền cọc: ${Math.round(c.deposit.rate * 100)}% của tiền hàng cộng phí ship, làm tròn lên hàng nghìn, chuyển khoản QR trong ${c.payment.depositExpiryMinutes} phút. Phần còn lại trả khi nhận hàng (COD).`,
+    `Phí ship: theo đúng số Viettel Post báo cho địa chỉ của bạn ở trang thanh toán. Nếu Viettel Post chưa trả kết quả, trang tạm hiện ${money(c.shipping.fallbackFee)}.`,
+    `Đặt in theo file: web hiện giá tạm tính (tạm), đơn tối thiểu ${money(cp.minOrder)} (tạm). Shop gửi báo giá chính thức, hiệu lực ${cp.quoteValidHours} giờ.`,
+    'Giá từng sản phẩm: xem ở trang sản phẩm; giá đúng là giá hiện trên web lúc đặt.',
+  ].join('\n');
+  return { id: 'config:pricing', kind: 'policy', title: 'Giá, phí ship, tiền cọc', url: null, body, ref: null };
+}
+
 export function docChunks() {
   const chunks: Omit<Chunk, 'terms'>[] = [];
   for (const [id, url] of legalDocs) {
@@ -47,7 +60,8 @@ export function docChunks() {
       if (body) chunks.push({ id: `doc:${id}:${i}`, kind: 'policy', title: `${docTitle} – ${heading.trim()}`, url, body, ref: null });
     });
   }
-  for (const qa of hoiDap as { id: string; hoi: string; dap: string }[]) chunks.push({ id: `qa:${qa.id}`, kind: 'qa', title: qa.hoi, url: null, body: renderTokens(qa.dap), ref: null });
+  chunks.push(pricingChunk());
+  for (const qa of hoiDap as { id: string; hoi: string; dap: string }[]) chunks.push({ id: `qa:${qa.id}`, kind: 'qa', title: renderTokens(qa.hoi), url: null, body: renderTokens(qa.dap), ref: null });
   homeFaq().forEach((item, i) => chunks.push({ id: `faq:${i}`, kind: 'faq', title: item.q, url: '/', body: item.a, ref: null }));
   return chunks;
 }

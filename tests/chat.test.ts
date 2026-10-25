@@ -1,9 +1,10 @@
 import { readFileSync } from 'node:fs';
 import { Miniflare } from 'miniflare';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { handleChat, purgeChatUsage, reindexChat, retrieve, systemPrompt, terms, vnDay, type ChatConfig } from '../app/lib/chat.server';
+import { buildContext, docChunks, handleChat, pricingChunk, purgeChatUsage, reindexChat, retrieve, systemPrompt, terms, vnDay, type ChatConfig } from '../app/lib/chat.server';
 import { chatCopy, retryCountdown } from '../app/lib/chat-copy';
 import { homeFaq } from '../app/lib/copy';
+import { money } from '../app/lib/money';
 import { shopConfig } from '../app/lib/config';
 import type { Env } from '../app/lib/types';
 
@@ -14,7 +15,7 @@ beforeAll(async () => {
   mf = new Miniflare({ modules: true, script: 'export default { fetch() { return new Response("ok"); } }', d1Databases: ['DB'], compatibilityDate: '2026-07-30' });
   db = await mf.getD1Database('DB') as unknown as D1Database;
   env = { DB: db, GEMINI_API_KEY: 'test-key', CHAT_IP_SALT: 'test-salt' } as Env;
-  for (const file of ['0001_store', '0002_quotes', '0003_ops', '0004_shipping', '0005_chat']) { const sql = readFileSync(`migrations/${file}.sql`, 'utf8'); await db.prepare(sql).run().catch(async () => { await db.exec(sql); }); }
+  for (const file of ['0001_store', '0002_quotes', '0003_ops', '0004_shipping', '0005_vtp_order', '0006_chat']) { const sql = readFileSync(`migrations/${file}.sql`, 'utf8'); await db.prepare(sql).run().catch(async () => { await db.exec(sql); }); }
 });
 beforeEach(async () => {
   for (const t of ['chat_usage', 'chat_spend', 'chat_chunks', 'rate_limits', 'audit_logs', 'variants', 'products']) await db.prepare(`DELETE FROM ${t}`).run();
@@ -171,5 +172,27 @@ describe('chat copy and FAQ', () => {
     const items = homeFaq();
     expect(items).toHaveLength(10);
     expect(items.every(i => i.q && i.a && !/\{config\./.test(i.a))).toBe(true);
+  });
+});
+
+describe('chatbot never states prices that are not in config or D1', () => {
+  const allowed = () => { const c = shopConfig; return new Set([money(c.shipping.fallbackFee), money(c.customPrint.minOrder), `${Math.round(c.deposit.rate * 100)}%`]); };
+  it('every amount and percentage in the bot knowledge comes from shop-config', () => {
+    const ok = allowed();
+    for (const ch of docChunks()) {
+      const found = `${ch.title} ${ch.body}`.match(/\d{1,3}(?:\.\d{3})+\s?(?:đ|₫|VND)|(?<![±\d,.])\d+(?:[.,]\d+)?\s?%/g) || []; // ±x% is a print tolerance, not money
+      for (const f of found) expect(ok.has(f.replace(/\s/g, '')) || ok.has(f), `${ch.id}: ${f}`).toBe(true);
+      expect(`${ch.title} ${ch.body}`, ch.id).not.toMatch(/\{config\./);
+    }
+  });
+  it('pricing chunk follows config changes', () => {
+    const before = pricingChunk().body; expect(before).toContain(money(shopConfig.shipping.fallbackFee)); expect(before).toContain(`${Math.round(shopConfig.deposit.rate * 100)}%`);
+  });
+  it('product prices come live from D1, not from the index', async () => {
+    await db.prepare("UPDATE variants SET price=123000 WHERE id='d1'").run();
+    const rows = (await db.prepare("SELECT id,kind,title,url,body,terms,ref FROM chat_chunks WHERE ref='dragon'").all()).results as never[];
+    const ctx = await buildContext(env, rows);
+    expect(ctx).toContain(money(123000)); expect(ctx).not.toContain(money(89000));
+    const indexed = (await db.prepare("SELECT body FROM chat_chunks WHERE ref='dragon'").first<{ body: string }>())!.body; expect(indexed).not.toMatch(/\d{2,3}\.\d{3}/);
   });
 });

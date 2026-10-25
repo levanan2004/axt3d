@@ -64,7 +64,7 @@ export async function expireOrders(db:D1Database,now=Date.now()) {
   db.prepare('DELETE FROM rate_limits WHERE expires_at<?').bind(now)
  ]);
 }
-export const sepaySchema=z.object({id:z.union([z.number().int().positive(),z.string().regex(/^\d+$/)]),transferType:z.enum(['in','out']),transferAmount:z.number().int().positive().max(Number.MAX_SAFE_INTEGER),content:z.string().max(2000),accountNumber:z.string().max(100)});
+export const sepaySchema=z.object({id:z.union([z.number().int().positive(),z.string().regex(/^\d+$/)]),transferType:z.enum(['in','out']),transferAmount:z.number().int().positive().max(Number.MAX_SAFE_INTEGER),content:z.string().max(2000),accountNumber:z.string().max(100),subAccount:z.string().max(100).nullish()});
 export function transferContent(code:string) { return shopConfig.payment.transferContentPattern.replace('{orderCode}',code); }
 export async function recordPayment(db:D1Database,payload:z.infer<typeof sepaySchema>,now=Date.now()) {
  const parsed=sepaySchema.parse(payload);

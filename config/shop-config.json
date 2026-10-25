@@ -13,7 +13,7 @@
   "bank": {
     "bin": "970418",
     "name": "BIDV",
-    "accountNumber": "8877022760",
+    "accountNumber": "96247N9N20",
     "accountName": "LE VAN AN"
   },
   "policies": {
@@ -196,13 +196,27 @@
       "orderType": 1,
       "serviceSelection": "cheapest",
       "locationCacheSeconds": 86400,
-      "feeCacheSeconds": 600
+      "feeCacheSeconds": 600,
+      "createOrderPath": "/order/createOrder",
+      "createOrderTimeoutMs": 15000,
+      "publicTrackingUrl": "https://viettelpost.com.vn/tra-cuu-hanh-trinh-don/?KEY={maVanDon}",
+      "deliveredStatus": 501,
+      "warehouse": {
+        "groupAddressId": 29689517,
+        "name": "Lê Vân An",
+        "phone": "",
+        "address": "41 Đường số 29, Tân Thông Hội, Củ Chi",
+        "provinceId": 2,
+        "districtId": 36,
+        "wardId": 689,
+        "_note": "Kho lấy hàng đã khai trên VTP (đơn vị hành chính cũ 3 cấp). phone để trống: VTP lấy theo GROUPADDRESS_ID."
+      }
     }
   },
   "payment": {
     "depositGateway": "sepay",
     "method": "bank_transfer_qr",
-    "transferContentPattern": "IN3D{orderCode}",
+    "transferContentPattern": "AXT3D{orderCode}",
     "depositExpiryMinutes": 30,
     "idempotencyKey": "sepay.transactionId",
     "confirmRule": "amount >= depositAmount AND content contains orderCode"
@@ -332,5 +346,16 @@
       "bot_khong_biet": "/images/chatbot/bot_khong_biet"
     },
     "_devNote": "Model, token prices and FX come from Hà Phương (web-in-3d/shop-config.json). Usage rows (hashed visitor counts and chat burst counters) are deleted after usageRetentionDays."
+  },
+  "vtpOrder": {
+    "_status": "Hà Phương chốt 25/10/2026",
+    "codAmount": "goods_plus_ship_minus_deposit",
+    "shippingFeePaidBy": "shop",
+    "codFeePaidBy": "shop",
+    "serviceCode": "sameAsQuote",
+    "_note": "codAmount: dùng đúng số đã lưu trong đơn. allowInspection true = cho xem hàng, allowTryOn false = không cho thử. Đơn phí dự phòng: lúc tạo vận đơn báo giá lại, lấy gói rẻ nhất VTP trả về; nếu vẫn lỗi thì An tạo tay. Không thu thêm hay hoàn lại tiền khách.",
+    "allowInspection": true,
+    "allowTryOn": false,
+    "fallbackService": "requote_cheapest_then_manual"
   }
 }

@@ -8,8 +8,8 @@
   {
     "id": "q02",
     "chu_de": "van_chuyen",
-    "hoi": "Sao phí ship hiện 20.000đ rồi lại đổi?",
-    "dap": "Nếu Viettel Post chưa trả kết quả trong 5 giây, trang thanh toán tạm hiện 20.000đ. Khi tạo đơn, hệ thống tính lại phí theo Viettel Post, nên số cuối có thể khác số tạm."
+    "hoi": "Sao phí ship hiện {config.shipping.fallbackFee} rồi lại đổi?",
+    "dap": "Nếu Viettel Post chưa trả kết quả trong 5 giây, trang thanh toán tạm hiện {config.shipping.fallbackFee}. Khi tạo đơn, hệ thống tính lại phí theo Viettel Post, nên số cuối có thể khác số tạm."
   },
   {
     "id": "q03",
@@ -33,7 +33,7 @@
     "id": "q06",
     "chu_de": "coc",
     "hoi": "Đặt hàng phải cọc bao nhiêu?",
-    "dap": "Bạn cọc 50% của tổng tiền hàng cộng phí ship, làm tròn lên hàng nghìn. Số tiền cọc hiện rõ ở màn thanh toán."
+    "dap": "Bạn cọc {config.deposit.rate} của tổng tiền hàng cộng phí ship, làm tròn lên hàng nghìn. Số tiền cọc hiện rõ ở màn thanh toán."
   },
   {
     "id": "q07",
@@ -45,7 +45,7 @@
     "id": "q08",
     "chu_de": "thanh_toan",
     "hoi": "Có bao lâu để chuyển cọc?",
-    "dap": "Bạn có 30 phút để chuyển cọc. Quá thời gian này đơn tự hủy và hàng trả về kho."
+    "dap": "Bạn có {config.payment.depositExpiryMinutes} phút để chuyển cọc. Quá thời gian này đơn tự hủy và hàng trả về kho."
   },
   {
     "id": "q09",
@@ -63,7 +63,7 @@
     "id": "q11",
     "chu_de": "thanh_toan",
     "hoi": "Có thanh toán toàn bộ khi nhận hàng được không?",
-    "dap": "Hiện mọi đơn đều cần cọc 50% trước bằng chuyển khoản QR, phần còn lại mới trả khi nhận hàng."
+    "dap": "Hiện mọi đơn đều cần cọc {config.deposit.rate} trước bằng chuyển khoản QR, phần còn lại mới trả khi nhận hàng."
   },
   {
     "id": "q12",
@@ -87,13 +87,13 @@
     "id": "q15",
     "chu_de": "dat_in",
     "hoi": "Đặt in riêng thế nào?",
-    "dap": "Bạn tải file 3D lên trang đặt in, chọn chất liệu, màu và số lượng, web sẽ hiện giá tạm tính. Shop kiểm tra file rồi gửi báo giá chính thức, bạn đồng ý và chuyển cọc 50% như đơn thường thì shop bắt đầu in."
+    "dap": "Bạn tải file 3D lên trang đặt in, chọn chất liệu, màu và số lượng, web sẽ hiện giá tạm tính. Shop kiểm tra file rồi gửi báo giá chính thức, bạn đồng ý và chuyển cọc {config.deposit.rate} như đơn thường thì shop bắt đầu in."
   },
   {
     "id": "q16",
     "chu_de": "dat_in",
     "hoi": "Đặt in nhận file định dạng gì?",
-    "dap": "Shop nhận file STL, 3MF hoặc OBJ, mỗi file tối đa 50 MB và tối đa 5 file mỗi lần gửi."
+    "dap": "Shop nhận file STL, 3MF hoặc OBJ, mỗi file tối đa {maxFileMB} MB và tối đa {maxFiles} file mỗi lần gửi."
   },
   {
     "id": "q17",
@@ -105,7 +105,7 @@
     "id": "q18",
     "chu_de": "dat_in",
     "hoi": "Giá tạm tính trên web có phải giá cuối không?",
-    "dap": "Không. Giá tạm tính chỉ để bạn tham khảo, shop sẽ kiểm tra file và gửi báo giá chính thức gồm giá cuối và thời gian in dự kiến. Báo giá có hiệu lực 48 giờ."
+    "dap": "Không. Giá tạm tính chỉ để bạn tham khảo, shop sẽ kiểm tra file và gửi báo giá chính thức gồm giá cuối và thời gian in dự kiến. Báo giá có hiệu lực {config.customPrint.quoteValidHours} giờ."
   },
   {
     "id": "q19",
@@ -117,13 +117,13 @@
     "id": "q20",
     "chu_de": "dat_in",
     "hoi": "Phí ship đơn đặt in tính theo cân nặng nào?",
-    "dap": "Cân nặng tính bằng tổng số gram nhựa của mọi món trong đơn cộng 150g hộp, phần hộp tính một lần cho mỗi đơn."
+    "dap": "Cân nặng tính bằng tổng số gram nhựa của mọi món trong đơn cộng {config.shipping.customPrintPackagingGram}g hộp, phần hộp tính một lần cho mỗi đơn."
   },
   {
     "id": "q21",
     "chu_de": "dat_in",
     "hoi": "Đặt in được tối đa bao nhiêu cái?",
-    "dap": "Mỗi mẫu đặt in tối đa 50 cái. Cần số lượng lớn hơn, bạn nhắn shop để trao đổi nhé."
+    "dap": "Mỗi mẫu đặt in tối đa {config.customPrint.maxQty} cái. Cần số lượng lớn hơn, bạn nhắn shop để trao đổi nhé."
   },
   {
     "id": "q22",
