@@ -58,3 +58,27 @@ Không bắt buộc: khách vẫn mua hàng không cần đăng nhập. Migratio
 | `EMAIL` | binding `send_email` | Chỉ thêm sau khi domain đã xác minh với Cloudflare Email Sending. |
 
 Mật khẩu: PBKDF2-SHA256 100000 vòng (giới hạn của Workers), salt riêng, chuỗi có phiên bản. Token email và phiên đăng nhập chỉ lưu SHA-256.
+
+## Thông báo đơn hàng qua Telegram (feat/12)
+
+Bot Telegram chỉ **gửi** tin (Bot API `sendMessage`, không webhook) vào nhóm/chat của shop khi:
+
+| Sự kiện | Điểm móc trong code |
+|---|---|
+| 🆕 Đơn mới | `createOrder` (checkout) và `respondQuote` (khách chấp nhận báo giá) |
+| 💰 Đã nhận cọc | Webhook SePay → `recordPayment` báo đơn chuyển `cho_coc → da_coc` |
+| ❌ Đơn huỷ / ⌛ hết hạn | Admin huỷ đơn; tiền về sau hạn cọc; `expireOrdersAndNotify` (cron + các trang gọi expire) sau 30 phút chưa cọc |
+| 🚚 Đã tạo vận đơn | `createVtpShipment` tạo đơn Viettel Post thành công (chỉ lần đầu) |
+| ✅ Khách đã nhận | Webhook Viettel Post status 501 → `hoan_thanh` |
+
+Nội dung: mã đơn, danh sách sản phẩm × số lượng, tiền hàng, phí ship, tiền cọc, COD còn thu (đều lấy từ số tiền **đã lưu trên đơn**), tên gọi ngắn + tỉnh/thành, trạng thái, link `SITE_URL/admin/don-hang/<mã>`. **Không** gửi số điện thoại, địa chỉ chi tiết, email. Dùng `parse_mode: HTML` và escape toàn bộ dữ liệu.
+
+Cấu hình:
+
+```sh
+npx wrangler secret put TELEGRAM_BOT_TOKEN   # token từ @BotFather
+npx wrangler secret put TELEGRAM_CHAT_ID     # hoặc đặt var TELEGRAM_CHAT_ID trong wrangler.jsonc
+```
+
+Chạy local: thêm hai biến vào `.dev.vars`. Thiếu một trong hai biến thì không gửi gì (im lặng). Việc gửi chạy trong `ctx.waitUntil`; lỗi Telegram chỉ ghi log ngắn (không có token/URL), không làm hỏng luồng đặt hàng.
+Code: `app/lib/telegram.ts` (định dạng + gửi), `app/lib/notify.server.ts` (đọc đơn từ D1 + móc sự kiện). Test: `tests/telegram.test.ts`.
