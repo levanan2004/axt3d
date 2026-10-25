@@ -199,9 +199,7 @@
       "feeCacheSeconds": 600,
       "createOrderPath": "/order/createOrder",
       "createOrderTimeoutMs": 15000,
-      "defaultOrderService": "VCN",
-      "_defaultOrderServiceNote": "Dùng khi đơn không lưu mã dịch vụ từ bước tính phí. Số tạm.",
-      "orderNoteInspection": "Cho xem hàng, không cho thử. Hàng in 3D dễ vỡ, xin nhẹ tay.",
+      "orderNoteInspection": "Cho xem hàng, không cho thử",
       "orderNoteNoInspection": "Không cho xem hàng. Hàng in 3D dễ vỡ, xin nhẹ tay.",
       "publicTrackingUrl": "https://viettelpost.com.vn/tra-cuu-hanh-trinh-don/?KEY={maVanDon}",
       "deliveredStatus": 501,
@@ -215,13 +213,7 @@
         "wardId": 689,
         "_note": "Kho lấy hàng đã khai trên VTP (đơn vị hành chính cũ 3 cấp). phone để trống: VTP lấy theo GROUPADDRESS_ID."
       }
-    },
-    "codAmountRule": "goods_plus_ship_minus_deposit",
-    "_codAmountRuleStatus": "TẠM, CHỜ HÀ PHƯƠNG CHỐT. Mặc định COD = (tiền hàng + ship) − tiền cọc. Giá trị khác được hỗ trợ: goods_plus_ship_minus_received (trừ số tiền thực nhận).",
-    "codFeePayer": "shop",
-    "_codFeePayerStatus": "TẠM, CHỜ HÀ PHƯƠNG CHỐT. \"shop\": shop trả cước + phí thu hộ, VTP chỉ thu COD (ORDER_PAYMENT 3). \"customer\": VTP thu COD + cước của người nhận (ORDER_PAYMENT 2).",
-    "allowInspection": true,
-    "_allowInspectionStatus": "TẠM, CHỜ HÀ PHƯƠNG CHỐT. true = cho xem hàng (ghi chú VTP + dòng nhắc trên trang theo dõi đơn)."
+    }
   },
   "payment": {
     "depositGateway": "sepay",
@@ -322,5 +314,14 @@
       "costSource": "customPrint rates; sản phẩm có sẵn dùng costPrice nhập trong Admin",
       "_status": "SỐ TẠM theo customPrint"
     }
+  },
+  "vtpOrder": {
+    "_status": "Hà Phương chốt 25/10/2026",
+    "codAmount": "itemsSubtotal + shippingFee - deposit (lấy đúng số đã lưu trong đơn, không tính lại)",
+    "shippingFeePaidBy": "shop",
+    "codFeePaidBy": "shop",
+    "serviceCode": "sameAsQuote",
+    "_note": "Khách đã trả ship trong cọc và COD, nên shop trả cước cho Viettel Post. Phí thu hộ shop chịu, khách không trả thêm. Gói cước dùng đúng gói lúc báo phí ship cho khách để 2 số khớp. Đơn cọc 100% thì COD = 0.",
+    "allowInspection": "cho xem hàng, không cho thử"
   }
 }
