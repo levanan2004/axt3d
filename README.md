@@ -41,3 +41,20 @@ Không có secret trong repo. Điền `SEPAY_WEBHOOK_KEY` bằng `wrangler secre
 ## Pháp lý và robots
 
 Trang: `/dieu-khoan`, `/chinh-sach-bao-mat`, `/doi-tra-hoan-tien`, `/van-chuyen`. Bản production của `robots.txt` chặn `/admin`, `/pos` và `/api/`.
+
+## Tài khoản khách hàng (feat/11)
+
+Không bắt buộc: khách vẫn mua hàng không cần đăng nhập. Migration `0006_accounts.sql` (local: `npm run db:migrate`).
+
+| Biến | Loại | Ghi chú |
+|---|---|---|
+| `SITE_URL` | var | Gốc cho link email và Google redirect (`{SITE_URL}/auth/google/callback`). |
+| `GOOGLE_CLIENT_ID` | var | Để trống = ẩn nút Google, `/auth/google*` trả 404. |
+| `GOOGLE_CLIENT_SECRET` | secret | Bắt buộc khi bật Google; cũng dùng để ký cookie state/nonce. |
+| `EMAIL_MODE` | var | `log` (mặc định) hoặc `cloudflare`. |
+| `EMAIL_FROM` | var | Ví dụ `no-reply@<domain>` (cần cho `cloudflare`). |
+| `DEV_EMAIL_LOG` | var | `1` chỉ trên staging để log link email. Local (`APP_ENV=local`) luôn log; production không bao giờ log. |
+| `TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET` | var / secret | Trống: bỏ qua ở local/staging; production thiếu khoá thì chặn (fail closed). |
+| `EMAIL` | binding `send_email` | Chỉ thêm sau khi domain đã xác minh với Cloudflare Email Sending. |
+
+Mật khẩu: PBKDF2-SHA256 100000 vòng (giới hạn của Workers), salt riêng, chuỗi có phiên bản. Token email và phiên đăng nhập chỉ lưu SHA-256.

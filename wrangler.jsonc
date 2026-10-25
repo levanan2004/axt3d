@@ -10,5 +10,9 @@
   "r2_buckets": [{ "binding": "IMAGES", "bucket_name": "axt3d-staging-images" }],
   "triggers": { "crons": ["* * * * *"] },
   // ALLOW_INDEXING=true opens robots.txt and drops the local noindex header so Lighthouse can score SEO. Leave it empty otherwise.
-  "vars": { "APP_ENV": "staging", "SITE_URL": "https://axt3d-staging.anxaitech.workers.dev", "ACCESS_TEAM_DOMAIN": "", "ACCESS_AUD": "", "ALLOW_INDEXING": "" }
+  "vars": { "APP_ENV": "staging", "SITE_URL": "https://axt3d-staging.anxaitech.workers.dev", "ACCESS_TEAM_DOMAIN": "", "ACCESS_AUD": "", "ALLOW_INDEXING": "",
+    // Customer accounts. Empty GOOGLE_CLIENT_ID hides Google login (routes 404). Secrets: GOOGLE_CLIENT_SECRET, TURNSTILE_SECRET (wrangler secret put).
+    "GOOGLE_CLIENT_ID": "", "EMAIL_MODE": "log", "EMAIL_FROM": "", "DEV_EMAIL_LOG": "", "TURNSTILE_SITE_KEY": "" }
+  // Real email: after onboarding the domain to Cloudflare Email Sending add  "send_email": [{ "name": "EMAIL" }]  and set EMAIL_MODE=cloudflare, EMAIL_FROM=no-reply@<domain>.
+  // Not added yet: the binding fails deploy until the sending domain is verified.
 }
