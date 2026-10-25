@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent } from
 import { X } from 'lucide-react';
 import { chatCopy, contactReady, retryCountdown } from '../lib/chat-copy';
 import { shopConfig } from '../lib/config';
+import { Mascot } from './mascot';
 
 const MAX = shopConfig.chatbot.maxInputChars;
 const COUNTER_AT = MAX - 50;
@@ -10,16 +11,9 @@ const zaloHref = chatCopy.zalo_href, callHref = chatCopy.call_href;
 type Msg = { role: 'user' | 'model'; text: string } | { role: 'fallback' } | { role: 'error'; retry: string };
 type Notice = { text: string; until?: number } | null;
 
-/** Empty, named slot for a mascot image (bot_avatar, bot_chao, bot_khong_biet). Drop a file path into config.chatbot.mascots to show it. */
-function Mascot({ name, size }: { name: 'bot_avatar' | 'bot_chao' | 'bot_khong_biet'; size: number }) {
-  const src = (shopConfig.chatbot.mascots as Record<string, string>)[name];
-  return src ? <img className="bot-mascot has-img" src={src} width={size} height={size} alt="" data-mascot={name}/>
-    : <span className="bot-mascot" data-mascot={name} style={{ width: size, height: size }} aria-hidden="true"/>;
-}
-
 function FallbackCard() {
-  return <div className="chat-row bot"><div className="chat-fallback">
-    <Mascot name="bot_khong_biet" size={56}/>
+  return <div className="chat-row bot"><Mascot name="bot_avatar" size={32}/><div className="chat-fallback">
+    <Mascot name="bot_khong_biet" size={80}/>
     <p>{chatCopy.fallback_reply}</p>
     {contactReady ? <div className="chat-fallback-actions">
       <a className="chat-btn zalo" href={zaloHref} target="_blank" rel="noopener noreferrer">{chatCopy.btn_zalo}</a>
@@ -133,15 +127,15 @@ export default function ChatPanel({ open, onClose }: { open: boolean; onClose: (
         <button type="button" className="chat-close" aria-label={chatCopy.close_aria} onClick={onClose}><X size={22} aria-hidden="true"/></button>
       </header>
       <div ref={log} className="chat-log" role="log" aria-live="polite" aria-relevant="additions">
-        <div className="chat-welcome"><Mascot name="bot_chao" size={96}/><p className="chat-disclaimer">{chatCopy.disclaimer}</p></div>
-        <div className="chat-row bot"><div className="chat-bubble bot">{chatCopy.greeting}</div></div>
+        <div className="chat-welcome"><Mascot name="bot_chao" size={120}/><p className="chat-disclaimer">{chatCopy.disclaimer}</p></div>
+        <div className="chat-row bot"><Mascot name="bot_avatar" size={32}/><div className="chat-bubble bot">{chatCopy.greeting}</div></div>
         {messages.length === 0 && <div className="chat-chips" role="group" aria-label={chatCopy.chips_group_aria}>
           {[chatCopy.chip_1, chatCopy.chip_2, chatCopy.chip_3].map(c => <button key={c} type="button" className="chat-chip" onClick={() => send(c)}>{c}</button>)}
         </div>}
         {messages.map((m, i) => m.role === 'fallback' ? <FallbackCard key={i}/>
           : m.role === 'error' ? <div key={i} className="chat-row bot"><div className="chat-error" role="alert">{chatCopy.error_send} <button type="button" className="chat-retry" onClick={() => { setMessages(x => x.slice(0, -2)); send(m.retry); }}>{chatCopy.error_retry}</button></div></div>
-          : <div key={i} className={`chat-row ${m.role === 'user' ? 'user' : 'bot'}`}><div className={`chat-bubble ${m.role === 'user' ? 'user' : 'bot'}`}>{m.text}</div></div>)}
-        {busy && <div className="chat-row bot"><div className="chat-bubble bot chat-typing" role="status" aria-label={chatCopy.typing_aria}><i/><i/><i/></div></div>}
+          : <div key={i} className={`chat-row ${m.role === 'user' ? 'user' : 'bot'}`}>{m.role !== 'user' && <Mascot name="bot_avatar" size={32}/>}<div className={`chat-bubble ${m.role === 'user' ? 'user' : 'bot'}`}>{m.text}</div></div>)}
+        {busy && <div className="chat-row bot"><Mascot name="bot_avatar" size={32}/><div className="chat-bubble bot chat-typing" role="status" aria-label={chatCopy.typing_aria}><i/><i/><i/></div></div>}
       </div>
       {notice && <div className="chat-warn" role="status">{notice.text}{waiting ? ` ${retryCountdown(waiting)}` : ''}</div>}
       <form className="chat-input" onSubmit={e => { e.preventDefault(); send(input); }}>

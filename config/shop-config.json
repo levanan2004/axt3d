@@ -327,9 +327,9 @@
       "phone": ""
     },
     "mascots": {
-      "bot_avatar": "",
-      "bot_chao": "",
-      "bot_khong_biet": ""
+      "bot_avatar": "/images/chatbot/bot_avatar",
+      "bot_chao": "/images/chatbot/bot_chao",
+      "bot_khong_biet": "/images/chatbot/bot_khong_biet"
     },
     "_devNote": "Model, token prices and FX come from Hà Phương (web-in-3d/shop-config.json). Usage rows (hashed visitor counts and chat burst counters) are deleted after usageRetentionDays."
   }
