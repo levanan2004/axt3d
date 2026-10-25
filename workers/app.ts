@@ -8,6 +8,10 @@ import {allowsIndexing,expectedBankAccount,legalRoutes,robotsTxt} from '../app/l
 import {orderDetails,publicOrder} from '../app/lib/db.server';
 import {assertSameOrigin,requireAdmin,requireOrder,secureEqual,rateLimit} from '../app/lib/security.server';
 import type {Env,Variant} from '../app/lib/types';
+import {listProvinces,listWards,quoteShipping} from '../app/lib/shipping.server';
+import {orderWeightGram} from '../app/lib/shipping';
+import {calcOrderTotals} from '../app/lib/money';
+import {quoteWeightGram} from '../app/lib/quotes.server';
 const handler=createRequestHandler(()=>import('virtual:react-router/server-build'),import.meta.env.MODE);
 function json(body:unknown,status=200){return Response.json(body,{status,headers:{'Cache-Control':'no-store'}});}
 const xml=(s:string)=>s.replace(/[<>&"']/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&apos;'}[c]!));
@@ -25,6 +29,37 @@ export async function webhook(request:Request,env:Env){
 }
 async function api(request:Request,env:Env):Promise<Response|null>{const url=new URL(request.url),path=url.pathname;
  if(path==='/api/webhooks/sepay'){if(request.method!=='POST')return json({success:false},405);return webhook(request,env);}
+ if(path==='/api/shipping/provinces'||path==='/api/shipping/wards'){
+  if(request.method!=='GET')return json({error:'Method not allowed'},405);
+  const cacheHeaders={'Cache-Control':`public, max-age=${shopConfig.shipping.viettelPost.locationCacheSeconds}`};
+  try{
+   if(path==='/api/shipping/provinces')return Response.json({provinces:await listProvinces(env)},{headers:cacheHeaders});
+   const provinceId=Number(url.searchParams.get('provinceId'));
+   if(!Number.isSafeInteger(provinceId)||provinceId<=0)return json({error:'Tỉnh/thành không hợp lệ.'},400);
+   return Response.json({wards:await listWards(env,provinceId)},{headers:cacheHeaders});
+  }catch(error){console.error('VTP location list failed',error instanceof Error?error.message:'unknown');return json({error:'Chưa tải được danh sách địa chỉ. Vui lòng thử lại.'},502);}
+ }
+ if(path==='/api/shipping/fee'){
+  if(request.method!=='POST')return json({error:'Method not allowed'},405);assertSameOrigin(request);await rateLimit(request,env,'ship-fee',60);
+  const raw=await request.text();if(raw.length>16384)return json({error:'Yêu cầu quá lớn.'},413);
+  let body:{provinceId:number;wardId:number;items?:{variantId:string;quantity:number}[];quoteCode?:string};
+  try{body=z.object({provinceId:z.number().int().positive(),wardId:z.number().int().positive(),items:z.array(z.object({variantId:z.string().max(100),quantity:z.number().int().min(1).max(99)})).min(1).max(30).optional(),quoteCode:z.string().regex(/^[A-F0-9]{12}$/).optional()}).parse(JSON.parse(raw));}catch{return json({error:'Địa chỉ không hợp lệ.'},400);}
+  let goods=0,weightGram=0;
+  if(body.items){
+   const grouped=new Map<string,number>();for(const i of body.items)grouped.set(i.variantId,(grouped.get(i.variantId)||0)+i.quantity);
+   const ids=[...grouped.keys()];
+   const {results}=await env.DB.prepare(`SELECT v.id,v.price,p.packed_weight_gram FROM variants v JOIN products p ON p.id=v.product_id WHERE v.id IN(${ids.map(()=>'?').join(',')}) AND v.active=1 AND p.active=1`).bind(...ids).all<{id:string;price:number;packed_weight_gram:number|null}>();
+   if(results.length!==ids.length)return json({error:'Có sản phẩm không còn bán.'},409);
+   const lines=results.map(r=>({unitPrice:r.price,quantity:grouped.get(r.id)!,weightGram:r.packed_weight_gram}));
+   goods=calcOrderTotals(lines,0).itemsSubtotal;weightGram=orderWeightGram(lines);
+  }else if(body.quoteCode){
+   const quote=await env.DB.prepare("SELECT grams,quantity,quoted_amount FROM quotes WHERE code=? AND status='da_bao_gia'").bind(body.quoteCode).first<{grams:number|null;quantity:number;quoted_amount:number|null}>();
+   if(!quote?.quoted_amount)return json({error:'Báo giá không còn hiệu lực.'},404);
+   goods=quote.quoted_amount;weightGram=quoteWeightGram(quote);
+  }else return json({error:'Thiếu sản phẩm.'},400);
+  const quote=await quoteShipping(env,{provinceId:body.provinceId,wardId:body.wardId,weightGram,goodsValue:goods,cod:goods});
+  return json(quote);
+ }
  if(path==='/api/cart/quote'){
   if(request.method!=='POST')return json({error:'Method not allowed'},405);assertSameOrigin(request);
   const raw=await request.text();if(raw.length>16384)return json({error:'Giỏ hàng quá lớn.'},413);
@@ -80,7 +115,7 @@ export default {
   try{const context=new RouterContextProvider();context.set(cloudflareContext,{env,ctx});response=await api(request,env)||await handler(request,context);}catch(error){if(error instanceof Response)response=error;else{console.error('Request failed',error instanceof Error?error.message:'unknown');response=json({error:'Không thể xử lý yêu cầu. Vui lòng thử lại.'},500);}}
   const headers=new Headers(response.headers);headers.set('X-Content-Type-Options','nosniff');headers.set('Referrer-Policy','strict-origin-when-cross-origin');headers.set('X-Frame-Options','DENY');headers.set('Permissions-Policy','camera=(), microphone=(), geolocation=()');
   const path=new URL(request.url).pathname;
-  if(/^\/(admin|api|thanh-toan|theo-doi-don|gio-hang|tai-khoan)/.test(path)){headers.set('Cache-Control','no-store');headers.set('X-Robots-Tag','noindex, nofollow');}
+  if(/^\/(admin|api|thanh-toan|theo-doi-don|gio-hang|tai-khoan)/.test(path)){if(!/^\/api\/shipping\/(provinces|wards)$/.test(path)||response.status!==200)headers.set('Cache-Control','no-store');headers.set('X-Robots-Tag','noindex, nofollow');}
   if(!allowsIndexing(env))headers.set('X-Robots-Tag','noindex, nofollow');
   return new Response(response.body,{status:response.status,statusText:response.statusText,headers});
  },

@@ -38,7 +38,7 @@ describe('model files and quote formula', () => {
     expect(plain.amount).toBe(50000);
     const painted = calcQuote({ materialId: 'PLA', colorName: 'Trắng', postProcess: 'paint', quantity: 2, grams: 80, hours: 3 });
     expect(painted.amount).toBe(409000);
-    expect(calcOrderTotals([{ unitPrice: plain.amount, quantity: 1 }])).toMatchObject({ depositAmount: 25000, codAmount: 45000, shippingFee: 20000 });
+    expect(calcOrderTotals([{ unitPrice: plain.amount, quantity: 1 }], 20000)).toMatchObject({ depositAmount: 35000, codAmount: 35000, shippingFee: 20000 });
   });
 });
 
@@ -50,7 +50,7 @@ beforeAll(async () => {
   const db = await mf.getD1Database('DB') as unknown as D1Database;
   const images = await mf.getR2Bucket('IMAGES') as unknown as R2Bucket;
   env = { DB: db, IMAGES: images } as Env;
-  for (const file of ['migrations/0001_store.sql', 'migrations/0002_quotes.sql']) {
+  for (const file of ['migrations/0001_store.sql', 'migrations/0002_quotes.sql', 'migrations/0003_ops.sql', 'migrations/0004_shipping.sql']) {
     const sql = readFileSync(file, 'utf8');
     await db.prepare(sql).run().catch(async () => { await db.exec(sql); });
   }
@@ -72,13 +72,13 @@ describe('quote orders', () => {
     const saved = (await quoteByCode(env.DB, quote.code))!.quote;
     expect(saved.computed_amount).toBe(409000);
     expect(saved.status).toBe('da_bao_gia');
-    const accepted = await respondQuote(env, saved, true, '12 Đường Mẫu, phường An, Thành phố Hồ Chí Minh', now + 2);
+    const accepted = await respondQuote(env, saved, true, { street: '12 Đường Mẫu', provinceId: 2, wardId: 49236, provinceName: 'Thành phố Hồ Chí Minh', wardName: 'Phường Bến Thành' }, now + 2);
     expect(accepted?.code).toMatch(/^[A-F0-9]{12}$/);
     const order = await env.DB.prepare('SELECT status,deposit_amount,cod_amount,channel FROM orders WHERE code=?').bind(accepted!.code).first<{ status: string; deposit_amount: number; cod_amount: number; channel: string }>();
-    expect(order).toMatchObject({ status: 'cho_coc', deposit_amount: 210000, cod_amount: 230000, channel: 'quote' });
+    expect(order).toMatchObject({ status: 'cho_coc', deposit_amount: 220000, cod_amount: 220000, channel: 'quote' });
     expect((await env.DB.prepare("SELECT stock FROM variants WHERE id='v'").first<{ stock: number }>())!.stock).toBe(5);
-    const catalog = await createOrder(env, { name: 'Nguyễn Văn An', phone: '0912345678', address: '12 Đường Mẫu, phường An, Thành phố Hồ Chí Minh', note: '', checkoutKey: crypto.randomUUID(), items: [{ variantId: 'v', quantity: 1 }] }, 'a'.repeat(64), now);
-    expect(catalog.deposit_amount).toBe(75000);
+    const catalog = await createOrder(env, { name: 'Nguyễn Văn An', phone: '0912345678', street: '12 Đường Mẫu', provinceId: 2, wardId: 49236, provinceName: 'Thành phố Hồ Chí Minh', wardName: 'Phường Bến Thành', note: '', checkoutKey: crypto.randomUUID(), items: [{ variantId: 'v', quantity: 1 }] }, 'a'.repeat(64), now);
+    expect(catalog.deposit_amount).toBe(85000);
     expect((await env.DB.prepare("SELECT stock FROM variants WHERE id='v'").first<{ stock: number }>())!.stock).toBe(4);
   });
   it('expires an unanswered quote once', async () => {

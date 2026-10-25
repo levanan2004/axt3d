@@ -1,5 +1,8 @@
 import { shopConfig } from './config';
 import { calcOrderTotals } from './money';
+import { customPrintWeightGram } from './shipping';
+import { quoteShipping, resolveAddress } from './shipping.server';
+import { addressSchema } from './orders.server';
 import { validateModelFile } from './model-file';
 import { calcQuote, postProcessLabels, quoteLimits, type QuoteSelection } from './quote';
 import { hash } from './security.server';
@@ -77,7 +80,8 @@ export async function saveQuotePrice(env: Env, code: string, actor: string, next
   ]);
 }
 
-export async function respondQuote(env: Env, quote: Quote, accept: boolean, address: string, now = Date.now()) {
+export function quoteWeightGram(quote: Pick<Quote, 'grams' | 'quantity'>) { return customPrintWeightGram(Number(quote.grams || 0), quote.quantity); }
+export async function respondQuote(env: Env, quote: Quote, accept: boolean, address: unknown, now = Date.now()) {
   if (quote.status !== 'da_bao_gia' || quote.expires_at <= now || !quote.quoted_amount) throw new Error('Báo giá chưa thể xác nhận.');
   if (!accept) {
     await env.DB.batch([
@@ -86,9 +90,13 @@ export async function respondQuote(env: Env, quote: Quote, accept: boolean, addr
     ]);
     return null;
   }
-  const trimmed = address.trim();
-  if (trimmed.length < 8) throw new Error('Cần địa chỉ nhận hàng trước khi cọc.');
-  const totals = calcOrderTotals([{ unitPrice: quote.quoted_amount, quantity: 1 }]);
+  const parsedAddress = addressSchema.safeParse(address);
+  if (!parsedAddress.success) throw new Error(parsedAddress.error.issues[0]?.message || 'Cần địa chỉ nhận hàng trước khi cọc.');
+  const where = parsedAddress.data;
+  const trimmed = (await resolveAddress(env, where)).address;
+  const weightGram = quoteWeightGram(quote);
+  const ship = await quoteShipping(env, { provinceId: where.provinceId, wardId: where.wardId, weightGram, goodsValue: quote.quoted_amount, cod: quote.quoted_amount });
+  const totals = calcOrderTotals([{ unitPrice: quote.quoted_amount, quantity: 1 }], ship.fee);
   const orderId = crypto.randomUUID();
   const orderCode = crypto.randomUUID().replaceAll('-', '').slice(0, 12).toUpperCase();
   const token = crypto.randomUUID().replaceAll('-', '') + crypto.randomUUID().replaceAll('-', '');
@@ -97,8 +105,8 @@ export async function respondQuote(env: Env, quote: Quote, accept: boolean, addr
   const label = postProcessLabels[quote.post_process] || quote.post_process;
   await env.DB.batch([
     env.DB.prepare('INSERT INTO customers(id,phone,name,created_at) VALUES(?,?,?,?) ON CONFLICT(phone) DO UPDATE SET name=excluded.name').bind(customerId, quote.phone, quote.customer_name, now),
-    env.DB.prepare(`INSERT INTO orders(id,code,customer_id,customer_name,phone,address,note,items_subtotal,shipping_fee,deposit_amount,cod_amount,expires_at,created_at,updated_at,access_hash,checkout_key,channel,quote_id) VALUES(?,?,(SELECT id FROM customers WHERE phone=?),?,?,?,?,?,?,?,?,?,?,?,?,?,'quote',?)`)
-      .bind(orderId, orderCode, quote.phone, quote.customer_name, quote.phone, trimmed, quote.note, totals.itemsSubtotal, totals.shippingFee, totals.depositAmount, totals.codAmount, now + shopConfig.payment.depositExpiryMinutes * 60000, now, now, accessHash, crypto.randomUUID(), quote.id),
+    env.DB.prepare(`INSERT INTO orders(id,code,customer_id,customer_name,phone,address,note,items_subtotal,shipping_fee,deposit_amount,cod_amount,expires_at,created_at,updated_at,access_hash,checkout_key,channel,quote_id,province_id,ward_id,shipping_weight_gram,shipping_service,shipping_fee_fallback) VALUES(?,?,(SELECT id FROM customers WHERE phone=?),?,?,?,?,?,?,?,?,?,?,?,?,?,'quote',?,?,?,?,?,?)`)
+      .bind(orderId, orderCode, quote.phone, quote.customer_name, quote.phone, trimmed, quote.note, totals.itemsSubtotal, totals.shippingFee, totals.depositAmount, totals.codAmount, now + shopConfig.payment.depositExpiryMinutes * 60000, now, now, accessHash, crypto.randomUUID(), quote.id, where.provinceId, where.wardId, weightGram, ship.service, ship.fallback ? 1 : 0),
     env.DB.prepare('INSERT INTO order_items(id,order_id,variant_id,product_name,variant_name,image,unit_price,quantity) VALUES(?,?,NULL,?,?,?,?,1)').bind(crypto.randomUUID(), orderId, quote.project_name || 'In theo yêu cầu', `${quote.material_id} · ${quote.color_name} · ${label}`, '/images/hero.webp', quote.quoted_amount),
     env.DB.prepare(`UPDATE quotes SET status='da_chap_nhan',order_id=?,updated_at=? WHERE id=? AND status='da_bao_gia'`).bind(orderId, now, quote.id),
     env.DB.prepare('INSERT INTO quote_events(quote_id,actor,action,detail,created_at) VALUES(?,?,?,?,?)').bind(quote.id, 'customer', 'accept', JSON.stringify({ orderCode, amount: quote.quoted_amount }), now),
