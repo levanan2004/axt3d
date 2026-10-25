@@ -6,14 +6,12 @@ export type CodOrder = { items_subtotal: number; shipping_fee: number; deposit_a
 
 export type VtpOrderRules = typeof shopConfig.vtpOrder;
 
-/** Hà Phương's vtpOrder.codAmount formula (25/10/2026). Anything else fails loudly instead of guessing money. */
-const COD_FORMULA = 'itemsSubtotal + shippingFee - deposit';
 /**
- * COD the shipper collects = (goods + ship) − deposit, using the amounts STORED on the order.
- * Shipping is never recomputed here. Deposit covering everything → 0.
+ * COD the shipper collects (vtpOrder.codAmount "goods_plus_ship_minus_deposit") = (goods + ship) − deposit,
+ * using the amounts STORED on the order. Shipping is never recomputed here. Deposit covering everything → 0.
  */
 export function vtpCodAmount(order: CodOrder, rules: VtpOrderRules = shopConfig.vtpOrder) {
-  if (!String(rules.codAmount).trim().startsWith(COD_FORMULA)) throw new Error(`Unsupported vtpOrder.codAmount ${rules.codAmount}`);
+  if (rules.codAmount !== 'goods_plus_ship_minus_deposit') throw new Error(`Unsupported vtpOrder.codAmount ${rules.codAmount}`);
   return Math.max(0, order.items_subtotal + order.shipping_fee - order.deposit_amount);
 }
 
@@ -27,19 +25,20 @@ export function vtpOrderPayment(rules: VtpOrderRules = shopConfig.vtpOrder) {
   throw new Error(`Unsupported vtpOrder payers shippingFeePaidBy=${ship} codFeePaidBy=${cod}`);
 }
 
+export const VTP_MANUAL_WAYBILL_MESSAGE = 'Không báo giá lại được với Viettel Post cho đơn này (đơn dùng phí ship dự phòng). Hãy tạo vận đơn thủ công trên Viettel Post. Đơn vẫn ở trạng thái Đã cọc.';
+
 /** vtpOrder.serviceCode "sameAsQuote": the service saved on the order when the web quoted shipping.
- *  The quote path has no default service (fallback quotes save null), so there is nothing to fall back to:
- *  refuse instead of picking a service whose price could differ from what the customer paid. */
-export function vtpOrderService(order: { shipping_service?: string | null }, rules: VtpOrderRules = shopConfig.vtpOrder) {
-  if (String(rules.serviceCode) !== 'sameAsQuote') throw new Error(`Unsupported vtpOrder.serviceCode ${rules.serviceCode}`);
-  if (!order.shipping_service) throw new Error('Đơn không lưu gói cước lúc báo phí ship (phí dự phòng). Hãy tạo vận đơn thủ công trên Viettel Post.');
-  return order.shipping_service;
+ *  Orders quoted with the fallback fee have none; with fallbackService "requote_cheapest_then_manual" the
+ *  caller re-quotes at waybill time and passes the cheapest service here. No service → manual waybill. */
+export function vtpOrderService(order: { shipping_service?: string | null }, rules: VtpOrderRules = shopConfig.vtpOrder, requotedService: string | null = null) {
+  if (rules.serviceCode !== 'sameAsQuote') throw new Error(`Unsupported vtpOrder.serviceCode ${rules.serviceCode}`);
+  if (order.shipping_service) return order.shipping_service;
+  if (rules.fallbackService === 'requote_cheapest_then_manual' && requotedService) return requotedService;
+  throw new Error(VTP_MANUAL_WAYBILL_MESSAGE);
 }
 
-/** vtpOrder.allowInspection: "cho xem hàng, không cho thử" → inspection on, no try-on. */
 export function vtpAllowsInspection(rules: VtpOrderRules = shopConfig.vtpOrder) {
-  const v = String(rules.allowInspection).trim().toLowerCase();
-  return v.startsWith('cho xem hàng');
+  return rules.allowInspection === true;
 }
 
 /** Same rules as the fee code: product packed weights (default 300 g), custom prints = plastic grams + packaging once per order. */
@@ -49,8 +48,10 @@ export function vtpWeightGram(productLines: WeightLine[], printLines: PrintLine[
   return Math.max(1, products + prints);
 }
 
-export function vtpOrderNote(config: ShippingConfig = shopConfig.shipping, rules: VtpOrderRules = shopConfig.vtpOrder) {
-  return vtpAllowsInspection(rules) ? config.viettelPost.orderNoteInspection : config.viettelPost.orderNoteNoInspection;
+/** VTP ORDER_NOTE from vtpOrder.allowInspection / allowTryOn. */
+export function vtpOrderNote(rules: VtpOrderRules = shopConfig.vtpOrder) {
+  if (!vtpAllowsInspection(rules)) return 'Không cho xem hàng';
+  return rules.allowTryOn === true ? 'Cho xem hàng, cho thử' : 'Cho xem hàng, không cho thử';
 }
 
 export function vtpTrackingUrl(trackingNumber: string, config: ShippingConfig = shopConfig.shipping) {
@@ -72,11 +73,11 @@ export type VtpItem = { name: string; quantity: number; unitPrice: number };
 
 /** Map an order to the VTP createOrder body. Sender = the registered warehouse (old 3-level ids),
  *  receiver = new 2-level ids, matching how priceAllBody sends RECEIVER_PROVINCE/RECEIVER_WARD. */
-export function createOrderBody(order: VtpOrderInput, items: VtpItem[], weightGram: number, now = Date.now(), config: ShippingConfig = shopConfig.shipping, rules: VtpOrderRules = shopConfig.vtpOrder) {
+export function createOrderBody(order: VtpOrderInput, items: VtpItem[], weightGram: number, now = Date.now(), config: ShippingConfig = shopConfig.shipping, rules: VtpOrderRules = shopConfig.vtpOrder, requotedService: string | null = null) {
   if (!order.province_id || !order.ward_id) throw new Error('Đơn chưa có mã tỉnh/phường Viettel Post. Hãy cập nhật địa chỉ.');
   const w = config.viettelPost.warehouse;
   const cod = vtpCodAmount(order, rules);
-  const service = vtpOrderService(order, rules);
+  const service = vtpOrderService(order, rules, requotedService);
   const quantity = items.reduce((n, i) => n + i.quantity, 0) || 1;
   const name = items.map(i => `${i.name} x${i.quantity}`).join(', ').slice(0, 200) || `Đơn ${order.code}`;
   return {
@@ -111,7 +112,7 @@ export function createOrderBody(order: VtpOrderInput, items: VtpItem[], weightGr
     ORDER_SERVICE: service,
     ORDER_SERVICE_ADD: '',
     ORDER_VOUCHER: '',
-    ORDER_NOTE: vtpOrderNote(config, rules),
+    ORDER_NOTE: vtpOrderNote(rules),
     MONEY_COLLECTION: cod,
     MONEY_TOTALFEE: 0,
     MONEY_FEECOD: 0,

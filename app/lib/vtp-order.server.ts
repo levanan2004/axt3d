@@ -1,6 +1,7 @@
 import { shopConfig } from './config';
 import { secureEqual } from './security.server';
-import { createOrderBody, parseCreateOrderReply, vtpCodAmount, vtpWebhookAction, vtpWeightGram } from './vtp-order';
+import { fetchShippingQuote } from './shipping';
+import { createOrderBody, parseCreateOrderReply, VTP_MANUAL_WAYBILL_MESSAGE, vtpCodAmount, vtpWebhookAction, vtpWeightGram } from './vtp-order';
 import type { Env, Order } from './types';
 
 const vtp = shopConfig.shipping.viettelPost;
@@ -23,7 +24,7 @@ export async function vtpPreview(db: D1Database, order: Order) {
   return { weightGram, codAmount: vtpCodAmount(order), warehouse: `${vtp.warehouse.name} · ${vtp.warehouse.address}` };
 }
 
-export type VtpCreateResult = { ok: true; trackingNumber: string; already: boolean } | { ok: false; error: string; unknown?: boolean; status: number };
+export type VtpCreateResult = { ok: true; trackingNumber: string; already: boolean } | { ok: false; error: string; unknown?: boolean; manual?: boolean; status: number };
 
 /**
  * Create the VTP order once. A conditional UPDATE takes a per-order lock, so double clicks, two tabs or
@@ -45,7 +46,18 @@ export async function createVtpShipment(env: Env, code: string, actor: string, o
     return { ok: false, error: 'Đơn đang được gửi sang Viettel Post. Vui lòng đợi rồi tải lại trang.', status: 409 };
   }
   let body;
-  try { const { items, weightGram } = await orderLines(env.DB, order); body = createOrderBody(order, items, weightGram, now); }
+  let requoted: { service: string; fee: number } | null = null;
+  try {
+    const { items, weightGram } = await orderLines(env.DB, order);
+    if (!order.shipping_service && shopConfig.vtpOrder.fallbackService === 'requote_cheapest_then_manual' && order.province_id && order.ward_id) {
+      // Fallback-fee order: re-quote now and use the cheapest service. The stored shipping_fee and COD stay
+      // as the customer saw them; the shop absorbs any difference.
+      const quote = await fetchShippingQuote({ provinceId: order.province_id, wardId: order.ward_id, weightGram, goodsValue: order.items_subtotal, cod: vtpCodAmount(order) }, env.VTP_API_TOKEN, fetcher);
+      if (quote.fallback || !quote.service) { await setState(env.DB, order.id, 'error', VTP_MANUAL_WAYBILL_MESSAGE); return { ok: false, manual: true, error: VTP_MANUAL_WAYBILL_MESSAGE, status: 502 }; }
+      requoted = { service: quote.service, fee: quote.fee };
+    }
+    body = createOrderBody(order, items, weightGram, now, undefined, undefined, requoted?.service ?? null);
+  }
   catch (error) { const message = error instanceof Error ? error.message : 'Không tạo được dữ liệu đơn.'; await setState(env.DB, order.id, 'error', message); return { ok: false, error: message, status: 400 }; }
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), vtp.createOrderTimeoutMs);
@@ -67,7 +79,7 @@ export async function createVtpShipment(env: Env, code: string, actor: string, o
   }
   await env.DB.batch([
     env.DB.prepare("UPDATE orders SET vtp_order_number=?,tracking_code=?,vtp_state='done',vtp_error=NULL,status='da_giao_van_chuyen',updated_at=? WHERE id=? AND vtp_state='sending' AND vtp_order_number IS NULL").bind(reply.orderNumber, reply.orderNumber, now, order.id),
-    env.DB.prepare('INSERT INTO audit_logs(actor,action,entity_id,detail,created_at) VALUES(?,?,?,?,?)').bind(actor, 'vtp_create_order', order.id, JSON.stringify({ code: order.code, vtpOrderNumber: reply.orderNumber, cod: body.MONEY_COLLECTION, weight: body.PRODUCT_WEIGHT }), now),
+    env.DB.prepare('INSERT INTO audit_logs(actor,action,entity_id,detail,created_at) VALUES(?,?,?,?,?)').bind(actor, 'vtp_create_order', order.id, JSON.stringify({ code: order.code, vtpOrderNumber: reply.orderNumber, cod: body.MONEY_COLLECTION, weight: body.PRODUCT_WEIGHT, service: body.ORDER_SERVICE, ...(requoted ? { requotedFee: requoted.fee, storedShippingFee: order.shipping_fee } : {}) }), now),
   ]);
   return { ok: true, trackingNumber: reply.orderNumber, already: false };
 }

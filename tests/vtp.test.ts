@@ -2,7 +2,7 @@ import {readFileSync} from 'node:fs';
 import {Miniflare} from 'miniflare';
 import {beforeAll,beforeEach,afterAll,describe,it,expect,vi} from 'vitest';
 import {shopConfig} from '../app/lib/config';
-import {createOrderBody,parseCreateOrderReply,shippingCard,vtpAllowsInspection,vtpCodAmount,vtpOrderPayment,vtpOrderService,vtpWebhookAction,vtpWeightGram} from '../app/lib/vtp-order';
+import {createOrderBody,parseCreateOrderReply,shippingCard,vtpAllowsInspection,vtpCodAmount,vtpOrderNote,vtpOrderPayment,vtpOrderService,vtpWebhookAction,vtpWeightGram} from '../app/lib/vtp-order';
 import {createVtpShipment,vtpPreview,vtpWebhook} from '../app/lib/vtp-order.server';
 import {createOrder,recordPayment,transferContent} from '../app/lib/orders.server';
 import type {Env,Order} from '../app/lib/types';
@@ -14,10 +14,12 @@ const base={code:'ABCDEF123456',customer_name:'Nguyễn Văn An',phone:'09123456
 describe('COD and weight',()=>{
  it('COD = stored goods + stored ship - deposit',()=>{expect(vtpCodAmount(base)).toBe(84000);expect(vtpCodAmount({...base,shipping_fee:35000})).toBe(99000);});
  it('deposit covering everything gives COD 0',()=>{expect(vtpCodAmount({...base,deposit_amount:169000})).toBe(0);expect(vtpCodAmount({...base,deposit_amount:200000})).toBe(0);});
- it('shop pays freight and COD fee -> ORDER_PAYMENT 3',()=>{expect(rules.shippingFeePaidBy).toBe('shop');expect(rules.codFeePaidBy).toBe('shop');expect(vtpOrderPayment()).toBe(3);expect(vtpOrderPayment({...rules,shippingFeePaidBy:'customer',codFeePaidBy:'customer'})).toBe(2);});
- it('unknown or mixed rules fail loudly instead of guessing money',()=>{expect(()=>vtpCodAmount(base,{...rules,codAmount:'x'})).toThrow();expect(()=>vtpOrderPayment({...rules,codFeePaidBy:'customer'})).toThrow();expect(()=>vtpOrderService(base,{...rules,serviceCode:'x'})).toThrow();});
+ it('shop pays freight and COD fee -> ORDER_PAYMENT 3',()=>{expect(rules.shippingFeePaidBy).toBe('shop');expect(rules.codFeePaidBy).toBe('shop');expect(vtpOrderPayment()).toBe(3);expect(vtpOrderPayment({...rules,shippingFeePaidBy:'customer',codFeePaidBy:'customer'} as any)).toBe(2);});
+ it('unknown or mixed rules fail loudly instead of guessing money',()=>{expect(()=>vtpCodAmount(base,{...rules,codAmount:'x'})).toThrow();expect(()=>vtpOrderPayment({...rules,codFeePaidBy:'customer'} as any)).toThrow();expect(()=>vtpOrderService(base,{...rules,serviceCode:'x'} as any)).toThrow();});
  it('service = the one saved at quote time, no silent default',()=>{expect(vtpOrderService({shipping_service:'LCOD'})).toBe('LCOD');expect(()=>vtpOrderService({shipping_service:null})).toThrow();});
- it('inspection on, no try-on',()=>{expect(vtpAllowsInspection()).toBe(true);expect(vtpAllowsInspection({...rules,allowInspection:'không cho xem hàng'})).toBe(false);});
+ it('config values are plain: fixed codAmount, booleans',()=>{expect(rules.codAmount).toBe('goods_plus_ship_minus_deposit');expect(rules.allowInspection).toBe(true);expect(rules.allowTryOn).toBe(false);expect(rules.fallbackService).toBe('requote_cheapest_then_manual');});
+ it('VTP note from allowInspection/allowTryOn',()=>{expect(vtpOrderNote()).toBe('Cho xem hàng, không cho thử');expect(vtpOrderNote({...rules,allowTryOn:true} as any)).toBe('Cho xem hàng, cho thử');expect(vtpOrderNote({...rules,allowInspection:false} as any)).toBe('Không cho xem hàng');expect(vtpAllowsInspection({...rules,allowInspection:false} as any)).toBe(false);});
+ it('requoted service used only when none was saved',()=>{expect(vtpOrderService({shipping_service:null},rules,'LCOD')).toBe('LCOD');expect(vtpOrderService({shipping_service:'VCN'},rules,'LCOD')).toBe('VCN');expect(()=>vtpOrderService({shipping_service:null},{...rules,fallbackService:'manual'} as any,'LCOD')).toThrow();});
  it('weight: product grams with 300g default, custom print plastic + 150g once',()=>{expect(vtpWeightGram([{weightGram:120,quantity:2},{weightGram:null,quantity:1}])).toBe(540);expect(vtpWeightGram([],[{gramsPerUnit:80,quantity:2}])).toBe(160+150);expect(vtpWeightGram([{weightGram:100,quantity:1}],[{gramsPerUnit:50,quantity:1}])).toBe(100+50+150);});
 });
 
@@ -47,7 +49,11 @@ const vtpOk=(n='1868123456789')=>vi.fn(async(_url:RequestInfo|URL,_init?:Request
 const reload=async(id:string)=>(await db.prepare('SELECT * FROM orders WHERE id=?').bind(id).first<Order>())!;
 
 describe('createVtpShipment (mocked VTP)',()=>{
- it('refuses an order quoted with the fallback fee (no saved service) without calling VTP',async()=>{const o=await depositedOrder(null);const fetcher=vtpOk();const r=await createVtpShipment(env,o.code,'tester',{fetcher,now:now+5000});expect(r.ok).toBe(false);expect(fetcher).not.toHaveBeenCalled();expect((await reload(o.id)).status).toBe('da_coc');});
+ it('fallback-fee order: re-quotes, uses the cheapest service, keeps stored fee and COD',async()=>{const o=await depositedOrder(null);const fetcher=vi.fn(async(url:RequestInfo|URL,_init?:RequestInit)=>String(url).endsWith('/order/getPriceAll')?new Response(JSON.stringify([{MA_DV_CHINH:'VHT',GIA_CUOC:52000,THOI_GIAN:'24 giờ'},{MA_DV_CHINH:'LCOD',GIA_CUOC:31000,THOI_GIAN:'3 ngày'}]),{status:200}):new Response(JSON.stringify({status:200,error:false,message:'OK',data:{ORDER_NUMBER:'1868000000001'}}),{status:200}));
+  const r=await createVtpShipment(env,o.code,'tester',{fetcher,now:now+5000});expect(r.ok).toBe(true);expect(fetcher).toHaveBeenCalledTimes(2);const body=JSON.parse(String(fetcher.mock.calls[1][1]!.body));expect(body.ORDER_SERVICE).toBe('LCOD');expect(body.MONEY_COLLECTION).toBe(o.items_subtotal+o.shipping_fee-o.deposit_amount);
+  const after=await reload(o.id);expect(after.shipping_fee).toBe(o.shipping_fee);expect(after.status).toBe('da_giao_van_chuyen');});
+ it('fallback-fee order: failed re-quote asks for a manual waybill and stays da_coc',async()=>{const o=await depositedOrder(null);const fetcher=vi.fn(async(_url:RequestInfo|URL,_init?:RequestInit)=>new Response('err',{status:500}));const r=await createVtpShipment(env,o.code,'tester',{fetcher,now:now+5000});expect(r.ok).toBe(false);if(!r.ok){expect(r.manual).toBe(true);expect(r.error).toContain('tạo vận đơn thủ công trên Viettel Post');}
+  expect(fetcher).toHaveBeenCalledTimes(1);expect(String(fetcher.mock.calls[0][0])).toContain('getPriceAll');const after=await reload(o.id);expect(after.status).toBe('da_coc');expect(after.vtp_state).toBe('error');expect(after.vtp_order_number).toBeNull();});
  it('sends the mapped payload with the Token header and saves the result',async()=>{const o=await depositedOrder();const fetcher=vtpOk();const r=await createVtpShipment(env,o.code,'tester',{fetcher,now:now+5000});expect(r).toEqual({ok:true,trackingNumber:'1868123456789',already:false});
   const [url,init]=fetcher.mock.calls[0];expect(url).toBe('https://partner.viettelpost.vn/v2/order/createOrder');expect((init!.headers as Record<string,string>).Token).toBe('test-token');const body=JSON.parse(String(init!.body));expect(body.PRODUCT_WEIGHT).toBe(500);expect(body.MONEY_COLLECTION).toBe(o.items_subtotal+o.shipping_fee-o.deposit_amount);expect(body.RECEIVER_WARD).toBe(49236);expect(body.ORDER_SERVICE).toBe('VCN');expect(body.ORDER_PAYMENT).toBe(3);expect(body.ORDER_NOTE).toBe('Cho xem hàng, không cho thử');
   const after=await reload(o.id);expect(after.status).toBe('da_giao_van_chuyen');expect(after.vtp_order_number).toBe('1868123456789');expect(after.tracking_code).toBe('1868123456789');
