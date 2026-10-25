@@ -25,6 +25,19 @@ npm run preview
 `npm run setup` áp migration D1 local và nạp sản phẩm mẫu vào `.wrangler/state`. `npm run preview` chạy `wrangler dev` tại http://127.0.0.1:4173 và dùng cùng thư mục dữ liệu đó.
 
 Admin local: mở http://127.0.0.1:4173/admin/local-auth (hoặc http://127.0.0.1:5173/admin/local-auth khi chạy `npm run dev`), bấm **Vào trang quản trị**. Chỉ chạy trên loopback và cần `APP_ENV=local` + `LOCAL_ADMIN_TOKEN` trong `.dev.vars` (gitignored, ghi đè `APP_ENV=staging` của `wrangler.jsonc`). `node scripts/local-env.mjs` tự thêm các dòng còn thiếu mà không đổi khoá đã có.
+### Admin local ghi thẳng vào staging (`npm run admin:staging`)
+
+```powershell
+cd "C:\Users\cunuo\IT Dashboard\axt3d-feat12"
+npx wrangler login   # chỉ lần đầu, đăng nhập Cloudflare bằng trình duyệt
+npm run admin:staging
+```
+
+Mở địa chỉ `Local` in ra (thường http://127.0.0.1:5173) + `/admin/local-auth`, bấm **Vào trang quản trị**. Admin vẫn chỉ chạy trên localhost với `APP_ENV=local` + `LOCAL_ADMIN_TOKEN` (`.dev.vars`), nhưng D1 `DB` và R2 `IMAGES` dùng **remote binding** tới staging thật.
+
+> ⚠️ **Dữ liệu thật:** sản phẩm, tồn kho và ảnh lưu ở đây ghi thẳng vào D1/R2 staging và hiện ngay trên https://axt3d-staging.anxaitech.workers.dev. Xóa ở đây là xóa thật.
+
+Cron không chạy trong tiến trình local; đừng thêm `TELEGRAM_*` vào `.dev.vars` để tránh gửi trùng thông báo. `npm run dev` vẫn dùng dữ liệu giả lập local như cũ. Không cần và không được tạo API token: remote binding dùng phiên `wrangler login`.
 
 Webhook SePay local, khi `bank.accountNumber` trong config còn trống, gửi `accountNumber` là `LOCAL` và header `Authorization: Apikey <SEPAY_WEBHOOK_KEY>` (key nằm trong `.dev.vars`, không commit).
 

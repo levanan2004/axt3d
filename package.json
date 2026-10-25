@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "react-router dev --host 127.0.0.1",
+    "admin:staging": "node scripts/admin-staging.mjs",
     "build": "react-router build",
     "typecheck": "react-router typegen && tsc --noEmit",
     "test": "vitest run",
