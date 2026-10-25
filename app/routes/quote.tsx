@@ -4,7 +4,7 @@ import { LoaderCircle } from 'lucide-react';
 import { AddressPicker, ShippingFeeLine, addressComplete, emptyAddress, loadSavedContact, saveContact, useShippingFee, type AddressValue } from '../components/address-picker';
 import { StoreLayout, Breadcrumb, PriceSummary } from '../components/store';
 import { Button } from '../components/ui/button';
-import { getEnv } from '../lib/db.server';
+import { getCtx, getEnv } from '../lib/db.server';
 import { calcOrderTotals, money } from '../lib/money';
 import { quoteStatusLabels } from '../lib/quote';
 import { quoteByCode, respondQuote } from '../lib/quotes.server';
@@ -45,7 +45,7 @@ export async function action({ request, params, context }: ActionFunctionArgs) {
   if (!(await allowed(request, found.quote.access_hash))) return { error: 'Phiên xem báo giá đã hết. Hãy mở lại bằng số điện thoại.' };
   try {
     const address = { street: String(form.get('street') || ''), provinceId: form.get('provinceId'), wardId: form.get('wardId'), provinceName: String(form.get('provinceName') || ''), wardName: String(form.get('wardName') || '') };
-    const accepted = await respondQuote(env, found.quote, form.get('intent') === 'accept', address);
+    const accepted = await respondQuote(env, found.quote, form.get('intent') === 'accept', address, Date.now(), getCtx(context));
     if (!accepted) return redirect(`/bao-gia/${found.quote.code}`);
     return redirect(`/thanh-toan/${accepted.code}`, { headers: { 'Set-Cookie': orderCookie(accepted.code, accepted.token, request) } });
   } catch (error) {

@@ -1,6 +1,7 @@
 import type { Product, Variant, Order, OrderItem, OrderEvent, Env } from "./types";
 import {cloudflareContext} from './context';
 import type {RouterContextProvider} from 'react-router';
+export function getCtx(context: unknown): ExecutionContext | undefined { try { return (context as RouterContextProvider).get(cloudflareContext).ctx; } catch { return undefined; } }
 export function getEnv(context: unknown): Env { return (context as RouterContextProvider).get(cloudflareContext).env; }
 export async function listProducts(db: D1Database, params = new URLSearchParams()) {
  const conditions = ['p.active=1', 'v.active=1']; const values: (string | number)[] = [];

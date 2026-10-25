@@ -1,3 +1,4 @@
+import { notifyOrder, type WaitUntil } from './notify.server';
 import { shopConfig } from './config';
 import { calcOrderTotals } from './money';
 import { customPrintWeightGram } from './shipping';
@@ -81,7 +82,7 @@ export async function saveQuotePrice(env: Env, code: string, actor: string, next
 }
 
 export function quoteWeightGram(quote: Pick<Quote, 'grams' | 'quantity'>) { return customPrintWeightGram(Number(quote.grams || 0), quote.quantity); }
-export async function respondQuote(env: Env, quote: Quote, accept: boolean, address: unknown, now = Date.now()) {
+export async function respondQuote(env: Env, quote: Quote, accept: boolean, address: unknown, now = Date.now(), ctx?: WaitUntil) {
   if (quote.status !== 'da_bao_gia' || quote.expires_at <= now || !quote.quoted_amount) throw new Error('Báo giá chưa thể xác nhận.');
   if (!accept) {
     await env.DB.batch([
@@ -111,6 +112,7 @@ export async function respondQuote(env: Env, quote: Quote, accept: boolean, addr
     env.DB.prepare(`UPDATE quotes SET status='da_chap_nhan',order_id=?,updated_at=? WHERE id=? AND status='da_bao_gia'`).bind(orderId, now, quote.id),
     env.DB.prepare('INSERT INTO quote_events(quote_id,actor,action,detail,created_at) VALUES(?,?,?,?,?)').bind(quote.id, 'customer', 'accept', JSON.stringify({ orderCode, amount: quote.quoted_amount }), now),
   ]);
+  notifyOrder(env, ctx, 'created', orderCode);
   return { code: orderCode, token: token.slice(0, 64) };
 }
 

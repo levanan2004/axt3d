@@ -5,6 +5,7 @@ import { orderWeightGram } from './shipping';
 import { quoteShipping, resolveAddress } from './shipping.server';
 import { hash } from './security.server';
 import type { Env, Order, Variant } from './types';
+import { notifyOrder, type WaitUntil } from './notify.server';
 export const checkoutSchema = z.object({
  name:z.string().trim().min(2,'Vui lòng nhập họ tên.').max(100),
  phone:z.string().transform(normalizePhone).pipe(z.string().regex(/^0[35789]\d{8}$/,'Số điện thoại Việt Nam chưa đúng.')),
@@ -22,7 +23,7 @@ export function addressFields(){return {
 };}
 export const addressSchema=z.object(addressFields());
 export function normalizePhone(value:string) { return value.replace(/[\s.()-]/g,'').replace(/^\+84/,'0'); }
-export async function createOrder(env: Env, input: z.infer<typeof checkoutSchema>, accessToken:string, now=Date.now(), accountId:string|null=null) {
+export async function createOrder(env: Env, input: z.infer<typeof checkoutSchema>, accessToken:string, now=Date.now(), accountId:string|null=null, ctx?:WaitUntil) {
  const parsed=checkoutSchema.parse(input);
  const grouped=new Map<string,number>();
  for(const line of parsed.items) grouped.set(line.variantId,(grouped.get(line.variantId)||0)+line.quantity);
@@ -55,12 +56,13 @@ export async function createOrder(env: Env, input: z.infer<typeof checkoutSchema
   if(String(error).includes('STOCK_OR_PRICE_CHANGED')) throw new Error('Số lượng hoặc giá vừa thay đổi. Vui lòng kiểm tra lại giỏ hàng.');
   throw error;
  }
+ notifyOrder(env,ctx,'created',code);
  return (await env.DB.prepare('SELECT * FROM orders WHERE id=?').bind(id).first<Order>())!;
 }
 export async function expireOrders(db:D1Database,now=Date.now()) {
  // Bounded batches keep cron work predictable. Repeated calls safely continue the queue.
  return db.batch([
-  db.prepare("UPDATE orders SET status='da_huy',updated_at=? WHERE id IN(SELECT id FROM orders WHERE status='cho_coc' AND expires_at<=? ORDER BY expires_at LIMIT 100)").bind(now,now),
+  db.prepare("UPDATE orders SET status='da_huy',updated_at=? WHERE id IN(SELECT id FROM orders WHERE status='cho_coc' AND expires_at<=? ORDER BY expires_at LIMIT 100) RETURNING code").bind(now,now),
   db.prepare('DELETE FROM rate_limits WHERE expires_at<?').bind(now)
  ]);
 }
@@ -70,7 +72,11 @@ export async function recordPayment(db:D1Database,payload:z.infer<typeof sepaySc
  const parsed=sepaySchema.parse(payload);
  const patterns=[shopConfig.payment.transferContentPattern, shopConfig.pos.transferContentPattern];
  const code=patterns.map(pattern=>{const escaped=pattern.replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace('\\{orderCode\\}','([A-F0-9]{12})');return parsed.content.toUpperCase().match(new RegExp(`${escaped}(?![A-Z0-9])`,'i'))?.[1]||'';}).find(Boolean)||'';
- const order=code?await db.prepare('SELECT id FROM orders WHERE code=?').bind(code).first<{id:string}>():null;
+ const order=code?await db.prepare('SELECT id,status FROM orders WHERE code=?').bind(code).first<{id:string;status:string}>():null;
  const result=await db.prepare('INSERT INTO payments(transaction_id,order_id,amount,direction,content,account_number,received_at) VALUES(?,?,?,?,?,?,?) ON CONFLICT(transaction_id) DO NOTHING').bind(String(parsed.id),order?.id||null,parsed.transferAmount,parsed.transferType,parsed.content,parsed.accountNumber,now).run();
- return {duplicate:result.meta.changes===0};
+ const duplicate=result.meta.changes===0;
+ // Report a status change caused by this payment (trigger apply_payment) so the caller can notify.
+ let event:'deposited'|'cancelled'|null=null;
+ if(order&&!duplicate&&order.status==='cho_coc'){const after=await db.prepare('SELECT status FROM orders WHERE id=?').bind(order.id).first<{status:string}>();event=after?.status==='da_coc'?'deposited':after?.status==='da_huy'?'cancelled':null;}
+ return {duplicate,code:event?code:null,event};
 }

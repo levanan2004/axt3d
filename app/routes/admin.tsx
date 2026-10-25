@@ -1,8 +1,8 @@
 import {Link,useLoaderData,type LoaderFunctionArgs} from 'react-router';
 import {Plus,ArrowRight} from 'lucide-react';
-import {getEnv} from '../lib/db.server';
+import {getCtx,getEnv} from '../lib/db.server';
 import {requireAdmin} from '../lib/security.server';
-import {expireOrders} from '../lib/orders.server';
+import {expireOrdersAndNotify} from '../lib/notify.server';
 import {money} from '../lib/money';
 import {statusLabels,shopConfig} from '../lib/config';
 import type {Order,Product} from '../lib/types';
@@ -11,7 +11,7 @@ import {VtpCreateButton,type VtpPreview} from '../components/vtp';
 import {vtpPreview} from '../lib/vtp-order.server';
 import {StatusBadge} from '../components/order';
 import {Button} from '../components/ui/button';
-export async function loader({request,context}:LoaderFunctionArgs){const env=getEnv(context),actor=await requireAdmin(request,env);await expireOrders(env.DB);const url=new URL(request.url),tab=url.searchParams.get('tab')||'orders',status=url.searchParams.get('status')||'';const page=Math.max(1,Math.floor(Number(url.searchParams.get('page'))||1));const [orders,products,payments,stats]=await Promise.all([
+export async function loader({request,context}:LoaderFunctionArgs){const env=getEnv(context),actor=await requireAdmin(request,env);await expireOrdersAndNotify(env,getCtx(context));const url=new URL(request.url),tab=url.searchParams.get('tab')||'orders',status=url.searchParams.get('status')||'';const page=Math.max(1,Math.floor(Number(url.searchParams.get('page'))||1));const [orders,products,payments,stats]=await Promise.all([
  env.DB.prepare(`SELECT * FROM orders ${status&&Object.hasOwn(statusLabels,status)?'WHERE status=?':''} ORDER BY created_at DESC LIMIT 50 OFFSET ?`).bind(...(status&&Object.hasOwn(statusLabels,status)?[status]:[]),(page-1)*50).all<Order>(),
  env.DB.prepare('SELECT p.*,MIN(v.price) AS price,SUM(v.stock) AS stock FROM products p LEFT JOIN variants v ON v.product_id=p.id GROUP BY p.id ORDER BY p.created_at DESC LIMIT 50 OFFSET ?').bind((page-1)*50).all<Product>(),
  env.DB.prepare('SELECT p.*,o.code,o.status FROM payments p LEFT JOIN orders o ON o.id=p.order_id ORDER BY p.received_at DESC LIMIT 50 OFFSET ?').bind((page-1)*50).all<{transaction_id:string;amount:number;direction:string;content:string;received_at:number;disposition:string;code:string|null}>(),

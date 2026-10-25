@@ -3,6 +3,7 @@ import { secureEqual } from './security.server';
 import { fetchShippingQuote } from './shipping';
 import { createOrderBody, parseCreateOrderReply, VTP_MANUAL_WAYBILL_MESSAGE, vtpCodAmount, vtpWebhookAction, vtpWeightGram } from './vtp-order';
 import type { Env, Order } from './types';
+import { notifyOrder, type WaitUntil } from './notify.server';
 
 const vtp = shopConfig.shipping.viettelPost;
 /** A "sending" lock older than this is treated as a crashed request and may be retried. */
@@ -31,7 +32,7 @@ export type VtpCreateResult = { ok: true; trackingNumber: string; already: boole
  * retries never send twice; a finished order returns its saved number. A timeout leaves state "unknown"
  * and needs confirmUnknown=true, because VTP may have created the order anyway.
  */
-export async function createVtpShipment(env: Env, code: string, actor: string, opts: { confirmUnknown?: boolean; fetcher?: typeof fetch; now?: number } = {}): Promise<VtpCreateResult> {
+export async function createVtpShipment(env: Env, code: string, actor: string, opts: { confirmUnknown?: boolean; fetcher?: typeof fetch; now?: number; ctx?: WaitUntil } = {}): Promise<VtpCreateResult> {
   const now = opts.now ?? Date.now(), fetcher = opts.fetcher ?? fetch;
   const order = await env.DB.prepare('SELECT * FROM orders WHERE code=?').bind(code).first<Order>();
   if (!order) return { ok: false, error: 'Không tìm thấy đơn.', status: 404 };
@@ -77,10 +78,11 @@ export async function createVtpShipment(env: Env, code: string, actor: string, o
     await setState(env.DB, order.id, 'error', reply.message);
     return { ok: false, error: reply.message, status: 502 };
   }
-  await env.DB.batch([
+  const saved = await env.DB.batch([
     env.DB.prepare("UPDATE orders SET vtp_order_number=?,tracking_code=?,vtp_state='done',vtp_error=NULL,status='da_giao_van_chuyen',updated_at=? WHERE id=? AND vtp_state='sending' AND vtp_order_number IS NULL").bind(reply.orderNumber, reply.orderNumber, now, order.id),
     env.DB.prepare('INSERT INTO audit_logs(actor,action,entity_id,detail,created_at) VALUES(?,?,?,?,?)').bind(actor, 'vtp_create_order', order.id, JSON.stringify({ code: order.code, vtpOrderNumber: reply.orderNumber, cod: body.MONEY_COLLECTION, weight: body.PRODUCT_WEIGHT, service: body.ORDER_SERVICE, ...(requoted ? { requotedFee: requoted.fee, storedShippingFee: order.shipping_fee } : {}) }), now),
   ]);
+  if (saved[0]?.meta.changes) notifyOrder(env, opts.ctx, 'waybill', order.code);
   return { ok: true, trackingNumber: reply.orderNumber, already: false };
 }
 
@@ -95,7 +97,7 @@ function json(body: unknown, status = 200) { return Response.json(body, { status
  * either must equal VTP_WEBHOOK_SECRET. Repeated deliveries are ignored, and only 501 (delivered) moves the
  * order to hoan_thanh. Unknown orders still get 200 so VTP does not retry forever.
  */
-export async function vtpWebhook(request: Request, env: Env, now = Date.now()) {
+export async function vtpWebhook(request: Request, env: Env, now = Date.now(), ctx?: WaitUntil) {
   if (request.method !== 'POST') return json({ success: false }, 405);
   if (!env.VTP_WEBHOOK_SECRET) return json({ success: false, error: 'Integration not configured' }, 503);
   if (Number(request.headers.get('content-length') || 0) > 32768) return json({ success: false }, 413);
@@ -111,7 +113,8 @@ export async function vtpWebhook(request: Request, env: Env, now = Date.now()) {
   const statusName = typeof payload.DATA?.STATUS_NAME === 'string' ? payload.DATA.STATUS_NAME.slice(0, 200) : '';
   const next = vtpWebhookAction(status);
   const statements = [env.DB.prepare('INSERT INTO vtp_webhook_events(order_number,status,status_name,received_at) VALUES(?,?,?,?) ON CONFLICT(order_number,status) DO NOTHING').bind(number, status, statusName, now)];
-  if (next === 'hoan_thanh') statements.push(env.DB.prepare("UPDATE orders SET status='hoan_thanh',updated_at=? WHERE (vtp_order_number=? OR tracking_code=?) AND status='da_giao_van_chuyen'").bind(now, number, number));
+  if (next === 'hoan_thanh') statements.push(env.DB.prepare("UPDATE orders SET status='hoan_thanh',updated_at=? WHERE (vtp_order_number=? OR tracking_code=?) AND status='da_giao_van_chuyen' RETURNING code").bind(now, number, number));
   const results = await env.DB.batch(statements);
+  for (const row of (results[1]?.results || []) as { code: string }[]) notifyOrder(env, ctx, 'completed', row.code);
   return json({ success: true, duplicate: results[0].meta.changes === 0, updated: results[1]?.meta.changes ? true : false });
 }

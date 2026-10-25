@@ -2,7 +2,8 @@ import {createRequestHandler,RouterContextProvider} from 'react-router';
 import {cloudflareContext} from '../app/lib/context';
 import {z} from 'zod';
 import {shopConfig} from '../app/lib/config';
-import {expireOrders,recordPayment,sepaySchema} from '../app/lib/orders.server';
+import {recordPayment,sepaySchema} from '../app/lib/orders.server';
+import {expireOrdersAndNotify,notifyOrder,type WaitUntil} from '../app/lib/notify.server';
 import {expireQuotes} from '../app/lib/quotes.server';
 import {allowsIndexing,expectedBankAccount,legalRoutes,robotsTxt} from '../app/lib/http';
 import {orderDetails,customerOrder} from '../app/lib/db.server';
@@ -16,7 +17,7 @@ import {quoteWeightGram} from '../app/lib/quotes.server';
 const handler=createRequestHandler(()=>import('virtual:react-router/server-build'),import.meta.env.MODE);
 function json(body:unknown,status=200){return Response.json(body,{status,headers:{'Cache-Control':'no-store'}});}
 const xml=(s:string)=>s.replace(/[<>&"']/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&apos;'}[c]!));
-export async function webhook(request:Request,env:Env){
+export async function webhook(request:Request,env:Env,ctx?:WaitUntil){
  if(!env.SEPAY_WEBHOOK_KEY)return json({success:false,error:'Integration not configured'},503);
  if(!await secureEqual(request.headers.get('authorization')||'',`Apikey ${env.SEPAY_WEBHOOK_KEY}`))return json({success:false},401);
  if(Number(request.headers.get('content-length')||0)>16384)return json({success:false},413);
@@ -27,11 +28,12 @@ export async function webhook(request:Request,env:Env){
  // BIDV via SePay: accountNumber is the main account, subAccount is the VA shown in the QR.
  if(payload.accountNumber!==expectedAccount&&payload.subAccount!==expectedAccount)return json({success:false,error:'Wrong receiving account'},400);
  const result=await recordPayment(env.DB,payload);
- return json({success:true,...result});
+ if(result.code&&result.event)notifyOrder(env,ctx,result.event,result.code);
+ return json({success:true,duplicate:result.duplicate});
 }
-async function api(request:Request,env:Env):Promise<Response|null>{const url=new URL(request.url),path=url.pathname;
- if(path==='/api/webhooks/viettelpost')return vtpWebhook(request,env);
- if(path==='/api/webhooks/sepay'){if(request.method!=='POST')return json({success:false},405);return webhook(request,env);}
+async function api(request:Request,env:Env,ctx?:WaitUntil):Promise<Response|null>{const url=new URL(request.url),path=url.pathname;
+ if(path==='/api/webhooks/viettelpost')return vtpWebhook(request,env,Date.now(),ctx);
+ if(path==='/api/webhooks/sepay'){if(request.method!=='POST')return json({success:false},405);return webhook(request,env,ctx);}
  if(path==='/api/shipping/provinces'||path==='/api/shipping/wards'){
   if(request.method!=='GET')return json({error:'Method not allowed'},405);
   const cacheHeaders={'Cache-Control':`public, max-age=${shopConfig.shipping.viettelPost.locationCacheSeconds}`};
@@ -75,7 +77,7 @@ async function api(request:Request,env:Env):Promise<Response|null>{const url=new
  if(/^\/api\/orders\/[A-F0-9]{12}$/.test(path)){
   if(request.method!=='GET')return json({error:'Method not allowed'},405);
   const code=path.split('/').at(-1)!;const initial=await orderDetails(env.DB,code);await requireOrder(request,initial?.order||null);
-  await expireOrders(env.DB);const details=(await orderDetails(env.DB,code))!;
+  await expireOrdersAndNotify(env,ctx);const details=(await orderDetails(env.DB,code))!;
   return json({order:customerOrder(details.order),items:details.items,events:details.events});
  }
  if(path==='/api/admin/images'){
@@ -115,12 +117,12 @@ async function api(request:Request,env:Env):Promise<Response|null>{const url=new
 export default {
  async fetch(request:Request,env:Env,ctx:ExecutionContext){
   let response:Response;
-  try{const context=new RouterContextProvider();context.set(cloudflareContext,{env,ctx});response=await api(request,env)||await handler(request,context);}catch(error){if(error instanceof Response)response=error;else{console.error('Request failed',error instanceof Error?error.message:'unknown');response=json({error:'Không thể xử lý yêu cầu. Vui lòng thử lại.'},500);}}
+  try{const context=new RouterContextProvider();context.set(cloudflareContext,{env,ctx});response=await api(request,env,ctx)||await handler(request,context);}catch(error){if(error instanceof Response)response=error;else{console.error('Request failed',error instanceof Error?error.message:'unknown');response=json({error:'Không thể xử lý yêu cầu. Vui lòng thử lại.'},500);}}
   const headers=new Headers(response.headers);headers.set('X-Content-Type-Options','nosniff');headers.set('Referrer-Policy','strict-origin-when-cross-origin');headers.set('X-Frame-Options','DENY');headers.set('Permissions-Policy','camera=(), microphone=(), geolocation=()');
   const path=new URL(request.url).pathname;
   if(/^\/(admin|api|thanh-toan|theo-doi-don|gio-hang|tai-khoan|dang-nhap|dang-ky|quen-mat-khau|dat-lai-mat-khau|xac-nhan-email|auth)/.test(path)){if(!/^\/api\/shipping\/(provinces|wards)$/.test(path)||response.status!==200)headers.set('Cache-Control','no-store');headers.set('X-Robots-Tag','noindex, nofollow');}
   if(!allowsIndexing(env))headers.set('X-Robots-Tag','noindex, nofollow');
   return new Response(response.body,{status:response.status,statusText:response.statusText,headers});
  },
- async scheduled(_event:ScheduledController,env:Env,ctx:ExecutionContext){ctx.waitUntil(Promise.all([expireOrders(env.DB),expireQuotes(env.DB)]));}
+ async scheduled(_event:ScheduledController,env:Env,ctx:ExecutionContext){ctx.waitUntil(Promise.all([expireOrdersAndNotify(env,ctx),expireQuotes(env.DB)]));}
 } satisfies ExportedHandler<Env>;

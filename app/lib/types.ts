@@ -6,6 +6,8 @@ export interface Env {
   // Customer accounts (feat/11). Empty GOOGLE_CLIENT_ID disables Google login. EMAIL_MODE: 'log' | 'cloudflare'.
   GOOGLE_CLIENT_ID?: string; GOOGLE_CLIENT_SECRET?: string; EMAIL_FROM?: string; EMAIL_MODE?: string; DEV_EMAIL_LOG?: string;
   TURNSTILE_SITE_KEY?: string; TURNSTILE_SECRET?: string;
+  // Telegram order notifications (feat/12). Both empty = no messages are sent.
+  TELEGRAM_BOT_TOKEN?: string; TELEGRAM_CHAT_ID?: string;
   /** Cloudflare Email Sending `send_email` binding (optional until the domain is onboarded). */
   EMAIL?: { send(message: { to: string; from: string | { email: string; name?: string }; subject: string; html?: string; text?: string }): Promise<{ messageId: string }> };
 }
