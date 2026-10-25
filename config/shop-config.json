@@ -164,9 +164,9 @@
   },
   "deposit": {
     "rate": 0.5,
-    "base": "itemsSubtotal",
+    "base": "itemsSubtotal + shippingFee",
     "rounding": "ceilTo1000",
-    "codFormula": "itemsSubtotal - deposit + shippingFee"
+    "codFormula": "itemsSubtotal + shippingFee - deposit"
   },
   "shipping": {
     "mode": "viettelpost_api",
