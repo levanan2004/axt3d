@@ -40,6 +40,6 @@ export function customerOrder(order: Order) {
  return safe;
 }
 export function publicOrder(order: Order) {
- const { access_hash, checkout_key, customer_id, ...safe } = order;
+ const { access_hash, checkout_key, customer_id, account_id, ...safe } = order;
  return safe;
 }

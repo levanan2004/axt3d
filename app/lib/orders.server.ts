@@ -22,7 +22,7 @@ export function addressFields(){return {
 };}
 export const addressSchema=z.object(addressFields());
 export function normalizePhone(value:string) { return value.replace(/[\s.()-]/g,'').replace(/^\+84/,'0'); }
-export async function createOrder(env: Env, input: z.infer<typeof checkoutSchema>, accessToken:string, now=Date.now()) {
+export async function createOrder(env: Env, input: z.infer<typeof checkoutSchema>, accessToken:string, now=Date.now(), accountId:string|null=null) {
  const parsed=checkoutSchema.parse(input);
  const grouped=new Map<string,number>();
  for(const line of parsed.items) grouped.set(line.variantId,(grouped.get(line.variantId)||0)+line.quantity);
@@ -45,7 +45,7 @@ export async function createOrder(env: Env, input: z.infer<typeof checkoutSchema
  const customerId=crypto.randomUUID(), accessHash=await hash(accessToken);
  const statements=[
   env.DB.prepare('INSERT INTO customers(id,phone,name,created_at) VALUES(?,?,?,?) ON CONFLICT(phone) DO UPDATE SET name=excluded.name').bind(customerId,parsed.phone,parsed.name,now),
-  env.DB.prepare(`INSERT INTO orders(id,code,customer_id,customer_name,phone,address,note,items_subtotal,shipping_fee,deposit_amount,cod_amount,expires_at,created_at,updated_at,access_hash,checkout_key,province_id,ward_id,shipping_weight_gram,shipping_service,shipping_fee_fallback) VALUES(?,?,(SELECT id FROM customers WHERE phone=?),?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).bind(id,code,parsed.phone,parsed.name,parsed.phone,resolved.address,parsed.note,totals.itemsSubtotal,totals.shippingFee,totals.depositAmount,totals.codAmount,now+shopConfig.payment.depositExpiryMinutes*60000,now,now,accessHash,parsed.checkoutKey,parsed.provinceId,parsed.wardId,weightGram,ship.service,ship.fallback?1:0),
+  env.DB.prepare(`INSERT INTO orders(id,code,customer_id,customer_name,phone,address,note,items_subtotal,shipping_fee,deposit_amount,cod_amount,expires_at,created_at,updated_at,access_hash,checkout_key,province_id,ward_id,shipping_weight_gram,shipping_service,shipping_fee_fallback,account_id) VALUES(?,?,(SELECT id FROM customers WHERE phone=?),?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).bind(id,code,parsed.phone,parsed.name,parsed.phone,resolved.address,parsed.note,totals.itemsSubtotal,totals.shippingFee,totals.depositAmount,totals.codAmount,now+shopConfig.payment.depositExpiryMinutes*60000,now,now,accessHash,parsed.checkoutKey,parsed.provinceId,parsed.wardId,weightGram,ship.service,ship.fallback?1:0,accountId),
   ...variants.map(v=>env.DB.prepare('INSERT INTO order_items(id,order_id,variant_id,product_name,variant_name,image,unit_price,quantity) VALUES(?,?,?,?,?,?,?,?)').bind(crypto.randomUUID(),id,v.id,v.product_name,`${v.color} · ${v.material} · ${v.size}`,v.image,v.price,grouped.get(v.id)!))
  ];
  try { await env.DB.batch(statements); }
