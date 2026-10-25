@@ -309,11 +309,11 @@
     "onLimit": "Hiện câu báo hết lượt của Nhất + nút Zalo/gọi shop, không gọi API.",
     "_note": "Dùng bản Gemini Flash rẻ nhất đủ tốt; Minh đo chi phí thật 1 tuần đầu rồi báo Phương.",
     "model": "gemini-2.5-flash-lite",
+    "usdPer1MInputTokens": 0.1,
+    "usdPer1MOutputTokens": 0.4,
+    "vndPerUsd": 26000,
     "temperature": 0.2,
     "apiTimeoutMs": 18000,
-    "usdPerMillionInputTokens": 0.1,
-    "usdPerMillionOutputTokens": 0.4,
-    "vndPerUsd": 26000,
     "burstPerWindow": 10,
     "burstWindowSeconds": 600,
     "historyTurns": 6,
@@ -331,6 +331,6 @@
       "bot_chao": "",
       "bot_khong_biet": ""
     },
-    "_devNote": "Pricing is an estimate for gemini-2.5-flash-lite; usage rows are purged after usageRetentionDays."
+    "_devNote": "Model, token prices and FX come from Hà Phương (web-in-3d/shop-config.json). Usage rows (hashed visitor counts and chat burst counters) are deleted after usageRetentionDays."
   }
 }

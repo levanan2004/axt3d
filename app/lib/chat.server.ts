@@ -120,7 +120,7 @@ export async function visitorKey(env: Env, request: Request, day: string) {
 }
 
 export function costVnd(inputTokens: number, outputTokens: number, config: ChatConfig = shopConfig.chatbot) {
-  return (inputTokens * config.usdPerMillionInputTokens + outputTokens * config.usdPerMillionOutputTokens) / 1e6 * config.vndPerUsd;
+  return (inputTokens * config.usdPer1MInputTokens + outputTokens * config.usdPer1MOutputTokens) / 1e6 * config.vndPerUsd;
 }
 
 export async function checkLimits(env: Env, request: Request, now: number, config: ChatConfig): Promise<{ reason: LimitReason; retryAfter: number } | null> {
