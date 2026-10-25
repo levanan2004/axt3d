@@ -71,6 +71,11 @@ export function applyFileTypes(input: string) {
     .replace(/\{maxFileMB\}/g, String(limits.maxFileMB));
 }
 
+/** Transfer-content prefix from shop-config payment.transferContentPattern (e.g. "AXT3D{orderCode}" -> "AXT3D"). */
+export function transferPrefix(): string {
+  return shopConfig.payment.transferContentPattern.split('{orderCode}')[0];
+}
+
 /** Replace {config.*} from shop-config. Leave {TEN_SHOP}-style tokens visible unless site-info names them. */
 export function renderTokens(input: string): string {
   const withMoney = input.replace(/\{config\.([A-Za-z0-9_.]+)\}/g, (full, path: string) => {
@@ -80,6 +85,7 @@ export function renderTokens(input: string): string {
   const placeholders = siteInfo.placeholders as Record<string, string>;
   const named = withMoney.replace(/\{([A-Z][A-Z0-9_]*)\}/g, (full, key: string) => {
     if (key === 'TEN_SHOP') return shopConfig.shop.name;
+    if (key === 'TIEN_TO_CK') return transferPrefix();
     if (!Object.prototype.hasOwnProperty.call(placeholders, key)) return full;
     return placeholders[key] || full;
   });

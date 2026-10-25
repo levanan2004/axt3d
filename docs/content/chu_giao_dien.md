@@ -50,7 +50,7 @@ Biến: `{tienHang}`, `{tienCoc}`, `{tienCOD}`, `{phiShip}`, `{maDon}`, `{n}`...
 - `Mã đơn: {maDon}`
 - `Số tiền cọc` … `{tienCoc}` (nút `Sao chép`)
 - `Ngân hàng` · `Số tài khoản` · `Chủ tài khoản` (mỗi dòng có nút `Sao chép`)
-- `Nội dung chuyển khoản` … `IN3D{maDon}` (nút `Sao chép`)
+- `Nội dung chuyển khoản` … `{TIEN_TO_CK}{maDon}` (nút `Sao chép`)
 - Lưu ý: `Giữ đúng số tiền và nội dung chuyển khoản để hệ thống tự xác nhận.`
 - Nút mobile: `Lưu ảnh QR`
 - Toast sao chép: `Đã sao chép.`
@@ -95,7 +95,7 @@ Lý do hủy: `Quá hạn chuyển cọc.` · `Bạn yêu cầu hủy.` · `Shop
 **Quy trình (4 bước)**
 1. `Tải file và chọn thông số` – `Gửi file cùng thông tin yêu cầu: nhựa, màu, số lượng, hoàn thiện.`
 2. `Shop kiểm tra và báo giá` – `Shop xem file, tính giá theo khối lượng và giờ in thực tế, báo giá cùng thời gian in. Báo giá có hiệu lực {config.customPrint.quoteValidHours} giờ.`
-3. `Bạn duyệt và cọc 50%` – `Cọc qua QR như đơn thường, nội dung IN3D{maDon}.`
+3. `Bạn duyệt và cọc 50%` – `Cọc qua QR như đơn thường, nội dung {TIEN_TO_CK}{maDon}.`
 4. `In và giao hàng` – `In xong, shop giao qua Viettel Post. Phần còn lại và phí ship trả khi nhận.`
 
 **Bước 1 – Thông tin yêu cầu**

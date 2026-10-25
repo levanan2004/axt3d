@@ -20,7 +20,7 @@ Phiên bản 2. Có hiệu lực từ {NGAY_HIEU_LUC}.
 
 ## 3. Đặt hàng và thanh toán
 - Tiền cọc được thanh toán bằng mã QR chuyển khoản qua SePay; đơn hàng được giao bởi Viettel Post.
-- Nội dung chuyển khoản là IN3D kèm mã đơn. Hệ thống tự xác nhận khi nhận được tiền đúng nội dung và đủ số tiền cọc.
+- Nội dung chuyển khoản là {TIEN_TO_CK} kèm mã đơn. Hệ thống tự xác nhận khi nhận được tiền đúng nội dung và đủ số tiền cọc.
 - Bạn có 30 phút để chuyển cọc. Quá thời gian, đơn tự hủy và hàng được trả lại kho.
 - Tiền chuyển đến sau khi đơn đã hủy sẽ được shop hoàn lại theo Chính sách đổi trả và hoàn tiền.
 - Đơn chỉ được coi là xác nhận khi chuyển sang trạng thái "Đã cọc".

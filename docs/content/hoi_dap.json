@@ -39,7 +39,7 @@
     "id": "q07",
     "chu_de": "thanh_toan",
     "hoi": "Chuyển cọc bằng cách nào?",
-    "dap": "Bạn quét mã QR ở màn thanh toán để chuyển khoản, giao dịch được xác nhận tự động qua SePay. Nội dung chuyển khoản là IN3D kèm mã đơn, bạn giữ đúng nội dung để hệ thống nhận ra."
+    "dap": "Bạn quét mã QR ở màn thanh toán để chuyển khoản, giao dịch được xác nhận tự động qua SePay. Nội dung chuyển khoản là {TIEN_TO_CK} kèm mã đơn, bạn giữ đúng nội dung để hệ thống nhận ra."
   },
   {
     "id": "q08",
