@@ -196,8 +196,32 @@
       "orderType": 1,
       "serviceSelection": "cheapest",
       "locationCacheSeconds": 86400,
-      "feeCacheSeconds": 600
-    }
+      "feeCacheSeconds": 600,
+      "createOrderPath": "/order/createOrder",
+      "createOrderTimeoutMs": 15000,
+      "defaultOrderService": "VCN",
+      "_defaultOrderServiceNote": "Dùng khi đơn không lưu mã dịch vụ từ bước tính phí. Số tạm.",
+      "orderNoteInspection": "Cho xem hàng, không cho thử. Hàng in 3D dễ vỡ, xin nhẹ tay.",
+      "orderNoteNoInspection": "Không cho xem hàng. Hàng in 3D dễ vỡ, xin nhẹ tay.",
+      "publicTrackingUrl": "https://viettelpost.com.vn/tra-cuu-hanh-trinh-don/?KEY={maVanDon}",
+      "deliveredStatus": 501,
+      "warehouse": {
+        "groupAddressId": 29689517,
+        "name": "Lê Vân An",
+        "phone": "",
+        "address": "41 Đường số 29, Tân Thông Hội, Củ Chi",
+        "provinceId": 2,
+        "districtId": 36,
+        "wardId": 689,
+        "_note": "Kho lấy hàng đã khai trên VTP (đơn vị hành chính cũ 3 cấp). phone để trống: VTP lấy theo GROUPADDRESS_ID."
+      }
+    },
+    "codAmountRule": "goods_plus_ship_minus_deposit",
+    "_codAmountRuleStatus": "TẠM, CHỜ HÀ PHƯƠNG CHỐT. Mặc định COD = (tiền hàng + ship) − tiền cọc. Giá trị khác được hỗ trợ: goods_plus_ship_minus_received (trừ số tiền thực nhận).",
+    "codFeePayer": "shop",
+    "_codFeePayerStatus": "TẠM, CHỜ HÀ PHƯƠNG CHỐT. \"shop\": shop trả cước + phí thu hộ, VTP chỉ thu COD (ORDER_PAYMENT 3). \"customer\": VTP thu COD + cước của người nhận (ORDER_PAYMENT 2).",
+    "allowInspection": true,
+    "_allowInspectionStatus": "TẠM, CHỜ HÀ PHƯƠNG CHỐT. true = cho xem hàng (ghi chú VTP + dòng nhắc trên trang theo dõi đơn)."
   },
   "payment": {
     "depositGateway": "sepay",
