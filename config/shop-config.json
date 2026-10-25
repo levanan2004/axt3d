@@ -202,7 +202,7 @@
   "payment": {
     "depositGateway": "sepay",
     "method": "bank_transfer_qr",
-    "transferContentPattern": "IN3D{orderCode}",
+    "transferContentPattern": "AXT3D{orderCode}",
     "depositExpiryMinutes": 30,
     "idempotencyKey": "sepay.transactionId",
     "confirmRule": "amount >= depositAmount AND content contains orderCode"
