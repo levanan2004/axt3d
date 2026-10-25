@@ -7,7 +7,9 @@ for (const p of config.catalog.seedProducts) {
  const image = `/images/${p.image}.webp`;
  sql.push(`INSERT OR IGNORE INTO products(id,slug,name,category,description,image,images,badge,created_at,updated_at) VALUES(${[p.id,p.slug,p.name,p.category,`${p.name} được in từng lớp, hoàn thiện thủ công với những đường vân đặc trưng. Nhẹ, bền và mang một chút sáng tạo vào mỗi ngày. Hình ảnh minh họa mẫu; màu sắc thực tế có thể khác nhẹ.`,image,JSON.stringify([image,`/images/${p.image}-detail.webp`]),p.badge].map(q).join(',')},${Date.now()},${Date.now()});`);
  for (const [i,color,hex] of [[1,p.color,p.hex],[2,'Kem','#e5d6bc']]) {
-  sql.push(`INSERT OR IGNORE INTO variants(id,product_id,sku,color,color_hex,material,price,stock) VALUES(${[`${p.id}-${i}`,p.id,`${p.id.toUpperCase()}-${i}`,color,hex,p.material].map(q).join(',')},${p.price},${p.stock});`);
+  // Robot's config stock is the total. Xám and Kem each get half.
+  const stock = p.id === 'robot' ? p.stock / 2 : p.stock;
+  sql.push(`INSERT OR IGNORE INTO variants(id,product_id,sku,color,color_hex,material,price,stock) VALUES(${[`${p.id}-${i}`,p.id,`${p.id.toUpperCase()}-${i}`,color,hex,p.material].map(q).join(',')},${p.price},${stock});`);
  }
 }
 mkdirSync('seed', { recursive: true });
