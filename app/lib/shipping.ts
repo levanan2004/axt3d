@@ -14,10 +14,25 @@ export function orderWeightGram(lines: WeightLine[], config: ShippingConfig = sh
   }, 0);
 }
 
-/** Custom print: quoted plastic grams (per unit × quantity) plus one box. */
+export type PrintLine = { gramsPerUnit: number; quantity: number };
+
+/** Custom print order weight: plastic grams of every item, plus packaging from config.
+ *  customPrintPackagingPer "order" adds customPrintPackagingGram once; "item" adds it per unit. */
+export function customPrintOrderWeightGram(lines: PrintLine[], config: ShippingConfig = shopConfig.shipping) {
+  let plastic = 0, units = 0;
+  for (const line of lines) {
+    const qty = Math.max(1, Math.floor(line.quantity || 1));
+    units += qty;
+    if (Number.isFinite(line.gramsPerUnit) && line.gramsPerUnit > 0) plastic += line.gramsPerUnit * qty;
+  }
+  const per = String(config.customPrintPackagingPer || 'order');
+  const packaging = per === 'order' ? config.customPrintPackagingGram : config.customPrintPackagingGram * Math.max(1, units);
+  return Math.ceil(plastic) + packaging;
+}
+
+/** Single custom-print quote (one file × quantity). */
 export function customPrintWeightGram(gramsPerUnit: number, quantity = 1, config: ShippingConfig = shopConfig.shipping) {
-  const plastic = Number.isFinite(gramsPerUnit) && gramsPerUnit > 0 ? gramsPerUnit * Math.max(1, quantity) : 0;
-  return Math.ceil(plastic) + config.customPrintPackagingGram;
+  return customPrintOrderWeightGram([{ gramsPerUnit, quantity }], config);
 }
 
 /** "72 giờ" -> 3 days. Returns null when VTP gives no usable time. */

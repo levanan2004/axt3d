@@ -1,12 +1,13 @@
 import {describe,it,expect,vi,afterEach} from 'vitest';
-import {customPrintWeightGram,deliveryDays,fetchShippingQuote,orderWeightGram,pickService,priceAllBody} from '../app/lib/shipping';
 import {shopConfig} from '../app/lib/config';
+import {customPrintOrderWeightGram,customPrintWeightGram,deliveryDays,fetchShippingQuote,orderWeightGram,pickService,priceAllBody} from '../app/lib/shipping';
 const req={provinceId:1,wardId:49823,weightGram:500,goodsValue:89000,cod:89000};
 const ok=(body:unknown)=>Promise.resolve(new Response(JSON.stringify(body),{status:200}));
 afterEach(()=>vi.useRealTimers());
 describe('packed weight',()=>{
  it('sums weight × quantity and defaults missing weights to 300g',()=>{expect(orderWeightGram([{weightGram:120,quantity:2},{weightGram:null,quantity:1},{quantity:3}])).toBe(240+300+900);});
  it('reads the default from config',()=>expect(orderWeightGram([{quantity:2}],{...shopConfig.shipping,defaultPackedWeightGram:250})).toBe(500));
+ it('custom print packaging is config-driven: once per order or per unit',()=>{const base={...shopConfig.shipping};expect(customPrintOrderWeightGram([{gramsPerUnit:80,quantity:2},{gramsPerUnit:40,quantity:1}],base)).toBe(80*2+40+base.customPrintPackagingGram);expect(customPrintOrderWeightGram([{gramsPerUnit:80,quantity:2},{gramsPerUnit:40,quantity:1}],{...base,customPrintPackagingPer:'item'})).toBe(200+3*base.customPrintPackagingGram);});
  it('custom prints use quoted plastic grams + 150g box',()=>{expect(customPrintWeightGram(80)).toBe(230);expect(customPrintWeightGram(80,2)).toBe(310);expect(customPrintWeightGram(0)).toBe(150);});
 });
 describe('VTP fee',()=>{

@@ -180,6 +180,8 @@
     "defaultPackedWeightGram": 300,
     "customPrintPackagingGram": 150,
     "weightRule": "Tổng = cân nặng đóng gói từng món × số lượng; in theo file = gram nhựa báo giá + customPrintPackagingGram. Số tạm, chờ An.",
+    "customPrintPackagingPer": "order",
+    "_customPrintNote": "Đặt in riêng: tổng gram nhựa của mọi món + customPrintPackagingGram tính 1 lần mỗi đơn.",
     "sender": {
       "address": "41 đường 29, Tân Tiến 1, xã Tân Thông Hội, Củ Chi, TP.HCM",
       "provinceId": 2,
