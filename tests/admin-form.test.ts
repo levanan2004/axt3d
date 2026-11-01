@@ -1,5 +1,5 @@
 import {describe,it,expect} from 'vitest';
-import {formatThousands,moveItem,normalizeHex,parseIntInput,planUploads,skippedMessage} from '../app/lib/admin-form';
+import {formatThousands,isActivationKey,moveItem,normalizeHex,parseIntInput,planUploads,skippedMessage} from '../app/lib/admin-form';
 import {isWebp,validateImageUpload,newImageKey,MAX_IMAGE_BYTES} from '../app/lib/admin-images';
 import {productSchema} from '../app/lib/admin-product-schema';
 const webp=(payload=8,chunk='VP8 ')=>{const b=new Uint8Array(12+4+payload);const enc=(s:string,o:number)=>[...s].forEach((c,i)=>b[o+i]=c.charCodeAt(0));enc('RIFF',0);const size=b.length-8;b[4]=size&255;b[5]=(size>>8)&255;b[6]=(size>>16)&255;b[7]=size>>>24;enc('WEBP',8);enc(chunk,12);return b;};
@@ -16,6 +16,7 @@ describe('hex color',()=>{
 });
 describe('image uploads',()=>{
  it('caps at 8 keeping selection order',()=>{expect(planUploads(['a','b','c','d'],6)).toEqual({accepted:['a','b'],skipped:2});expect(planUploads(['a'],8)).toEqual({accepted:[],skipped:1});expect(planUploads(['a','b'],0)).toEqual({accepted:['a','b'],skipped:0});});
+ it('activation keys',()=>{expect(isActivationKey('Enter')).toBe(true);expect(isActivationKey(' ')).toBe(true);expect(isActivationKey('a')).toBe(false);});
  it('skip message',()=>expect(skippedMessage(3)).toBe('Tối đa 8 ảnh, đã bỏ bớt 3 ảnh'));
  it('reorders',()=>{expect(moveItem(['a','b','c'],2,0)).toEqual(['c','a','b']);expect(moveItem(['a','b'],5,0)).toEqual(['a','b']);});
 });

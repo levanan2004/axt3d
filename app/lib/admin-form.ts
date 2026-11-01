@@ -1,4 +1,6 @@
 // Pure helpers for the admin product editor (tested in tests/admin-form.test.ts).
+/** Enter/Space activate a custom role=button element. */
+export const isActivationKey=(key:string)=>key==='Enter'||key===' '||key==='Spacebar';
 export const MAX_PRODUCT_IMAGES=8;
 /** Digits only, leading zeros stripped. '' stays '' (empty field), '0' stays 0. */
 export function parseIntInput(raw:string):number|null{const digits=raw.replace(/\D/g,'');if(!digits)return null;return Number(digits.replace(/^0+(?=\d)/,''));}
